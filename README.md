@@ -1,73 +1,97 @@
 
-<img width="897" height="220" alt="image" src="https://github.com/user-attachments/assets/e6d6a3e4-0acc-4712-a894-68e15f13d584" />
+# 🌍 Próxima Parada
+
+> Uma plataforma moderna de turismo para descobrir os melhores destinos de viagem
+
+<!-- ![Próxima Parada](docs/screenshot-login.png) -->
+
+<img width="1449" height="931" alt="image" src="https://github.com/user-attachments/assets/12f73901-e52f-43bc-9f27-82f01c51c936" />
+
+<img width="1561" height="904" alt="image" src="https://github.com/user-attachments/assets/b20e88b8-f776-48f7-9b3c-f28ac0987e8d" />
 
 
-# React + TypeScript + Vite
+## 📋 Sobre o Projeto
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Próxima Parada** é uma aplicação web desenvolvida em React + TypeScript que oferece uma experiência moderna e responsiva para explorar pacotes de viagem. Com um design limpo e intuitivo, os usuários podem navegar entre diferentes destinos e fazer login na plataforma.
 
-Currently, two official plugins are available:
+### ✨ Características Principais
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎨 **Interface Moderna**: Design responsivo com React Bootstrap
+- 🚀 **Performance**: Construído com Vite para desenvolvimento rápido
+- 📱 **Mobile-First**: Totalmente responsivo para todos os dispositivos
+- 🔒 **Sistema de Login**: Autenticação segura e intuitiva
+- 🧭 **Navegação**: React Router DOM para navegação fluida
+- 📦 **Componentes Reutilizáveis**: Arquitetura modular e clean code
 
-## Expanding the ESLint configuration
+## 🛠️ Tecnologias Utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Core
+- **React 19** - Biblioteca para interfaces de usuário
+- **TypeScript** - Superset JavaScript com tipagem estática
+- **Vite** - Build tool moderna e rápida
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### UI/UX
+- **React Bootstrap** - Componentes UI responsivos
+- **Bootstrap 5** - Framework CSS
+- **React Router DOM** - Roteamento do lado do cliente
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Desenvolvimento
+- **ESLint** - Linting e padronização de código
+- **Git** - Controle de versão
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── components/           # Componentes globais reutilizáveis
+│   ├── Header/          # Cabeçalho da aplicação
+│   ├── Footer/          # Rodapé da aplicação
+│   └── index.ts         # Exports dos componentes
+├── pages/               # Páginas da aplicação
+│   ├── Home/            # Página inicial
+│   │   ├── components/  # Componentes específicos da Home
+│   │   │   ├── HeroSection/     # Seção hero
+│   │   │   ├── TravelCard/      # Card de pacotes
+│   │   │   └── index.ts
+│   │   ├── Home.tsx
+│   │   └── index.ts
+│   └── Login/           # Página de login
+│       ├── components/  # Componentes específicos do Login
+│       │   ├── LoginForm/       # Formulário de login
+│       │   └── index.ts
+│       ├── Login.tsx
+│       └── index.ts
+├── data/                # Dados mockados
+│   └── mockData.ts      # Pacotes de viagem mock
+├── hooks/               # Custom hooks
+├── services/            # Serviços de API
+├── store/               # Gerenciamento de estado
+├── utils/               # Utilitários
+├── styles/              # Estilos globais
+└── tests/               # Testes
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Como Executar
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Pré-requisitos
+- Node.js (versão 16+)
+- npm ou yarn
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Instalação
+
+1. **Clone o repositório**
+```bash
+git clone [url-do-repositorio]
+cd proxima-parada-frontend
 ```
+
+2. **Instale as dependências**
+```bash
+npm install
+```
+
+3. **Execute em modo de desenvolvimento**
+```bash
+npm run dev
+=======
+

@@ -1,3 +1,4 @@
+
 # 🌍 Próxima Parada
 
 > Uma plataforma moderna de turismo para descobrir os melhores destinos de viagem
@@ -92,69 +93,5 @@ npm install
 3. **Execute em modo de desenvolvimento**
 ```bash
 npm run dev
-```
+=======
 
-4. **Acesse a aplicação**
-```
-http://localhost:5173
-```
-
-### Scripts Disponíveis
-
-- `npm run dev` - Executa em modo desenvolvimento
-- `npm run build` - Gera build de produção
-- `npm run preview` - Preview do build de produção
-- `npm run lint` - Executa linting do código
-
-## 📱 Funcionalidades
-
-### 🏠 Página Home
-- Hero section com call-to-action
-- Galeria de pacotes de viagem
-- Cards responsivos com informações dos destinos
-- Navegação intuitiva
-
-### 🔐 Página Login
-- Formulário de autenticação
-- Validação de campos
-- Design centralizado e responsivo
-- Link para cadastro
-
-## 🎨 Design Principles
-
-O projeto segue os princípios de:
-
-- **Clean Code**: Código limpo e legível
-- **DRY (Don't Repeat Yourself)**: Reutilização de componentes
-- **KISS (Keep It Simple, Stupid)**: Simplicidade e objetividade
-- **Componentização**: Divisão em componentes reutilizáveis
-- **Responsividade**: Mobile-first design
-
-## 🔄 Próximos Passos
-
-- [ ] Implementar autenticação real
-- [ ] Adicionar mais páginas (Detalhes do pacote, Perfil)
-- [ ] Integração com API backend
-- [ ] Implementar carrinho de compras
-- [ ] Adicionar sistema de avaliações
-- [ ] Testes unitários e de integração
-
-## 🤝 Contribuição
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 👥 Autor
-
-Desenvolvido como projeto acadêmico - Impacta Tecnologia
-
----
-
-⭐ **Se este projeto foi útil para você, considere dar uma estrela!**

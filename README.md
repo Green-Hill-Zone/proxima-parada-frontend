@@ -2,7 +2,7 @@
 
 > Uma plataforma moderna de turismo para descobrir os melhores destinos de viagem
 
-![Próxima Parada](docs/screenshot-login.png)
+<!-- ![Próxima Parada](docs/screenshot-login.png) -->
 
 ## 📋 Sobre o Projeto
 
@@ -153,22 +153,3 @@ Desenvolvido como projeto acadêmico - Impacta Tecnologia
 ---
 
 ⭐ **Se este projeto foi útil para você, considere dar uma estrela!**
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```

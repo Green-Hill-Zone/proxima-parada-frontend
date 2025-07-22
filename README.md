@@ -4,6 +4,11 @@
 
 <!-- ![Próxima Parada](docs/screenshot-login.png) -->
 
+<img width="1449" height="931" alt="image" src="https://github.com/user-attachments/assets/12f73901-e52f-43bc-9f27-82f01c51c936" />
+
+<img width="1561" height="904" alt="image" src="https://github.com/user-attachments/assets/b20e88b8-f776-48f7-9b3c-f28ac0987e8d" />
+
+
 ## 📋 Sobre o Projeto
 
 **Próxima Parada** é uma aplicação web desenvolvida em React + TypeScript que oferece uma experiência moderna e responsiva para explorar pacotes de viagem. Com um design limpo e intuitivo, os usuários podem navegar entre diferentes destinos e fazer login na plataforma.

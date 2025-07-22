@@ -1,0 +1,54 @@
+import { Card, Button } from 'react-bootstrap';
+
+interface TravelPackage {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+}
+
+interface TravelCardProps {
+  travelPackage: TravelPackage;
+  onViewDetails?: (id: string) => void;
+}
+
+const TravelCard = ({ travelPackage, onViewDetails }: TravelCardProps) => {
+  const { id, title, description, price, imageUrl } = travelPackage;
+
+  const handleViewDetails = () => {
+    if (onViewDetails) {
+      onViewDetails(id);
+    }
+  };
+
+  return (
+    <Card className="h-100 shadow-sm">
+      <Card.Img variant="top" src={imageUrl} alt={title} />
+      <Card.Body className="d-flex flex-column">
+        <Card.Title>{title}</Card.Title>
+        <Card.Text className="flex-grow-1">
+          {description}
+        </Card.Text>
+        <div className="mt-auto">
+          <h5 className="text-primary">
+            {new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL'
+            }).format(price)}
+          </h5>
+          <Button 
+            variant="primary" 
+            className="w-100"
+            onClick={handleViewDetails}
+          >
+            Ver Detalhes
+          </Button>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export default TravelCard;
+export type { TravelPackage };

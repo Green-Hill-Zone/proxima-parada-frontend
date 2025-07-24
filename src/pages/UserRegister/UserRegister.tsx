@@ -1,4 +1,4 @@
-import UserRegisterFormRefactored from "./components/UserRegisterFormRefactored";
+import UserRegisterFormRefactored from "./components/UserRegisterForm";
 
 function UserRegister() {
   return (

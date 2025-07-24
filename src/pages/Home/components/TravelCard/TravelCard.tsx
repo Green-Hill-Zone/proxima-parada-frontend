@@ -1,4 +1,4 @@
-import { Card, Button } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 
 interface TravelPackage {
   id: string;
@@ -10,17 +10,10 @@ interface TravelPackage {
 
 interface TravelCardProps {
   travelPackage: TravelPackage;
-  onViewDetails?: (id: string) => void;
 }
 
-const TravelCard = ({ travelPackage, onViewDetails }: TravelCardProps) => {
+const TravelCard = ({ travelPackage }: TravelCardProps) => {
   const { id, title, description, price, imageUrl } = travelPackage;
-
-  const handleViewDetails = () => {
-    if (onViewDetails) {
-      onViewDetails(id);
-    }
-  };
 
   return (
     <Card className="h-100 shadow-sm">
@@ -37,13 +30,6 @@ const TravelCard = ({ travelPackage, onViewDetails }: TravelCardProps) => {
               currency: 'BRL'
             }).format(price)}
           </h5>
-          <Button 
-            variant="primary" 
-            className="w-100"
-            onClick={handleViewDetails}
-          >
-            Ver Detalhes
-          </Button>
         </div>
       </Card.Body>
     </Card>

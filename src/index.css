@@ -1,34 +1,96 @@
-/* Global styles for the travel app */
+/* Estilos globais para a aplicação de viagens */
 :root {
+  /* Definição das cores do tema da aplicação */
+  --primary-blue: #3246AA;    /* Azul principal usado no header, footer e botões */
+  --secondary-orange: #FFAD33; /* Laranja usado em hovers e destaques */
+  --white: #ffffff;           /* Branco padrão */
+  --black: #000000;           /* Preto padrão */
+  
+  /* Configurações de tipografia global */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  font-weight: 400;
+  line-height: 1.6;          /* Altura da linha para melhor legibilidade */
+  font-weight: 400;          /* Peso da fonte padrão */
 }
 
+/* Reset CSS - Remove margens e paddings padrão dos navegadores */
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  box-sizing: border-box; /* Inclui padding e border no cálculo do tamanho total */
 }
 
+/* Estilos do corpo da página */
 body {
   margin: 0;
-  background-color: #ffffff;
-  color: #333;
+  background-color: #ffffff; /* Fundo branco */
+  color: #333;              /* Texto cinza escuro para boa legibilidade */
 }
 
+/* Container principal da aplicação - ocupa toda a altura da tela */
 #root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  min-height: 100vh;        /* Altura mínima de 100% da viewport */
+  display: flex;            /* Layout flexível */
+  flex-direction: column;   /* Organiza header, main e footer verticalmente */
 }
 
-/* Smooth transitions for cards */
+/* Animações suaves para os cartões de viagem */
 .card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transição suave de 0.3s */
 }
 
+/* Efeito de hover nos cartões - elevação e sombra */
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+  transform: translateY(-5px);                            /* Move o cartão 5px para cima */
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;   /* Sombra mais intensa */
+}
+
+/* Personalização dos botões primários com as cores do tema */
+.btn-primary {
+  background-color: var(--primary-blue) !important; /* Fundo azul personalizado */
+  border-color: var(--primary-blue) !important;     /* Borda azul personalizada */
+}
+
+/* Efeito hover dos botões primários - azul mais escuro */
+.btn-primary:hover {
+  background-color: #2a3a8a !important; /* Azul mais escuro no hover */
+  border-color: #2a3a8a !important;     /* Borda azul mais escura no hover */
+}
+
+/* Classe para textos na cor azul principal */
+.text-primary {
+  color: var(--primary-blue) !important; /* Aplica a cor azul aos textos */
+}
+
+/* Estilos para o botão do menu hambúrguer (mobile) */
+.navbar-toggler {
+  border-color: var(--white) !important; /* Borda branca para contraste com fundo azul */
+}
+
+/* Ícone do menu hambúrguer personalizado em branco */
+.navbar-toggler-icon {
+  /* SVG customizado com linhas brancas para o ícone do menu */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Efeito hover para os links de navegação (Home e Login) */
+.navbar-nav .nav-link {
+  transition: color 0.3s ease; /* Transição suave de cor em 0.3s */
+  position: relative;          /* Posicionamento para futuros efeitos */
+}
+
+/* Cor laranja quando passar o mouse sobre os links de navegação */
+.navbar-nav .nav-link:hover {
+  color: var(--secondary-orange) !important; /* Muda para laranja no hover */
+}
+
+/* Estilos para links no rodapé */
+.footer-link {
+  color: var(--secondary-orange);   /* Cor laranja padrão */
+  text-decoration: none;            /* Remove sublinhado */
+  transition: color 0.3s ease;     /* Transição suave de cor */
+}
+
+/* Efeito hover nos links do rodapé - fica branco */
+.footer-link:hover {
+  color: var(--white) !important;  /* Cor branca no hover */
 }

@@ -1,41 +1,53 @@
+// Importações do React Bootstrap e componentes locais
 import { Container, Row, Col } from 'react-bootstrap';
-import { Header, Footer } from '../../components';
-import { HeroSection, TravelCard } from './components';
-import { mockTravelPackages } from '../../data/mockData';
+import { Header, Footer } from '../../components';                    // Componentes de layout
+import { HeroSection, TravelCard } from './components';               // Componentes específicos da Home
+import { mockTravelPackages } from '../../data/mockData';             // Dados fictícios dos pacotes
 
+// Componente Home - Página principal da aplicação
 const Home = () => {
+  // Função executada quando usuário clica em "Ver detalhes" de um pacote
   const handleViewDetails = (packageId: string) => {
     console.log('Ver detalhes do pacote:', packageId);
     // Aqui você pode implementar a navegação para a página de detalhes
+    // Exemplo: usar React Router para navegar para /pacote/[id]
   };
 
   return (
     <>
+      {/* Cabeçalho da aplicação */}
       <Header />
+      {/* Conteúdo principal da página */}
       <main>
+        {/* Seção hero com título e subtítulo de destaque */}
         <HeroSection 
           title="Descubra o Mundo"
           subtitle="Encontre os melhores pacotes de viagem para sua próxima aventura"
         />
 
+        {/* Container para os pacotes de viagem */}
         <Container className="py-5">
+          {/* Título da seção de pacotes */}
           <Row className="mb-4">
             <Col>
               <h2 className="text-center">Pacotes em Destaque</h2>
             </Col>
           </Row>
+          {/* Grid de cartões de pacotes */}
           <Row>
+            {/* Mapeia cada pacote do array mockTravelPackages para um cartão */}
             {mockTravelPackages.map((travelPackage) => (
-              <Col key={travelPackage.id} md={4} className="mb-4">
+              <Col key={travelPackage.id} md={4} className="mb-4"> {/* 3 colunas em tablets/desktop */}
                 <TravelCard 
-                  travelPackage={travelPackage}
-                  onViewDetails={handleViewDetails}
+                  travelPackage={travelPackage}        // Dados do pacote
+                  onViewDetails={handleViewDetails}    // Função de callback para detalhes
                 />
               </Col>
             ))}
           </Row>
         </Container>
       </main>
+      {/* Rodapé da aplicação */}
       <Footer />
     </>
   );

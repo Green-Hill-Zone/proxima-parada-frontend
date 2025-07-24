@@ -13,7 +13,7 @@ interface TravelCardProps {
 }
 
 const TravelCard = ({ travelPackage }: TravelCardProps) => {
-  const { id, title, description, price, imageUrl } = travelPackage;
+  const {  title, description, price, imageUrl } = travelPackage;
 
   return (
     <Card className="h-100 shadow-sm">

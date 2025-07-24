@@ -2,6 +2,8 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { Header, Footer } from '../../components';
 import { HeroSection, TravelCard } from './components';
 import { mockTravelPackages } from '../../data/mockData';
+import imgBg from '../../imgs/img-home/img-bg.png';
+import '../../styles/home/heroSection.css';
 
 const Home = () => {
   const handleViewDetails = (packageId: string) => {
@@ -13,8 +15,9 @@ const Home = () => {
     <>
       <Header />
       <main>
-        <HeroSection 
-          title="Descubra o Mundo"
+        <HeroSection
+          imgSrc={imgBg}
+          title={`Descubra o mundo,\ndescubra a si mesmo`}
           subtitle="Encontre os melhores pacotes de viagem para sua próxima aventura"
         />
 
@@ -27,7 +30,7 @@ const Home = () => {
           <Row>
             {mockTravelPackages.map((travelPackage) => (
               <Col key={travelPackage.id} md={4} className="mb-4">
-                <TravelCard 
+                <TravelCard
                   travelPackage={travelPackage}
                   onViewDetails={handleViewDetails}
                 />

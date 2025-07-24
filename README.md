@@ -21,7 +21,7 @@
 - 📱 **Mobile-First**: Totalmente responsivo para todos os dispositivos
 - 🔒 **Sistema de Login**: Autenticação segura e intuitiva
 - 🧭 **Navegação**: React Router DOM para navegação fluida
-- 📦  **Componentes Reutilizáveis**: Arquitetura modular e clean code
+- 📦 **Componentes Reutilizáveis**: Arquitetura modular e clean code
 
 ## 🛠️ Tecnologias Utilizadas
 

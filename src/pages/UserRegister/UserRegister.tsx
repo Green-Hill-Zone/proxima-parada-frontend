@@ -1,9 +1,9 @@
-import UserRegisterForm from "./components/UserRegisterForm";
+import UserRegisterFormRefactored from "./components/UserRegisterFormRefactored";
 
 function UserRegister() {
   return (
     <>
-      <UserRegisterForm />
+      <UserRegisterFormRefactored />
     </>
   );
 }

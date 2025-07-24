@@ -1,6 +1,4 @@
-import { Header } from '../../components';
 import { LoginForm, type LoginFormData } from './components';
-
 const Login = () => {
   const handleLogin = (data: LoginFormData) => {
     console.log('Login attempt:', data);
@@ -9,7 +7,6 @@ const Login = () => {
 
   return (
     <>
-      <Header />
       <main>
         <LoginForm onSubmit={handleLogin} />
       </main>

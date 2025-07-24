@@ -1,7 +1,7 @@
-import { Container, Row, Col } from 'react-bootstrap';
-import { Header, Footer } from '../../components';
-import { HeroSection, TravelCard } from './components';
+import { Col, Container, Row } from 'react-bootstrap';
+import { Footer } from '../../components';
 import { mockTravelPackages } from '../../data/mockData';
+import { HeroSection, TravelCard } from './components';
 
 const Home = () => {
   const handleViewDetails = (packageId: string) => {
@@ -11,7 +11,6 @@ const Home = () => {
 
   return (
     <>
-      <Header />
       <main>
         <HeroSection 
           title="Descubra o Mundo"

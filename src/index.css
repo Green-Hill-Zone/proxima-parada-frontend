@@ -61,36 +61,31 @@ body {
   color: var(--primary-blue) !important; /* Aplica a cor azul aos textos */
 }
 
-/* Estilos para o botão do menu hambúrguer (mobile) */
-.navbar-toggler {
-  border-color: var(--white) !important; /* Borda branca para contraste com fundo azul */
+/* Estilos globais para formulários */
+.form-control:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 0.2rem rgba(50, 70, 170, 0.25);
 }
 
-/* Ícone do menu hambúrguer personalizado em branco */
-.navbar-toggler-icon {
-  /* SVG customizado com linhas brancas para o ícone do menu */
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+/* Estilos globais para links */
+a {
+  color: var(--primary-blue);
+  text-decoration: none;
 }
 
-/* Efeito hover para os links de navegação (Home e Login) */
-.navbar-nav .nav-link {
-  transition: color 0.3s ease; /* Transição suave de cor em 0.3s */
-  position: relative;          /* Posicionamento para futuros efeitos */
+a:hover {
+  color: var(--secondary-orange);
 }
 
-/* Cor laranja quando passar o mouse sobre os links de navegação */
-.navbar-nav .nav-link:hover {
-  color: var(--secondary-orange) !important; /* Muda para laranja no hover */
+/* Utilitários globais */
+.text-orange {
+  color: var(--secondary-orange) !important;
 }
 
-/* Estilos para links no rodapé */
-.footer-link {
-  color: var(--secondary-orange);   /* Cor laranja padrão */
-  text-decoration: none;            /* Remove sublinhado */
-  transition: color 0.3s ease;     /* Transição suave de cor */
+.bg-primary-blue {
+  background-color: var(--primary-blue) !important;
 }
 
-/* Efeito hover nos links do rodapé - fica branco */
-.footer-link:hover {
-  color: var(--white) !important;  /* Cor branca no hover */
+.bg-secondary-orange {
+  background-color: var(--secondary-orange) !important;
 }

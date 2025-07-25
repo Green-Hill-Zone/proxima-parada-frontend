@@ -1,0 +1,59 @@
+/* Estilos específicos do componente Header */
+
+/* Container principal do cabeçalho */
+.header-navbar {
+  background-color: var(--primary-blue);
+  margin-bottom: 0;
+}
+
+/* Logo da marca no cabeçalho */
+.header-logo {
+  height: 40px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+/* Container dos links de navegação */
+.header-nav {
+  margin-left: auto;
+}
+
+/* Links de navegação individuais */
+.header-nav-link {
+  color: var(--white);
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+/* Efeito hover nos links de navegação - cor laranja */
+.header-nav-link:hover {
+  color: var(--secondary-orange) !important;
+}
+
+/* Estilo do botão hambúrguer para dispositivos móveis */
+.header-toggler {
+  border-color: var(--white) !important;
+}
+
+/* Ícone personalizado do menu hambúrguer em branco */
+.header-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Responsividade para telas grandes */
+@media (min-width: 992px) {
+  .header-navbar {
+    padding: 0.75rem 0;
+  }
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 991px) {
+  .header-logo {
+    height: 35px;
+  }
+  
+  .header-nav-link {
+    padding: 0.75rem 1rem;
+  }
+}

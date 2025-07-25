@@ -1,6 +1,7 @@
 // Importações dos componentes necessários
 import { Header, Footer } from '../../components';              // Componentes de layout
 import { LoginForm, type LoginFormData } from './components';   // Componente e tipo do formulário
+import './styles.css'; // Importa os estilos específicos da página Login
 
 // Componente Login - Página principal de autenticação
 const Login = () => {

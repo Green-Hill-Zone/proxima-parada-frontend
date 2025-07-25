@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { Header, Footer } from '../../components';                    // Componentes de layout
 import { HeroSection, TravelCard } from './components';               // Componentes específicos da Home
 import { mockTravelPackages } from '../../data/mockData';             // Dados fictícios dos pacotes
+import './styles.css'; // Importa os estilos específicos da página Home
 
 // Componente Home - Página principal da aplicação
 const Home = () => {
@@ -18,7 +19,7 @@ const Home = () => {
       {/* Cabeçalho da aplicação */}
       <Header />
       {/* Conteúdo principal da página */}
-      <main>
+      <main className="home-main">
         {/* Seção hero com título e subtítulo de destaque */}
         <HeroSection 
           title="Descubra o Mundo"
@@ -26,18 +27,18 @@ const Home = () => {
         />
 
         {/* Container para os pacotes de viagem */}
-        <Container className="py-5">
+        <Container className="home-packages-section">
           {/* Título da seção de pacotes */}
           <Row className="mb-4">
             <Col>
-              <h2 className="text-center">Pacotes em Destaque</h2>
+              <h2 className="home-packages-title">Pacotes em Destaque</h2>
             </Col>
           </Row>
           {/* Grid de cartões de pacotes */}
-          <Row>
+          <Row className="home-packages-grid">
             {/* Mapeia cada pacote do array mockTravelPackages para um cartão */}
             {mockTravelPackages.map((travelPackage) => (
-              <Col key={travelPackage.id} md={4} className="mb-4"> {/* 3 colunas em tablets/desktop */}
+              <Col key={travelPackage.id} md={4} className="home-package-col"> {/* 3 colunas em tablets/desktop */}
                 <TravelCard 
                   travelPackage={travelPackage}        // Dados do pacote
                   onViewDetails={handleViewDetails}    // Função de callback para detalhes

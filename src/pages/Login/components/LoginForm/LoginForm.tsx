@@ -1,9 +1,14 @@
 // Importações necessárias do React e React Bootstrap
 import { useState } from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 // Importação das imagens dos logos para login social
 import googleLogo from '../../../../assets/google.png';
 import facebookLogo from '../../../../assets/facebook.png';
+// Importação dos estilos específicos do LoginForm
+import './LoginForm.css';
+// Importação do hook de autenticação
+import { useAuth } from '../../../../hooks/useAuth';
 
 // Interface TypeScript que define a estrutura dos dados do formulário
 interface LoginFormData {
@@ -18,11 +23,19 @@ interface LoginFormProps {
 
 // Componente LoginForm - Formulário de autenticação
 const LoginForm = ({ onSubmit }: LoginFormProps) => {
+  // Hooks de autenticação e navegação
+  const { login, isLoading } = useAuth();
+  const navigate = useNavigate();
+  
   // Estado do React para armazenar os dados do formulário
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',    // Valor inicial vazio para email
     password: ''  // Valor inicial vazio para senha
   });
+
+  // Estado para mensagens de erro
+  const [error, setError] = useState<string>('');
+  const [showError, setShowError] = useState<boolean>(false);
 
   // Função que atualiza os campos do formulário quando o usuário digita
   const handleInputChange = (field: keyof LoginFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,35 +46,61 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
   };
 
   // Função executada quando o formulário é enviado
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Previne o comportamento padrão do formulário (recarregar página)
-    if (onSubmit) {
-      onSubmit(formData); // Executa a função passada como prop
-    } else {
-      // Lógica padrão caso nenhuma função seja fornecida
-      console.log('Tentativa de login:', formData);
+    setError(''); // Limpa erros anteriores
+    setShowError(false);
+
+    try {
+      // Tenta fazer login com as credenciais fornecidas
+      const success = await login(formData.email, formData.password);
+      
+      if (success) {
+        // Login bem-sucedido - executa callback se fornecido
+        if (onSubmit) {
+          onSubmit(formData);
+        }
+        // Redireciona para o dashboard
+        navigate('/dashboard');
+      } else {
+        // Login falhou - mostra mensagem de erro
+        setError('Email ou senha incorretos. Tente novamente.');
+        setShowError(true);
+      }
+    } catch (error) {
+      // Erro inesperado durante o login
+      console.error('Erro durante o login:', error);
+      setError('Ocorreu um erro inesperado. Tente novamente.');
+      setShowError(true);
     }
   };
 
   return (
     // Container principal centralizado vertical e horizontalmente
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
-      <Row className="w-100">
+    <Container className="login-form-container">
+      <Row className="login-form-row">
         {/* Coluna responsiva: md=6 (metade em tablets), lg=4 (1/3 em desktops), centralizada */}
-        <Col md={6} lg={4} className="mx-auto">
+        <Col md={6} lg={4} className="login-form-col">
           {/* Cartão com sombra para o formulário */}
-          <Card className="shadow-lg">
-            <Card.Body className="p-4">
+          <Card className="login-form-card">
+            <Card.Body className="login-form-card-body">
               {/* Cabeçalho do formulário */}
-              <div className="text-center mb-4">
-                <h3 className="text-primary">Fazer Login</h3>          {/* Título em azul */}
-                <p className="text-muted">Entre em sua conta</p>        {/* Subtítulo em cinza */}
+              <div className="login-form-header">
+                <h3 className="login-form-title">Login</h3>          {/* Título em azul */}
+                <p className="login-form-subtitle">Preencha seus dados</p>   {/* Subtítulo em cinza */}
               </div>
               
               {/* Formulário de login */}
               <Form onSubmit={handleSubmit}>
+                {/* Alerta de erro */}
+                {showError && (
+                  <Alert variant="danger" className="mb-3">
+                    {error}
+                  </Alert>
+                )}
+
                 {/* Campo de email */}
-                <Form.Group className="mb-3">
+                <Form.Group className="login-form-group">
                   <Form.Label>Email</Form.Label>
                   <Form.Control
                     type="email"                                    // Tipo email para validação automática
@@ -69,11 +108,12 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                     value={formData.email}                         // Valor controlado pelo estado
                     onChange={handleInputChange('email')}          // Função para atualizar o estado
                     required                                        // Campo obrigatório
+                    disabled={isLoading}                           // Desabilita durante carregamento
                   />
                 </Form.Group>
 
                 {/* Campo de senha */}
-                <Form.Group className="mb-4">
+                <Form.Group className="login-form-group">
                   <Form.Label>Senha</Form.Label>
                   <Form.Control
                     type="password"                                 // Tipo password para mascarar a entrada
@@ -81,45 +121,60 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                     value={formData.password}                      // Valor controlado pelo estado
                     onChange={handleInputChange('password')}       // Função para atualizar o estado
                     required                                        // Campo obrigatório
+                    disabled={isLoading}                           // Desabilita durante carregamento
                   />
                 </Form.Group>
 
+                {/* Botão principal de login */}
                 <Button 
-                  variant="primary" 
-                  type="submit" 
-                  className="w-100 mb-3"
-                  style={{ backgroundColor: 'var(--primary-blue)', borderColor: 'var(--primary-blue)' }}
+                  variant="primary"                                             // Estilo azul do Bootstrap
+                  type="submit"                                                 // Tipo submit para enviar o formulário
+                  className="login-form-btn-primary"                           // Classe CSS personalizada
+                  disabled={isLoading}                                         // Desabilita durante carregamento
                 >
-                  Entrar
+                  {isLoading ? (
+                    <>
+                      <Spinner 
+                        as="span" 
+                        animation="border" 
+                        size="sm" 
+                        role="status" 
+                        aria-hidden="true" 
+                        className="me-2"
+                      />
+                      Entrando...
+                    </>
+                  ) : (
+                    "Entrar"
+                  )}
                 </Button>
 
-                <div className="d-grid gap-2 mb-3">
+                {/* Container para botões de login social */}
+                <div className="login-form-social">
+                  {/* Botão de login com Google */}
                   <Button 
-                    variant="outline-secondary" 
-                    className="d-flex align-items-center justify-content-center"
-                    onClick={() => console.log('Login com Google')}
+                    variant="outline-secondary"                                 // Estilo com borda cinza
+                    className="login-form-social-btn"                          // Classe CSS personalizada
+                    onClick={() => console.log('Login com Google')}             // Função executada no clique
                   >
                     <img 
-                      src={googleLogo} 
-                      alt="Google" 
-                      width="20" 
-                      height="20" 
-                      className="me-2"
+                      src={googleLogo}                  // Caminho da imagem do Google
+                      alt="Google"                      // Texto alternativo
+                      className="login-form-social-logo" // Classe CSS personalizada para o logo
                     />
                     Entrar com Google
                   </Button>
                   
+                  {/* Botão de login com Facebook */}
                   <Button 
-                    variant="outline-primary" 
-                    className="d-flex align-items-center justify-content-center"
-                    onClick={() => console.log('Login com Facebook')}
+                    variant="outline-primary"                                   // Estilo com borda azul
+                    className="login-form-social-btn"                          // Classe CSS personalizada
+                    onClick={() => console.log('Login com Facebook')}           // Função executada no clique
                   >
                     <img 
-                      src={facebookLogo} 
-                      alt="Facebook" 
-                      width="20" 
-                      height="20" 
-                      className="me-2"
+                      src={facebookLogo}                // Caminho da imagem do Facebook
+                      alt="Facebook"                    // Texto alternativo
+                      className="login-form-social-logo" // Classe CSS personalizada para o logo
                     />
                     Entrar com Facebook
                   </Button>
@@ -127,11 +182,11 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
               </Form>
 
               {/* Seção para cadastro de novos usuários */}
-              <div className="text-center">
-                <p className="text-muted">
+              <div className="login-form-signup">
+                <p className="login-form-signup-text">
                   Não tem uma conta?{' '}
                   {/* Botão estilizado como link para cadastro */}
-                  <Button variant="link" className="p-0 ms-1">
+                  <Button variant="link" className="login-form-signup-link">
                     Cadastre-se
                   </Button>
                 </p>

@@ -112,5 +112,4 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
 };
 
 export default UserRegisterForm;
-export type { UserRegisterFormData };
 

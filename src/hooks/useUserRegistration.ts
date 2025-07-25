@@ -32,28 +32,34 @@ export const useUserRegistration = (
 
   const validateField = useCallback(
     (field: keyof UserRegisterFormData, value: string): string | null => {
+      // Validação para campos obrigatórios
+      if (!value) {
+        return ERROR_MESSAGES.REQUIRED_FIELD;
+      }
+
       switch (field) {
         case "email":
-          return value && !validateEmail(value)
-            ? ERROR_MESSAGES.INVALID_EMAIL
-            : null;
+          return !validateEmail(value) ? ERROR_MESSAGES.INVALID_EMAIL : null;
 
         case "document":
           const cpfNumbers = removeNonDigits(value);
-          return cpfNumbers.length > 0 &&
-            cpfNumbers.length !== VALIDATION_RULES.CPF_LENGTH
+          return cpfNumbers.length !== VALIDATION_RULES.CPF_LENGTH
             ? ERROR_MESSAGES.INVALID_CPF
             : null;
 
         case "phone":
           const phoneNumbers = removeNonDigits(value);
-          return phoneNumbers.length > 0 &&
-            phoneNumbers.length !== VALIDATION_RULES.PHONE_LENGTH
+          return phoneNumbers.length !== VALIDATION_RULES.PHONE_LENGTH
             ? ERROR_MESSAGES.INVALID_PHONE
             : null;
 
+        case "password":
+          return value.length < VALIDATION_RULES.MIN_PASSWORD_LENGTH
+            ? ERROR_MESSAGES.PASSWORD_TOO_SHORT
+            : null;
+
         case "confirmPassword":
-          return value && value !== formData.password
+          return value !== formData.password
             ? ERROR_MESSAGES.PASSWORDS_DONT_MATCH
             : null;
 

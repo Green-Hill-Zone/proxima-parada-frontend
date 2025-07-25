@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  FaPlane,
   FaCalendarAlt,
-  FaUser,
   FaChevronDown,
   FaChevronUp,
+  FaPlane,
+  FaUser,
 } from "react-icons/fa";
 
 const SearchBox = () => {

@@ -1,11 +1,11 @@
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Container, Nav, Navbar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import '../../styles/header/header.css';
-import logo from '../../imgs/logo/logo.svg';
-import iconHosp from '../../imgs/icons-menu/icon-hosp.svg';
 import iconAviao from '../../imgs/icons-menu/icon-aviao.svg';
 import iconCar from '../../imgs/icons-menu/icon-car.svg';
+import iconHosp from '../../imgs/icons-menu/icon-hosp.svg';
 import iconPasseio from '../../imgs/icons-menu/icon-passeio.svg';
+import logo from '../../imgs/logo/logo.svg';
+import '../../styles/header/header.css';
 
 
 const Header = () => {
@@ -32,7 +32,7 @@ const Header = () => {
             </Nav.Link>
           </Nav>
           <Nav className="ms-auto">
-            <Nav.Link as={Link} to="/cadastro">Cadastre-se</Nav.Link>
+            <Nav.Link as={Link} to="/register">Cadastre-se</Nav.Link>
             <Nav.Link as={Link} to="/login" className="btn btn-warning rounded-pill btn-login">Login</Nav.Link>
           </Nav>
         </Navbar.Collapse>

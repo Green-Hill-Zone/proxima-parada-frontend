@@ -1,12 +1,11 @@
 import { Col, Container, Row } from 'react-bootstrap';
 import { Footer } from '../../components';
 import { mockTravelPackages } from '../../data/mockData';
-import TravelCarousel from './components/TravelCard/TravelCarousel.tsx';
-
 import imgBg from '../../imgs/img-home/img-bg.png';
 import '../../styles/home/heroSection.css';
 import { HeroSection } from './components';
 import SearchSection from './components/SearchSection/SearchSection.tsx';
+import TravelCarousel from './components/TravelCard/TravelCarousel.tsx';
 
 const Home = () => {
   const handleViewDetails = (packageId: string) => {

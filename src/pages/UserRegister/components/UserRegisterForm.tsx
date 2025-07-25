@@ -27,7 +27,7 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
     if (onSubmit) {
       onSubmit(formData);
     } else {
-      alert('Registration attempt failed. Please try again later.');
+      console.log('Registration attempt failed. Please try again later.');
     }
   };
 

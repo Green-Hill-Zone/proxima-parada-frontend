@@ -95,7 +95,8 @@ export const useUserRegistration = (
   const validateAllFields = useCallback((): boolean => {
     const newErrors: ValidationErrors = {};
 
-    // Validar todos os campos
+    // Validar todos os campos usando a função validateField
+    // que já contém toda a lógica de validação necessária
     Object.keys(formData).forEach((key) => {
       const field = key as keyof UserRegisterFormData;
       const error = validateField(field, formData[field]);
@@ -104,28 +105,9 @@ export const useUserRegistration = (
       }
     });
 
-    // Validações especiais
-    if (!validateEmail(formData.email)) {
-      newErrors.email = ERROR_MESSAGES.INVALID_EMAIL;
-    }
-
-    const cpfNumbers = removeNonDigits(formData.document);
-    if (cpfNumbers.length !== VALIDATION_RULES.CPF_LENGTH) {
-      newErrors.document = ERROR_MESSAGES.INVALID_CPF;
-    }
-
-    const phoneNumbers = removeNonDigits(formData.phone);
-    if (phoneNumbers.length !== VALIDATION_RULES.PHONE_LENGTH) {
-      newErrors.phone = ERROR_MESSAGES.INVALID_PHONE;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = ERROR_MESSAGES.PASSWORDS_DONT_MATCH;
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [formData, validateField, validateEmail]);
+  }, [formData, validateField]);
 
   return {
     formData,

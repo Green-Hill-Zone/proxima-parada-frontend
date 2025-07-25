@@ -7,6 +7,14 @@
  * com as cores primárias (azul) e secundárias (laranja) do projeto.
  */
 
+/* Configuração de cores personalizadas */
+:root {
+  --primary-blue: #3246AA;
+  --secondary-orange: #FFAD33;
+  --white: #ffffff;
+  --black: #000000;
+}
+
 /* ===================================================================== */
 /* LAYOUT PRINCIPAL DA PÁGINA                                           */
 /* ===================================================================== */

@@ -1,5 +1,13 @@
 /* Estilos específicos da página Home */
 
+/* Configuração de cores personalizadas */
+:root {
+  --primary-blue: #3246AA;
+  --secondary-orange: #FFAD33;
+  --white: #ffffff;
+  --black: #000000;
+}
+
 /* Container principal da página */
 .home-main {
   flex: 1;

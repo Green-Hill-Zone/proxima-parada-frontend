@@ -1,5 +1,13 @@
 /* Estilos específicos do componente Footer */
 
+/* Configuração de cores personalizadas */
+:root {
+  --primary-blue: #3246AA;
+  --secondary-orange: #FFAD33;
+  --white: #ffffff;
+  --black: #000000;
+}
+
 /* Container principal do rodapé */
 .footer-container {
   background-color: var(--primary-blue);

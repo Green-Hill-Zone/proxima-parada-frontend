@@ -5,6 +5,8 @@ import { ProtectedRoute } from './components';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
+import MyTravels from './pages/MyTravels';
 import './App.css';
 
 function App() {
@@ -19,6 +21,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/my-travels" 
+            element={
+              <ProtectedRoute>
+                <MyTravels />
               </ProtectedRoute>
             } 
           />

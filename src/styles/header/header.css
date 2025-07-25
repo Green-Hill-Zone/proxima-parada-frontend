@@ -1,0 +1,37 @@
+@import '.././variables.css';
+
+.custom-navbar {
+  background-color: var(--primary-blue) !important;
+}
+.custom-navbar .nav-link {
+  color: var(--secondary-orange) !important; /* branco */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.custom-navbar .nav-link:hover {
+  color: #FFF !important; 
+}
+
+.menu-icon {
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 0.2em; 
+  vertical-align: middle; 
+}
+
+
+.btn-login {
+  background-color: #fff;
+  color: var(--secondary-orange);
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.btn-login:hover {
+  background-color: var(--secondary-orange);
+  color: #fff;
+}

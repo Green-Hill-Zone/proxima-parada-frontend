@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Button, Card, Col, Container, Form, Row, Alert } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Header, Footer } from '../../components';
 import './Payment.css';
 
 // Interface para dados do pagamento
@@ -188,7 +187,6 @@ const Payment = () => {
 
   return (
     <>
-      <Header />
       <main className="payment-main">
         <Container>
           <Row className="justify-content-center">
@@ -430,7 +428,6 @@ const Payment = () => {
           </Row>
         </Container>
       </main>
-      <Footer />
     </>
   );
 };

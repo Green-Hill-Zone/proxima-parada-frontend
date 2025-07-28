@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import FormField from '../../../components/FormField';
 import type { UserRegisterFormData } from '../../../hooks/useUserRegistration';
 import { useUserRegistration } from '../../../hooks/useUserRegistration';
+import { createUser } from '../../../services/UserService';
 import { FIELD_LIMITS } from '../../../utils/validationConstants';
-
 interface UserRegisterFormProps {
   onSubmit?: (data: UserRegisterFormData) => void;
 }
@@ -17,17 +17,32 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
     validateAllFields,
   } = useUserRegistration();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateAllFields()) {
       return;
     }
 
-    if (onSubmit) {
-      onSubmit(formData);
-    } else {
-      console.log('Registration attempt failed. Please try again later.');
+    try {
+      // Use a função register do serviço atualizado
+      const user = await createUser(formData);
+
+      if (onSubmit) {
+        onSubmit(formData);
+      }
+
+      console.log('User registered successfully:', user);
+
+      // Opcional: adicionar notificação de sucesso ou redirecionamento
+      // Ex: toast.success('Cadastro realizado com sucesso!');
+      // Ex: navigate('/login');
+
+    } catch (error) {
+      console.error('Registration error:', error);
+
+      // Opcional: adicionar notificação de erro
+      // Ex: toast.error('Erro ao realizar cadastro. Tente novamente.');
     }
   };
 
@@ -41,7 +56,7 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
                 <h3 className="text-primary">Criar Conta</h3>
                 <p className="text-muted">Preencha os dados para se cadastrar</p>
               </div>
-              
+
               <Form onSubmit={handleSubmit}>
                 <FormField
                   label="Email"
@@ -97,7 +112,7 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
 
               <div className="text-center">
                 <p className="text-muted">
-                  Já tem uma conta? 
+                  Já tem uma conta?
                   <Link to="/login" className="text-decoration-none ms-1">
                     Fazer login
                   </Link>

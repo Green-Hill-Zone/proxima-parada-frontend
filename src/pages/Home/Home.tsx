@@ -1,6 +1,12 @@
 // Importações do React Bootstrap e componentes locais
 import { Container, Row, Col } from 'react-bootstrap';
-import { Header, Footer } from '../../components';                    // Componentes de layout
+import { Header, Footer } from '../../components';
+import TravelCarousel from './components/TravelCard/TravelCarousel.tsx';
+
+import imgBg from '../../imgs/img-home/img-bg.png';
+import '../../styles/home/heroSection.css';
+import SearchSection from './components/SearchSection/SearchSection.tsx';
+
 import { HeroSection, TravelCard } from './components';               // Componentes específicos da Home
 import { mockTravelPackages } from '../../data/mockData';             // Dados fictícios dos pacotes
 import './styles.css'; // Importa os estilos específicos da página Home
@@ -22,16 +28,25 @@ const Home = () => {
       <main className="home-main">
         {/* Seção hero com título e subtítulo de destaque */}
         <HeroSection 
-          title="Descubra o Mundo"
+          imgSrc={imgBg}
+          title={`Descubra o mundo,\ndescubra a si mesmo`}
           subtitle="Encontre os melhores pacotes de viagem para sua próxima aventura"
         />
-
+        <SearchSection />
         {/* Container para os pacotes de viagem */}
         <Container className="home-packages-section">
           {/* Título da seção de pacotes */}
           <Row className="mb-4">
             <Col>
               <h2 className="home-packages-title">Pacotes em Destaque</h2>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <TravelCarousel
+                travelPackages={mockTravelPackages}
+                onViewDetails={handleViewDetails}
+              />
             </Col>
           </Row>
           {/* Grid de cartões de pacotes */}

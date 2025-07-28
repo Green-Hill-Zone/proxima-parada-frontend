@@ -1,21 +1,33 @@
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 
 interface HeroSectionProps {
+  imgSrc: string;
   title: string;
   subtitle: string;
 }
 
-const HeroSection = ({ title, subtitle }: HeroSectionProps) => {
+const HeroSection = ({ imgSrc, title, subtitle }: HeroSectionProps) => {
   return (
-    <div className="bg-light py-5">
-      <Container>
-        <Row className="text-center">
-          <Col>
-            <h1 className="display-4 fw-bold text-primary">{title}</h1>
-            <p className="lead">{subtitle}</p>
-          </Col>
-        </Row>
-      </Container>
+    <div
+      className="hero-section"
+      style={{
+        backgroundImage: `url(${imgSrc})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        width: '100%',
+        minHeight: '400px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+      }}
+    >
+      <div className="hero-overlay">
+        <Container>
+          <h1 style={{ whiteSpace: 'pre-line' }} className="display-4 fw-bold text-light">{title}</h1>
+          <p className="lead text-light">{subtitle}</p>
+        </Container>
+      </div>
     </div>
   );
 };

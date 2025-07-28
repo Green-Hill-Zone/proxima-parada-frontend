@@ -1,0 +1,6 @@
+{
+  "AppUser": [
+    { "id": "1", "name": "name", "email": "", "passwordHash": "", "phone": "", "document": "", "role": "admin", "companyId": null, "isDeleted": false },
+    { "id": "2", "name": "name2", "email": "", "passwordHash": "", "phone": "", "document": "", "role": "user", "companyId": null, "isDeleted": false }
+  ]
+}

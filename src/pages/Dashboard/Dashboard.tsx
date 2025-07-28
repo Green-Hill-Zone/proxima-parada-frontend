@@ -1,9 +1,7 @@
 // Importações necessárias
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
 import './Dashboard.css';
 
 // Componente Dashboard - Página para usuários autenticados
@@ -28,9 +26,8 @@ const Dashboard = () => {
 
   return (
     <>
-      {/* Header com navegação */}
-      <Header />
-      
+
+
       {/* Conteúdo principal do dashboard */}
       <main className="dashboard-main">
         <Container>
@@ -55,8 +52,8 @@ const Dashboard = () => {
                       <Card.Text>
                         Veja e gerencie suas viagens planejadas e histórico de destinos visitados.
                       </Card.Text>
-                      <Button 
-                        variant="primary" 
+                      <Button
+                        variant="primary"
                         className="dashboard-card-button btn-standard"
                         onClick={handleMinhasViagens}
                       >
@@ -77,8 +74,8 @@ const Dashboard = () => {
                       <Card.Text>
                         Descubra novos lugares incríveis e planeje sua próxima aventura.
                       </Card.Text>
-                      <Button 
-                        variant="primary" 
+                      <Button
+                        variant="primary"
                         className="dashboard-card-button btn-standard"
                         onClick={handleExplorarDestinos}
                       >
@@ -99,8 +96,8 @@ const Dashboard = () => {
                       <Card.Text>
                         Atualize suas informações pessoais e preferências de viagem.
                       </Card.Text>
-                      <Button 
-                        variant="primary" 
+                      <Button
+                        variant="primary"
                         className="dashboard-card-button btn-standard"
                         onClick={handleEditarPerfil}
                       >
@@ -112,7 +109,7 @@ const Dashboard = () => {
               </Row>
 
               {/* Informações do usuário - Seção expandida */}
-              <Row className="mt-5"> 
+              <Row className="mt-5">
                 <Col>
                   <Card className="dashboard-user-info">
                     <Card.Header>
@@ -244,8 +241,7 @@ const Dashboard = () => {
         </Container>
       </main>
 
-      {/* Footer */}
-      <Footer />
+
     </>
   );
 };

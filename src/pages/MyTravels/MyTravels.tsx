@@ -1,11 +1,9 @@
 // Importações necessárias
-import { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Badge, Button, Form, Alert } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Alert, Badge, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
 import type { TravelPackage } from '../../contexts/AuthContext';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
+import { useAuth } from '../../hooks/useAuth';
 import './MyTravels.css';
 
 // Componente MyTravels - Página de histórico de viagens do usuário
@@ -101,7 +99,7 @@ const MyTravels = () => {
   // Função para renderizar estrelas de avaliação
   const renderStars = (rating?: number) => {
     if (!rating) return <span className="text-muted">Não avaliado</span>;
-    
+
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
@@ -115,15 +113,14 @@ const MyTravels = () => {
 
   return (
     <>
-      {/* Header com navegação */}
-      <Header />
-      
+
+
       {/* Conteúdo principal */}
       <main className="my-travels-main">
         <Container>
           <Row className="justify-content-center">
             <Col lg={12}>
-              
+
               {/* Cabeçalho da página */}
               <div className="my-travels-header">
                 <div className="d-flex justify-content-between align-items-center">
@@ -216,8 +213,8 @@ const MyTravels = () => {
                 <Alert variant="info" className="text-center">
                   <h5>Nenhuma viagem encontrada</h5>
                   <p>
-                    {filter === 'all' 
-                      ? 'Você ainda não possui viagens registradas.' 
+                    {filter === 'all'
+                      ? 'Você ainda não possui viagens registradas.'
                       : `Não há viagens com o status "${filter === 'completed' ? 'concluídas' : filter === 'upcoming' ? 'próximas' : 'canceladas'}".`
                     }
                   </p>
@@ -227,12 +224,12 @@ const MyTravels = () => {
                   {filteredTravels.map((travel) => (
                     <Col lg={6} xl={4} key={travel.id} className="mb-4">
                       <Card className="travel-card h-100">
-                        
+
                         {/* Imagem do destino */}
                         <div className="travel-image-container">
-                          <Card.Img 
-                            variant="top" 
-                            src={travel.imageUrl} 
+                          <Card.Img
+                            variant="top"
+                            src={travel.imageUrl}
                             alt={travel.destination}
                             className="travel-image"
                           />
@@ -242,7 +239,7 @@ const MyTravels = () => {
                         </div>
 
                         <Card.Body className="d-flex flex-column">
-                          
+
                           {/* Cabeçalho do card */}
                           <div className="travel-header mb-3">
                             <Card.Title className="travel-title">{travel.title}</Card.Title>
@@ -308,8 +305,7 @@ const MyTravels = () => {
         </Container>
       </main>
 
-      {/* Footer */}
-      <Footer />
+
     </>
   );
 };

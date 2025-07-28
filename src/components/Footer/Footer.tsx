@@ -1,5 +1,5 @@
 // Importação dos componentes do React Bootstrap
-import { Container, Row, Col } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import logo from '../../imgs/logo/logo.svg';
 
@@ -48,7 +48,7 @@ const Footer = () => {
                   {/* Separador visual entre o texto e o link */}
                   <span className="footer-separator">|</span>
                   {/* Link para política de privacidade com estilo personalizado */}
-                  <a 
+                  <a
                     href="/politica-privacidade"  // URL da página de política de privacidade
                     className="footer-link"        // Classe CSS personalizada (laranja com hover branco)
                   >

@@ -1,14 +1,13 @@
 // Importações do React Bootstrap e componentes locais
-import { Container, Row, Col } from 'react-bootstrap';
-import { Header, Footer } from '../../components';
+import { Col, Container, Row } from 'react-bootstrap';
 import TravelCarousel from './components/TravelCard/TravelCarousel.tsx';
 
 import imgBg from '../../imgs/img-home/img-bg.png';
 import '../../styles/home/heroSection.css';
 import SearchSection from './components/SearchSection/SearchSection.tsx';
 
-import { HeroSection, TravelCard } from './components';               // Componentes específicos da Home
-import { mockTravelPackages } from '../../data/mockData';             // Dados fictícios dos pacotes
+import { mockTravelPackages } from '../../data/mockData'; // Dados fictícios dos pacotes
+import { HeroSection, TravelCard } from './components'; // Componentes específicos da Home
 import './styles.css'; // Importa os estilos específicos da página Home
 
 // Componente Home - Página principal da aplicação
@@ -22,12 +21,11 @@ const Home = () => {
 
   return (
     <>
-      {/* Cabeçalho da aplicação */}
-      <Header />
+
       {/* Conteúdo principal da página */}
       <main className="home-main">
         {/* Seção hero com título e subtítulo de destaque */}
-        <HeroSection 
+        <HeroSection
           imgSrc={imgBg}
           title={`Descubra o mundo,\ndescubra a si mesmo`}
           subtitle="Encontre os melhores pacotes de viagem para sua próxima aventura"
@@ -54,7 +52,7 @@ const Home = () => {
             {/* Mapeia cada pacote do array mockTravelPackages para um cartão */}
             {mockTravelPackages.map((travelPackage) => (
               <Col key={travelPackage.id} md={4} className="home-package-col"> {/* 3 colunas em tablets/desktop */}
-                <TravelCard 
+                <TravelCard
                   travelPackage={travelPackage}        // Dados do pacote
                   onViewDetails={handleViewDetails}    // Função de callback para detalhes
                 />
@@ -63,8 +61,7 @@ const Home = () => {
           </Row>
         </Container>
       </main>
-      {/* Rodapé da aplicação */}
-      <Footer />
+
     </>
   );
 };

@@ -1,10 +1,8 @@
 // Importações necessárias
-import { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
 import './Profile.css';
 
 // Interface para os dados do formulário
@@ -90,7 +88,7 @@ const Profile = () => {
   // Validação dos campos obrigatórios
   const validateForm = (): boolean => {
     const requiredFields = ['name', 'email', 'birthDate', 'cpf', 'phone', 'cep', 'street', 'streetNumber', 'neighborhood', 'city', 'state'];
-    
+
     for (const field of requiredFields) {
       if (!formData[field as keyof ProfileFormData].trim()) {
         setError(`O campo ${getFieldLabel(field)} é obrigatório.`);
@@ -175,7 +173,7 @@ const Profile = () => {
 
       // Por enquanto, simula sucesso
       setShowSuccess(true);
-      
+
       // Auto-hide da mensagem de sucesso após 3 segundos
       setTimeout(() => setShowSuccess(false), 3000);
 
@@ -197,15 +195,13 @@ const Profile = () => {
 
   return (
     <>
-      {/* Header com navegação */}
-      <Header />
-      
+
       {/* Conteúdo principal do perfil */}
       <main className="profile-main">
         <Container>
           <Row className="justify-content-center">
             <Col lg={8}>
-              
+
               {/* Título da página */}
               <div className="profile-header">
                 <h1>Meu Perfil</h1>
@@ -218,7 +214,7 @@ const Profile = () => {
                   <h5 className="mb-0">Dados Pessoais</h5>
                 </Card.Header>
                 <Card.Body>
-                  
+
                   {/* Alertas de feedback */}
                   {showSuccess && (
                     <Alert variant="success" className="mb-3">
@@ -234,7 +230,7 @@ const Profile = () => {
 
                   {/* Formulário de perfil */}
                   <Form onSubmit={handleSubmit}>
-                    
+
                     {/* Primeira linha - Nome e Email */}
                     <Row className="mb-3">
                       <Col md={6}>
@@ -528,8 +524,7 @@ const Profile = () => {
         </Container>
       </main>
 
-      {/* Footer */}
-      <Footer />
+
     </>
   );
 };

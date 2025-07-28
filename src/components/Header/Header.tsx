@@ -1,15 +1,14 @@
 // Importações necessárias do React Bootstrap e React Router
-import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import '../../styles/header/header.css';
-import logo from '../../imgs/logo/logo.svg';
-import iconHosp from '../../imgs/icons-menu/icon-hosp.svg';
 import iconAviao from '../../imgs/icons-menu/icon-aviao.svg';
 import iconCar from '../../imgs/icons-menu/icon-car.svg';
+import iconHosp from '../../imgs/icons-menu/icon-hosp.svg';
 import iconPasseio from '../../imgs/icons-menu/icon-passeio.svg';
+import logo from '../../imgs/logo/logo.svg';
+import '../../styles/header/header.css';
 
 import { useAuth } from '../../hooks/useAuth';
-import logotipo from '../../assets/logotipo.png'; // Importa a imagem do logotipo
 import './Header.css'; // Importa os estilos específicos do Header
 
 // Componente Header - Cabeçalho da aplicação
@@ -22,24 +21,17 @@ const Header = () => {
 
   return (
     // Navbar com fundo azul personalizado, expansível em telas grandes
-        <Navbar expand="lg" className="header-navbar">
+    <Navbar expand="lg" className="header-navbar">
       <Container>
         <Navbar.Brand as={Link} to="/">
           <img src={logo} alt="Logo" />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        {/* Logo da marca - clicável para voltar à página inicial */}
-        <Navbar.Brand as={Link} to="/">
-          <img 
-            src={logotipo}                    // Caminho da imagem do logo
-            alt="Próxima Parada"              // Texto alternativo para acessibilidade
-            className="header-logo"           // Classe CSS personalizada
-          />
-        </Navbar.Brand>
-        
+
+
         {/* Botão hambúrguer para dispositivos móveis */}
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="header-toggler" />
-        
+
         {/* Menu de navegação que se expande/contrai */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
@@ -57,18 +49,14 @@ const Header = () => {
             </Nav.Link>
           </Nav>
           <Nav className="ms-auto">
-            <Nav.Link as={Link} to="/cadastro">Cadastre-se</Nav.Link>
-            <Nav.Link as={Link} to="/login" className="btn btn-warning rounded-pill btn-login">Login</Nav.Link>
             {/* Links de navegação alinhados à direita */}
             <Nav className="header-nav">
-              {/* Link para a página inicial */}
-              <Nav.Link as={Link} to="/" className="header-nav-link">Home</Nav.Link>
-              
+
               {/* Mostra diferentes opções baseado no status de autenticação */}
               {user ? (
                 // Menu dropdown para usuários logados
-                <NavDropdown 
-                  title={`Olá, ${user.name}`} 
+                <NavDropdown
+                  title={`Olá, ${user.name}`}
                   id="user-dropdown"
                   className="header-nav-link"
                 >
@@ -85,7 +73,11 @@ const Header = () => {
                 </NavDropdown>
               ) : (
                 // Link para login quando usuário não está logado
-                <Nav.Link as={Link} to="/login" className="header-nav-link">Login</Nav.Link>
+                <div className="d-flex flex-row mb-3">
+                  <Nav.Link as={Link} to="/register" className="header-nav-link">Cadastre-se</Nav.Link>
+                  <Nav.Link as={Link} to="/login" className="header-nav-link">Login</Nav.Link>
+
+                </div>
               )}
             </Nav>
           </Nav>

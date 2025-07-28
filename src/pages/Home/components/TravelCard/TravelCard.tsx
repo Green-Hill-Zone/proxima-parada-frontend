@@ -10,11 +10,12 @@ interface TravelPackage {
 }
 
 interface TravelCardProps {
-  travelPackage: TravelPackage;
+  travelPackage: TravelPackage,
+  onViewDetails?: (id: string) => void
 }
 
 const TravelCard = ({ travelPackage }: TravelCardProps) => {
-  const {  title, description, price, imageUrl } = travelPackage;
+  const { title, description, price, imageUrl } = travelPackage;
   const navigate = useNavigate();
 
   const handleBookNow = () => {
@@ -60,3 +61,4 @@ const TravelCard = ({ travelPackage }: TravelCardProps) => {
 
 export default TravelCard;
 export type { TravelPackage };
+

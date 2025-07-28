@@ -1,7 +1,16 @@
 /* Custom styles for the travel app */
+
+/* Configuração de cores personalizadas */
+:root {
+  --primary-blue: #3246AA;
+  --secondary-orange: #FFAD33;
+  --white: #ffffff;
+  --black: #000000;
+}
+
 .hero-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  color: var(--white);
 }
 
 .card-hover:hover {

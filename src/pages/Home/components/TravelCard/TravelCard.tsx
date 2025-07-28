@@ -1,4 +1,5 @@
-import { Card } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 interface TravelPackage {
   id: string;
@@ -14,6 +15,20 @@ interface TravelCardProps {
 
 const TravelCard = ({ travelPackage }: TravelCardProps) => {
   const {  title, description, price, imageUrl } = travelPackage;
+  const navigate = useNavigate();
+
+  const handleBookNow = () => {
+    navigate('/payment', {
+      state: {
+        travelData: {
+          name: title,
+          date: "15/08/2025 - 22/08/2025",
+          price: price,
+          people: 1
+        }
+      }
+    });
+  };
 
   return (
     <Card className="h-100 shadow-sm">
@@ -24,12 +39,19 @@ const TravelCard = ({ travelPackage }: TravelCardProps) => {
           {description}
         </Card.Text>
         <div className="mt-auto">
-          <h5 className="text-primary">
+          <h5 className="text-primary mb-3">
             {new Intl.NumberFormat('pt-BR', {
               style: 'currency',
               currency: 'BRL'
             }).format(price)}
           </h5>
+          <Button 
+            variant="primary" 
+            className="w-100"
+            onClick={handleBookNow}
+          >
+            Reservar Agora
+          </Button>
         </div>
       </Card.Body>
     </Card>

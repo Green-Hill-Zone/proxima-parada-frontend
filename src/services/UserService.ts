@@ -59,3 +59,11 @@ export const updateUser = async (id: number, user: Partial<Omit<User, 'id' | 'cr
     return null;
   }
 };
+
+export const deleteUser = async (id: number): Promise<void> => {
+  try {
+    await api.delete(`/Users/${id}`);
+  } catch (error) {
+    console.error('Error deleting user:', error);
+  }
+}

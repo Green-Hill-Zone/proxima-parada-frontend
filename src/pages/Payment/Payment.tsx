@@ -223,7 +223,7 @@ const Payment = () => {
               {showSuccess && (
                 <Alert variant="info" className="payment-success-alert">
                   <Alert.Heading>🔄 Redirecionando para pagamento...</Alert.Heading>
-                  <p>Você será redirecionado para o Stripe para concluir o pagamento de forma segura.</p>
+                  <p>Você será redirecionado para concluir o pagamento de forma segura.</p>
                 </Alert>
               )}
 
@@ -437,7 +437,7 @@ const Payment = () => {
                                 Redirecionando...
                               </>
                             ) : (
-                              'Pagar com Stripe'
+                              'Pagar'
                             )}
                           </Button>
                         </div>

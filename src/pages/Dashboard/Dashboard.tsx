@@ -194,12 +194,18 @@ const Dashboard = () => {
                         </Col>
                       </Row>
 
-                      {/* Quarta linha - Membro desde */}
+                      {/* Quarta linha - Membro desde e Telefone 2 */}
                       <Row className="mb-3">
                         <Col md={6}>
                           <Row>
                             <Col sm={4}><strong>Membro desde:</strong></Col>
                             <Col sm={8}>{user?.memberSince}</Col>
+                          </Row>
+                        </Col>
+                        <Col md={6}>
+                          <Row>
+                            <Col sm={4}><strong>Telefone 2:</strong></Col>
+                            <Col sm={8}>{user?.phone2 || '(21) 98888-5679'}</Col>
                           </Row>
                         </Col>
                       </Row>
@@ -214,13 +220,13 @@ const Dashboard = () => {
                         <Col md={6}>
                           <Row>
                             <Col sm={4}><strong>CEP:</strong></Col>
-                            <Col sm={8}>{user?.cep}</Col>
+                            <Col sm={3}>{user?.cep}</Col>
                           </Row>
                         </Col>
                         <Col md={6}>
                           <Row>
                             <Col sm={4}><strong>Logradouro:</strong></Col>
-                            <Col sm={8}>{user?.street}</Col>
+                            <Col sm={3}>{user?.street}</Col>
                           </Row>
                         </Col>
                       </Row>
@@ -236,26 +242,36 @@ const Dashboard = () => {
                         <Col md={6}>
                           <Row>
                             <Col sm={4}><strong>Complemento:</strong></Col>
-                            <Col sm={8}>{user?.complement || '-'}</Col>
+                            <Col sm={3}>{user?.complement || '-'}</Col>
                           </Row>
                         </Col>
                       </Row>
 
-                      {/* Sétima linha - Bairro, Cidade e Estado */}
-                      <Row>
-                        <Col md={4}>
+                      {/* Sétima linha - Bairro e Cidade */}
+                      <Row className="mb-3">
+                        <Col md={6}>
                           <Row>
                             <Col sm={4}><strong>Bairro:</strong></Col>
-                            <Col sm={8}>{user?.neighborhood}</Col>
+                            <Col sm={3}>{user?.neighborhood}</Col>
                           </Row>
                         </Col>
-                        <Col md={4}>
+                        <Col md={6}>
                           <Row>
                             <Col sm={4}><strong>Cidade:</strong></Col>
-                            <Col sm={8}>{user?.city}</Col>
+                            <Col sm={3}>{user?.city}</Col>
                           </Row>
                         </Col>
-                        <Col md={4}>
+                      </Row>
+
+                      {/* Oitava linha - País e UF */}
+                      <Row>
+                        <Col md={6}>
+                          <Row>
+                            <Col sm={4}><strong>País:</strong></Col>
+                            <Col sm={8}>{user?.country || 'Brasil'}</Col>
+                          </Row>
+                        </Col>
+                        <Col md={6}>
                           <Row>
                             <Col sm={4}><strong>UF:</strong></Col>
                             <Col sm={8}>{user?.state}</Col>

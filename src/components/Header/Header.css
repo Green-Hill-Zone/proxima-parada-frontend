@@ -27,6 +27,32 @@
 }
 
 /* ===================================================================== */
+/* CENTRALIZAÇÃO DA NAVEGAÇÃO PRINCIPAL                                 */
+/* ===================================================================== */
+
+/* Centralizar a navegação principal no meio da tela */
+.header-navbar .navbar-collapse {
+  justify-content: center;
+}
+
+/* Navegação principal centralizada */
+.header-navbar .navbar-nav.me-auto {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Menu do usuário permanece à direita */
+.header-navbar .navbar-nav.ms-auto {
+  margin-left: auto !important;
+  position: relative;
+  z-index: 10;
+}
+
+/* ===================================================================== */
 /* ESTILOS ESPECÍFICOS PARA OS LINKS DE NAVEGAÇÃO PRINCIPAL            */
 /* ===================================================================== */
 
@@ -197,6 +223,13 @@
   .header-navbar {
     padding: 0.75rem 0;
   }
+  
+  /* Garantir que a navegação principal permaneça centralizada */
+  .header-navbar .navbar-nav.me-auto {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
 /* Responsividade para telas médias - evitar quebra de linha */
@@ -206,6 +239,13 @@
     padding: 0.5rem 0.6rem;
     gap: 0.3rem;
     margin: 0 0.1rem;
+  }
+  
+  /* Ajustar posicionamento da navegação para telas menores */
+  .header-navbar .navbar-nav.me-auto {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
@@ -217,5 +257,17 @@
   
   .header-nav-link {
     padding: 0.75rem 1rem;
+  }
+  
+  /* Em dispositivos móveis, voltar ao layout padrão */
+  .header-navbar .navbar-nav.me-auto {
+    position: static;
+    transform: none;
+    margin-bottom: 1rem;
+  }
+  
+  /* Empilhar verticalmente no mobile */
+  .header-navbar .navbar-collapse {
+    justify-content: flex-start;
   }
 }

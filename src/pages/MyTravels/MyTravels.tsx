@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Alert, Badge, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import type { TravelPackage } from '../../contexts/AuthContext';
+import type { TravelPackage } from '../../contexts/types';
 import { useAuth } from '../../hooks/useAuth';
 import './MyTravels.css';
 

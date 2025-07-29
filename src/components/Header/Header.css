@@ -26,16 +26,80 @@
   margin-left: auto;
 }
 
-/* Links de navegação individuais */
-.header-nav-link {
-  color: var(--white);
-  transition: color 0.3s ease;
+/* ===================================================================== */
+/* ESTILOS ESPECÍFICOS PARA OS LINKS DE NAVEGAÇÃO PRINCIPAL            */
+/* ===================================================================== */
+
+/* Links de navegação individuais - sobrescreve estilos do Bootstrap */
+.header-navbar .navbar-nav .nav-link.header-nav-link {
+  color: var(--white) !important;
+  transition: all 0.3s ease;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin: 0 0.2rem;
 }
 
-/* Efeito hover nos links de navegação - cor laranja */
+/* Efeito hover nos links de navegação - tudo laranja */
+.header-navbar .navbar-nav .nav-link.header-nav-link:hover,
+.header-navbar .navbar-nav .nav-link.header-nav-link:focus {
+  color: var(--secondary-orange) !important;
+  background-color: rgba(255, 173, 51, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Ícones dos menus de navegação - LARANJA por padrão */
+.header-navbar .menu-icon {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) saturate(100%) invert(69%) sepia(57%) saturate(1000%) hue-rotate(350deg) brightness(103%) contrast(101%);
+  transition: all 0.3s ease;
+}
+
+/* Ícones no hover - permanecem laranja */
+.header-navbar .navbar-nav .nav-link.header-nav-link:hover .menu-icon,
+.header-navbar .navbar-nav .nav-link.header-nav-link:focus .menu-icon {
+  filter: brightness(0) saturate(100%) invert(69%) sepia(57%) saturate(1000%) hue-rotate(350deg) brightness(103%) contrast(101%);
+}
+
+/* Classe antiga mantida para compatibilidade */
+.header-nav-link {
+  color: var(--white) !important;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* Efeito hover na classe antiga */
 .header-nav-link:hover {
   color: var(--secondary-orange) !important;
+  background-color: rgba(255, 173, 51, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Ícones na classe antiga - LARANJA por padrão */
+.menu-icon {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) saturate(100%) invert(69%) sepia(57%) saturate(1000%) hue-rotate(350deg) brightness(103%) contrast(101%);
+  transition: all 0.3s ease;
+}
+
+/* Ícones no hover na classe antiga */
+.header-nav-link:hover .menu-icon {
+  filter: brightness(0) saturate(100%) invert(69%) sepia(57%) saturate(1000%) hue-rotate(350deg) brightness(103%) contrast(101%);
 }
 
 /* Estilo do botão hambúrguer para dispositivos móveis */
@@ -49,8 +113,35 @@
 }
 
 /* ===================================================================== */
-/* ESTILOS DO MENU DROPDOWN DO USUÁRIO                                  */
+/* ESTILOS DO MENU DROPDOWN DO USUÁRIO - MANTÉM PADRÃO ORIGINAL        */
 /* ===================================================================== */
+
+/* Dropdown toggle (botão principal com nome do usuário) - NÃO afetado pelos estilos de navegação */
+.header-navbar .navbar-nav .dropdown-toggle {
+  background-color: white !important;
+  color: var(--primary-blue) !important;
+  border: 2px solid white !important;
+  border-radius: 25px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  /* Reseta estilos que possam vir dos nav-links */
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  transform: none;
+}
+
+.header-navbar .navbar-nav .dropdown-toggle:hover,
+.header-navbar .navbar-nav .dropdown-toggle:focus,
+.header-navbar .navbar-nav .dropdown-toggle.show {
+  background-color: var(--secondary-orange) !important;
+  color: white !important;
+  border-color: var(--secondary-orange) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 173, 51, 0.3);
+}
 
 /* Dropdown toggle (botão principal com nome do usuário) */
 .header-nav .dropdown-toggle {
@@ -105,6 +196,16 @@
 @media (min-width: 992px) {
   .header-navbar {
     padding: 0.75rem 0;
+  }
+}
+
+/* Responsividade para telas médias - evitar quebra de linha */
+@media (max-width: 1200px) and (min-width: 992px) {
+  .header-navbar .navbar-nav .nav-link.header-nav-link {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.6rem;
+    gap: 0.3rem;
+    margin: 0 0.1rem;
   }
 }
 

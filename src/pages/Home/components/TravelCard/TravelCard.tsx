@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Card } from 'react-bootstrap';
-import type { TravelPackageListItem } from '../../../../Entities/TravelPackage';
+import { type TravelPackageListItem } from '../../../../Entities/TravelPackage';
 
 interface TravelCardProps {
   travelPackage: TravelPackageListItem;
@@ -13,7 +13,7 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
 
   // Encontrar a imagem principal ou usar a primeira disponível
   const mainImage = Images?.find(img => img.IsMain) || Images?.[0];
-  const imageUrl = mainImage?.ImageUrl || 'https://soycancun.com.br/wp-content/uploads/2020/01/playa-delfines-in-cancun.jpg';
+  const imageUrl = mainImage?.ImageUrl || 'https://via.placeholder.com/300x200?text=Sem+Imagem';
   const imageAlt = mainImage?.AltText || Name;
 
   // Truncar descrição para não ficar muito longa

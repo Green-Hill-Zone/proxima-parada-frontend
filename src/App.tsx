@@ -6,7 +6,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import MyPayments from './pages/MyPayments';
 import MyTravels from './pages/MyTravels';
+import Payment from './pages/Payment';
 import Profile from './pages/Profile';
 import UserRegister from './pages/UserRegister/UserRegister';
 
@@ -19,7 +21,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<UserRegister />} />
-
+          <Route path="/payment" element={<Payment />} />
           <Route
             path="/dashboard"
             element={
@@ -41,6 +43,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <MyTravels />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-payments"
+            element={
+              <ProtectedRoute>
+                <MyPayments />
               </ProtectedRoute>
             }
           />

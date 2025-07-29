@@ -8,7 +8,7 @@ const ReservationSummary = () => {
   const finalPrice = (valuePerTraveler + taxes) * totalTravelers;
 
   return (
-    <Card className="rounded-4 mb-0 stat-card">
+    <Card className="rounded-4 mb-0  stat-card">
       <Card.Header className="rounded-top-4 d-flex justify-content-between align-items-center border-0" style={{ background: '#3246aa' }}>
         <header aria-level={2} className='d-flex gap-2 align-items-center'>
           <span className='d-block fw-bold text-white'>Resumo</span>
@@ -17,7 +17,7 @@ const ReservationSummary = () => {
           <a href="#" className="text-decoration-none fw-bold inline-block text-white">Detalhes do valor</a>
         </nav>
       </Card.Header>
-      <Card.Body className="p-2 bg-white rounded-4">
+      <Card.Body className="p-3 bg-white rounded-4">
         <div className="mb-3">
           <div className="d-flex justify-content-between">
             <span className="text-secondary">Valor por viajante</span>

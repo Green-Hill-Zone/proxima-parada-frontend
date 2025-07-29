@@ -35,16 +35,16 @@ const Header = () => {
         {/* Menu de navegação que se expande/contrai */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/hospedagem">
+            <Nav.Link as={Link} to="/hospedagem" className="header-nav-link">
               <img src={iconHosp} alt="" className="menu-icon" /> Hospedagem
             </Nav.Link>
-            <Nav.Link as={Link} to="/passagens">
+            <Nav.Link as={Link} to="/passagens" className="header-nav-link">
               <img src={iconAviao} alt="" className="menu-icon" /> Passagens
             </Nav.Link>
-            <Nav.Link as={Link} to="/aluguel">
+            <Nav.Link as={Link} to="/aluguel" className="header-nav-link">
               <img src={iconCar} alt="" className="menu-icon" /> Aluguel de carros
             </Nav.Link>
-            <Nav.Link as={Link} to="/passeios">
+            <Nav.Link as={Link} to="/passeios" className="header-nav-link">
               <img src={iconPasseio} alt="" className="menu-icon" /> Passeios e atividades
             </Nav.Link>
           </Nav>
@@ -61,7 +61,13 @@ const Header = () => {
                   className="header-nav-link"
                 >
                   <NavDropdown.Item as={Link} to="/dashboard">
+                    Dashboard
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/my-travels">
                     Minhas Viagens
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/my-payments">
+                    Meus Pagamentos
                   </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/profile">
                     Perfil

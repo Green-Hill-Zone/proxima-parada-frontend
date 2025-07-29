@@ -96,7 +96,7 @@ const FlightInfo = () => {
             </section>
           </div>
           <Row className="py-4 mb-3 px-4">
-            <Col className="d-flex justify-content-start">
+            <Col className="d-flex justify-content-start fw-semibold">
               <Badge bg="warning" text="dark"> Não Reembolsável </Badge>
             </Col>
           </Row>

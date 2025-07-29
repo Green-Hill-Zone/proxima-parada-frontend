@@ -12,13 +12,11 @@ import Payment from './pages/Payment';
 import Profile from './pages/Profile';
 import UserRegister from './pages/UserRegister/UserRegister';
 import Reservation from './pages/Reservation/Reservation.tsx';
-import { ReservationProvider } from './pages/Reservation/context/ReservationContext.tsx';
 import AdminPackageForm from './pages/Admin/AdminPackageForm';
 
 function App() {
   return (
     <AuthProvider>
-      <ReservationProvider>
       <Router>
         <Header />
         <Routes>
@@ -63,7 +61,6 @@ function App() {
         </Routes>
         <Footer />
       </Router>
-      </ReservationProvider>
     </AuthProvider>
   )
 }

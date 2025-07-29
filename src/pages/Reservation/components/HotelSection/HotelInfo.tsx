@@ -118,7 +118,7 @@ const HotelInfo = () => {
             </Badge>
           </div>
         </Card>
-        <div className="mt-2">
+        <div className="mt-2 fw-semibold">
               <Badge bg="success" text="white">
                 Reembolsável
               </Badge>

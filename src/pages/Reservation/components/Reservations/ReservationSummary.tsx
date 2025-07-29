@@ -35,7 +35,7 @@ const ReservationSummary = () => {
             <span className="fw-bold fs-5">R$ {finalPrice.toLocaleString()}</span>
           </div>
 
-          <Badge bg="warning" text="dark" className="mb-3 rounded-pill fw-bold">
+          <Badge bg="warning" text="dark" className="mb-4 rounded-pill fw-semibold">
             Não Reembolsável
           </Badge>
 

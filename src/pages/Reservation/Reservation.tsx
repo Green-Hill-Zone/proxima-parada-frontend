@@ -1,13 +1,11 @@
 import FlightInfo from '../Reservation/components/FlightSection/FlightInfo';
 import HotelInfo from '../Reservation/components/HotelSection/HotelInfo';
 import ReservationSummary from '../Reservation/components/Reservations/ReservationSummary';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
+
 
 const Reservation = () => {
   return (
     <>
-      <Header />
       <div className="container mt-5">
         <h2 className="mb-4 text-center">Resumo da Viagem</h2>
         <div className="row align-items-stretch h-100">
@@ -22,7 +20,6 @@ const Reservation = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

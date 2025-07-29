@@ -1,28 +1,18 @@
 import axios from 'axios';
-
-interface User {
-  id: number;
-  email: string;
-  password: string;
-  name?: string;
-  phone?: string;
-  document?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { User, UserCreateRequest, UserResponse } from '../Entities/User';
 
 const api = axios.create({
   baseURL: 'http://localhost:3001', // ou o endereço onde está rodando o json-server
 });
 
-export const createUser = async (user: Omit<User, 'createdAt' | 'updatedAt' | 'id'>): Promise<User> => {
+export const createUser = async (user: Omit<UserCreateRequest, 'createdAt' | 'updatedAt' | 'id'>): Promise<User> => {
   const response = await api.post('/Users', user);
   return response.data;
 };
 
-export const getUserByEmail = async (email: string): Promise<User | null> => {
+export const getUserByEmail = async (email: string): Promise<UserResponse | null> => {
   try {
-    const response = await api.get<User[]>(`/Users?email=${encodeURIComponent(email)}`);
+    const response = await api.get<UserResponse[]>(`/Users?email=${encodeURIComponent(email)}`);
     return response.data.length > 0 ? response.data[0] : null;
   } catch (error) {
     console.error('Error fetching user by email:', error);
@@ -30,9 +20,9 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
   }
 };
 
-export const getAllUsers = async (): Promise<User[]> => {
+export const getAllUsers = async (): Promise<UserResponse[]> => {
   try {
-    const response = await api.get<User[]>('/Users');
+    const response = await api.get<UserResponse[]>('/Users');
     return response.data;
   } catch (error) {
     console.error('Error fetching all users:', error);
@@ -40,9 +30,9 @@ export const getAllUsers = async (): Promise<User[]> => {
   }
 }
 
-export const getUserById = async (id: number): Promise<User | null> => {
+export const getUserById = async (id: number): Promise<UserResponse | null> => {
   try {
-    const response = await api.get<User>(`/Users/${id}`);
+    const response = await api.get<UserResponse>(`/Users/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching user by ID:', error);

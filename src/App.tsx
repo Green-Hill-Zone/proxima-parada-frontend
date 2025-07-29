@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Reservation from './pages/Reservation/Reservation.tsx';
 import { ReservationProvider } from './pages/Reservation/context/ReservationContext.tsx';
+import AdminPackageForm from './pages/Admin/AdminPackageForm';
 import './App.css';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reserva" element={<Reservation />} />
+          <Route path="/admin/pacotes" element={<AdminPackageForm />} />
         </Routes>
       </Router>
     </ReservationProvider>

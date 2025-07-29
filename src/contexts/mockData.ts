@@ -159,6 +159,38 @@ export const mockTravelPackages: { [userId: string]: TravelPackage[] } = {
       category: 'Cultural',
       rating: 4,
       review: 'Rica em cultura e história. Pelourinho é maravilhoso!'
+    },
+    {
+      id: 'trip-7',
+      title: 'Paris - França',
+      destination: 'Paris, França',
+      startDate: '15/08/2025',
+      endDate: '22/08/2025',
+      duration: 7,
+      price: 3500,
+      status: 'upcoming',
+      imageUrl: 'https://images.unsplash.com/photo-1431274172761-fca41d930114?w=400&h=300&fit=crop',
+      description: 'Viagem romântica para Paris com hotel 4 estrelas, passeios pelos pontos turísticos e experiência gastronômica única.',
+      includes: ['Hotel 4 estrelas', 'Café da manhã', 'City tour', 'Visita Torre Eiffel', 'Passeio no Sena'],
+      category: 'Cultural',
+      rating: undefined,
+      review: undefined
+    },
+    {
+      id: 'trip-8',
+      title: 'Londres - Inglaterra',
+      destination: 'Londres, Inglaterra',
+      startDate: '10/09/2025',
+      endDate: '17/09/2025',
+      duration: 7,
+      price: 4200,
+      status: 'cancelled',
+      imageUrl: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=300&fit=crop',
+      description: 'Descobrindo Londres com visitas aos principais pontos turísticos, museus e experiência cultural britânica.',
+      includes: ['Hotel 3 estrelas', 'Café da manhã', 'City tour', 'Museus', 'Thames cruise'],
+      category: 'Cultural',
+      rating: undefined,
+      review: undefined
     }
   ],
   '3': [ // Viagens do Carlos Oliveira

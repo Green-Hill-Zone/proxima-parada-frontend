@@ -13,6 +13,7 @@ interface ProfileFormData {
   cpf: string;
   gender: string;
   phone: string;
+  phone2: string;
   // Campos de endereço
   cep: string;
   street: string;
@@ -21,6 +22,7 @@ interface ProfileFormData {
   neighborhood: string;
   city: string;
   state: string;
+  country: string;
 }
 
 // Componente Profile - Página de edição de perfil do usuário
@@ -40,6 +42,7 @@ const Profile = () => {
     cpf: '',
     gender: '',
     phone: '',
+    phone2: '',
     // Campos de endereço
     cep: '',
     street: '',
@@ -47,7 +50,8 @@ const Profile = () => {
     complement: '',
     neighborhood: '',
     city: '',
-    state: ''
+    state: '',
+    country: ''
   });
 
   // Carrega dados do usuário no formulário quando componente monta
@@ -60,6 +64,7 @@ const Profile = () => {
         cpf: user.cpf || '',
         gender: user.gender || '',
         phone: user.phone || '',
+        phone2: user.phone2 || '',
         // Campos de endereço
         cep: user.cep || '',
         street: user.street || '',
@@ -67,7 +72,8 @@ const Profile = () => {
         complement: user.complement || '',
         neighborhood: user.neighborhood || '',
         city: user.city || '',
-        state: user.state || ''
+        state: user.state || '',
+        country: user.country || 'Brasil'
       });
     }
   }, [user]);
@@ -87,7 +93,7 @@ const Profile = () => {
 
   // Validação dos campos obrigatórios
   const validateForm = (): boolean => {
-    const requiredFields = ['name', 'email', 'birthDate', 'cpf', 'phone', 'cep', 'street', 'streetNumber', 'neighborhood', 'city', 'state'];
+    const requiredFields = ['name', 'email', 'birthDate', 'cpf', 'phone', 'cep', 'street', 'streetNumber', 'neighborhood', 'city', 'state', 'country'];
 
     for (const field of requiredFields) {
       if (!formData[field as keyof ProfileFormData].trim()) {
@@ -121,6 +127,13 @@ const Profile = () => {
       return false;
     }
 
+    // Validação específica de telefone 2 (opcional, mas se preenchido deve estar no formato correto)
+    if (formData.phone2.trim() && !phoneRegex.test(formData.phone2)) {
+      setError('Telefone 2 deve estar no formato: (00) 00000-0000');
+      setShowError(true);
+      return false;
+    }
+
     // Validação específica de CEP
     const cepRegex = /^\d{5}-\d{3}$/;
     if (!cepRegex.test(formData.cep)) {
@@ -140,12 +153,14 @@ const Profile = () => {
       birthDate: 'Data de Nascimento',
       cpf: 'CPF',
       phone: 'Telefone',
+      phone2: 'Telefone 2',
       cep: 'CEP',
       street: 'Logradouro',
       streetNumber: 'Número',
       neighborhood: 'Bairro',
       city: 'Cidade',
-      state: 'Estado'
+      state: 'Estado',
+      country: 'País'
     };
     return labels[field] || field;
   };
@@ -305,7 +320,7 @@ const Profile = () => {
                     </Row>
 
                     {/* Terceira linha - Gênero e Telefone */}
-                    <Row className="mb-4">
+                    <Row className="mb-3">
                       <Col md={6}>
                         <Form.Group>
                           <Form.Label>Gênero</Form.Label>
@@ -334,6 +349,23 @@ const Profile = () => {
                             onChange={handleInputChange('phone')}
                             maxLength={15}
                             required
+                            disabled={isLoading}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    {/* Quarta linha - Telefone 2 */}
+                    <Row className="mb-4">
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label>Telefone 2</Form.Label>
+                          <Form.Control
+                            type="tel"
+                            placeholder="(00) 00000-0000 (opcional)"
+                            value={formData.phone2}
+                            onChange={handleInputChange('phone2')}
+                            maxLength={15}
                             disabled={isLoading}
                           />
                         </Form.Group>
@@ -411,9 +443,9 @@ const Profile = () => {
                       </Col>
                     </Row>
 
-                    {/* Terceira linha de endereço - Bairro, Cidade e Estado */}
-                    <Row className="mb-4">
-                      <Col md={4}>
+                    {/* Terceira linha de endereço - Bairro e Cidade */}
+                    <Row className="mb-3">
+                      <Col md={6}>
                         <Form.Group>
                           <Form.Label>
                             Bairro <span className="text-danger">*</span>
@@ -443,7 +475,60 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={2}>
+                    </Row>
+
+                    {/* Quarta linha de endereço - País e UF */}
+                    <Row className="mb-4">
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label>
+                            País <span className="text-danger">*</span>
+                          </Form.Label>
+                          <Form.Select
+                            value={formData.country}
+                            onChange={handleInputChange('country')}
+                            required
+                            disabled={isLoading}
+                          >
+                            <option value="">Selecione...</option>
+                            <option value="Brasil">Brasil</option>
+                            <option value="Argentina">Argentina</option>
+                            <option value="Chile">Chile</option>
+                            <option value="Uruguai">Uruguai</option>
+                            <option value="Paraguai">Paraguai</option>
+                            <option value="Bolívia">Bolívia</option>
+                            <option value="Peru">Peru</option>
+                            <option value="Equador">Equador</option>
+                            <option value="Colômbia">Colômbia</option>
+                            <option value="Venezuela">Venezuela</option>
+                            <option value="Estados Unidos">Estados Unidos</option>
+                            <option value="Canadá">Canadá</option>
+                            <option value="México">México</option>
+                            <option value="França">França</option>
+                            <option value="Espanha">Espanha</option>
+                            <option value="Portugal">Portugal</option>
+                            <option value="Itália">Itália</option>
+                            <option value="Reino Unido">Reino Unido</option>
+                            <option value="Alemanha">Alemanha</option>
+                            <option value="Holanda">Holanda</option>
+                            <option value="Suíça">Suíça</option>
+                            <option value="Áustria">Áustria</option>
+                            <option value="Bélgica">Bélgica</option>
+                            <option value="Dinamarca">Dinamarca</option>
+                            <option value="Suécia">Suécia</option>
+                            <option value="Noruega">Noruega</option>
+                            <option value="Finlândia">Finlândia</option>
+                            <option value="Japão">Japão</option>
+                            <option value="China">China</option>
+                            <option value="Coreia do Sul">Coreia do Sul</option>
+                            <option value="Austrália">Austrália</option>
+                            <option value="Nova Zelândia">Nova Zelândia</option>
+                            <option value="África do Sul">África do Sul</option>
+                            <option value="Outros">Outros</option>
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
                         <Form.Group>
                           <Form.Label>
                             UF <span className="text-danger">*</span>

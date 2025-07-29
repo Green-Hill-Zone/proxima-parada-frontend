@@ -72,6 +72,42 @@ const MyPayments = () => {
         status: 'rejected',
         createdAt: '2025-01-15T14:20:00Z',
         updatedAt: '2025-01-15T14:25:00Z'
+      },
+      {
+        paymentId: 'pay_1122334455',
+        travelData: {
+          name: 'Relax em Búzios',
+          date: '20/02/2024 - 25/02/2024',
+          price: 2400.00,
+          people: 2
+        },
+        paymentData: {
+          fullName: 'Maria Santos',
+          email: 'maria@email.com',
+          installments: '2'
+        },
+        amount: 4800.00,
+        status: 'approved',
+        createdAt: '2024-01-15T09:20:00Z',
+        updatedAt: '2024-01-15T09:25:00Z'
+      },
+      {
+        paymentId: 'pay_5566778899',
+        travelData: {
+          name: 'Cultural Salvador',
+          date: '15/06/2024 - 19/06/2024',
+          price: 1800.00,
+          people: 1
+        },
+        paymentData: {
+          fullName: 'Maria Santos',
+          email: 'maria@email.com',
+          installments: '1'
+        },
+        amount: 1800.00,
+        status: 'approved',
+        createdAt: '2024-05-10T16:45:00Z',
+        updatedAt: '2024-05-10T16:50:00Z'
       }
     ];
 

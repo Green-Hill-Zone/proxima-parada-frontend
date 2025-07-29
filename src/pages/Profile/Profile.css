@@ -1,0 +1,285 @@
+/* ===================================================================== */
+/* ESTILOS DA PÁGINA DE PERFIL - FORMULÁRIO DE DADOS PESSOAIS          */
+/* ===================================================================== */
+/*
+ * Estilos específicos para a página de edição de perfil do usuário
+ * Segue o padrão de design com cores azul/laranja do projeto
+ */
+
+/* Configuração de cores personalizadas */
+:root {
+  --primary-blue: #3246AA;
+  --secondary-orange: #FFAD33;
+  --white: #ffffff;
+  --black: #000000;
+}
+
+/* ===================================================================== */
+/* LAYOUT PRINCIPAL DA PÁGINA                                           */
+/* ===================================================================== */
+
+.profile-main {
+  min-height: calc(100vh - 140px); /* Altura mínima considerando header e footer */
+  padding: 3rem 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* ===================================================================== */
+/* CABEÇALHO DA PÁGINA                                                  */
+/* ===================================================================== */
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 1rem 0;
+}
+
+.profile-header h1 {
+  color: var(--primary-blue);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.profile-header .lead {
+  color: #6c757d;
+  font-size: 1.2rem;
+}
+
+/* ===================================================================== */
+/* CARTÃO DO FORMULÁRIO                                                 */
+/* ===================================================================== */
+
+.profile-card {
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+/* ===================================================================== */
+/* DIVISOR DE SEÇÃO                                                     */
+/* ===================================================================== */
+
+.profile-section-divider {
+  border-top: 2px solid #e9ecef;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.profile-section-divider h6 {
+  color: var(--primary-blue);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.profile-card .card-header {
+  background: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 1.5rem;
+}
+
+.profile-card .card-header h5 {
+  font-weight: 600;
+  margin: 0;
+}
+
+.profile-card .card-body {
+  padding: 2rem;
+}
+
+/* ===================================================================== */
+/* CAMPOS DO FORMULÁRIO                                                 */
+/* ===================================================================== */
+
+/* Labels dos campos */
+.profile-card .form-label {
+  color: var(--primary-blue);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Campos de input */
+.profile-card .form-control,
+.profile-card .form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.profile-card .form-control:focus,
+.profile-card .form-select:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 0.2rem rgba(50, 70, 170, 0.25);
+}
+
+/* Estados de validação */
+.profile-card .form-control.is-invalid,
+.profile-card .form-select.is-invalid {
+  border-color: #dc3545;
+}
+
+.profile-card .form-control.is-valid,
+.profile-card .form-select.is-valid {
+  border-color: #28a745;
+}
+
+/* ===================================================================== */
+/* NOTA SOBRE CAMPOS OBRIGATÓRIOS                                       */
+/* ===================================================================== */
+
+.profile-required-note {
+  background-color: #f8f9fa;
+  border-left: 4px solid var(--secondary-orange);
+  padding: 1rem;
+  border-radius: 0 8px 8px 0;
+}
+
+.profile-required-note small {
+  font-size: 0.9rem;
+}
+
+/* ===================================================================== */
+/* BOTÕES DE AÇÃO                                                       */
+/* ===================================================================== */
+
+.profile-actions {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Botão "Voltar ao Dashboard" */
+.profile-back-button {
+  border-radius: 25px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid #6c757d;
+  color: #6c757d;
+}
+
+.profile-back-button:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Botão "Salvar Alterações" - usando o padrão do projeto */
+.profile-save-button.btn-standard {
+  border-radius: 25px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  background-color: white !important;
+  color: var(--primary-blue) !important;
+  border: 2px solid var(--primary-blue) !important;
+  transition: all 0.3s ease;
+}
+
+.profile-save-button.btn-standard:hover {
+  background-color: var(--secondary-orange) !important;
+  color: white !important;
+  border-color: var(--secondary-orange) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 173, 51, 0.3);
+}
+
+.profile-save-button.btn-standard:disabled {
+  opacity: 0.6;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* ===================================================================== */
+/* ALERTAS DE FEEDBACK                                                  */
+/* ===================================================================== */
+
+.profile-card .alert {
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.profile-card .alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border-left: 4px solid #28a745;
+}
+
+.profile-card .alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+/* ===================================================================== */
+/* RESPONSIVIDADE PARA DISPOSITIVOS MÓVEIS                             */
+/* ===================================================================== */
+
+@media (max-width: 768px) {
+  .profile-main {
+    padding: 2rem 0;
+  }
+  
+  .profile-header {
+    margin-bottom: 2rem;
+  }
+  
+  .profile-header h1 {
+    font-size: 2rem;
+  }
+  
+  .profile-card .card-body {
+    padding: 1.5rem;
+  }
+  
+  .profile-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .profile-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-header .lead {
+    font-size: 1.1rem;
+  }
+  
+  .profile-card .card-header {
+    padding: 1rem;
+  }
+  
+  .profile-card .card-body {
+    padding: 1rem;
+  }
+}
+
+/* ===================================================================== */
+/* ANIMAÇÕES E TRANSIÇÕES                                               */
+/* ===================================================================== */
+
+.profile-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

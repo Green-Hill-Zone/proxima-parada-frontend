@@ -1,11 +1,15 @@
-import { Container, Row, Col } from 'react-bootstrap';
+// Importação dos componentes do React Bootstrap
+import { Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import logo from '../../imgs/logo/logo.svg';
 
+import './Footer.css'; // Importa os estilos específicos do Footer
 
+// Componente Footer - Rodapé da aplicação
 const Footer = () => {
   return (
-    <footer className="custom-navbar text-light py-5 mt-5">
+    // Rodapé com classes CSS personalizadas
+    <footer className="footer-container">
       <Container>
         <Row className="mb-4">
           <Col md={4}>
@@ -34,7 +38,25 @@ const Footer = () => {
         <Row>
           <Col className="text-center">
             <hr className="border-light" />
-            <p className="mb-0">&copy; 2025 Próxima Parada. Todos os direitos reservados.</p>
+            {/* Row centralizada com conteúdo alinhado ao centro */}
+            <Row className="footer-content">
+              <Col>
+                {/* Parágrafo com informações de direitos autorais e link */}
+                <p className="footer-text">
+                  {/* Texto de direitos reservados */}
+                  &copy; 2025 Próxima Parada. Todos os direitos reservados.
+                  {/* Separador visual entre o texto e o link */}
+                  <span className="footer-separator">|</span>
+                  {/* Link para política de privacidade com estilo personalizado */}
+                  <a
+                    href="/politica-privacidade"  // URL da página de política de privacidade
+                    className="footer-link"        // Classe CSS personalizada (laranja com hover branco)
+                  >
+                    Política de Privacidade
+                  </a>
+                </p>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Container>

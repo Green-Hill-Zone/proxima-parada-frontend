@@ -1,29 +1,111 @@
-/* Global styles for the travel app */
+/* Estilos globais para a aplicação de viagens */
 :root {
+  /* Definição das cores do tema da aplicação */
+  --primary-blue: #3246AA;
+  /* Azul principal usado no header, footer e botões */
+  --secondary-orange: #FFAD33;
+  /* Laranja usado em hovers e destaques */
+  --white: #ffffff;
+  /* Branco padrão */
+  --black: #000000;
+  /* Preto padrão */
+
+  /* Configurações de tipografia global */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
+  /* Altura da linha para melhor legibilidade */
   font-weight: 400;
+  /* Peso da fonte padrão */
 }
 
+/* Reset CSS - Remove margens e paddings padrão dos navegadores */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* Inclui padding e border no cálculo do tamanho total */
 }
 
+/* Estilos do corpo da página */
 body {
   margin: 0;
   background-color: #ffffff;
+  /* Fundo branco */
   color: #333;
+  /* Texto cinza escuro para boa legibilidade */
 }
 
+/* Container principal da aplicação - ocupa toda a altura da tela */
 #root {
   min-height: 100vh;
+  /* Altura mínima de 100% da viewport */
   display: flex;
+  /* Layout flexível */
   flex-direction: column;
+  /* Organiza header, main e footer verticalmente */
 }
 
-/* Smooth transitions for cards */
+/* Animações suaves para os cartões de viagem */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* Transição suave de 0.3s */
+}
 
+/* Efeito de hover nos cartões - elevação e sombra */
+.card:hover {
+  transform: translateY(-5px);
+  /* Move o cartão 5px para cima */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  /* Sombra mais intensa */
+}
 
+/* Personalização dos botões primários com as cores do tema */
+.btn-primary {
+  background-color: var(--primary-blue) !important;
+  /* Fundo azul personalizado */
+  border-color: var(--primary-blue) !important;
+  /* Borda azul personalizada */
+}
 
+/* Efeito hover dos botões primários - azul mais escuro */
+.btn-primary:hover {
+  background-color: #2a3a8a !important;
+  /* Azul mais escuro no hover */
+  border-color: #2a3a8a !important;
+  /* Borda azul mais escura no hover */
+}
+
+/* Classe para textos na cor azul principal */
+.text-primary {
+  color: var(--primary-blue) !important;
+  /* Aplica a cor azul aos textos */
+}
+
+/* Estilos globais para formulários */
+.form-control:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 0.2rem rgba(50, 70, 170, 0.25);
+}
+
+/* Estilos globais para links */
+a {
+  color: var(--primary-blue);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--secondary-orange);
+}
+
+/* Utilitários globais */
+.text-orange {
+  color: var(--secondary-orange) !important;
+}
+
+.bg-primary-blue {
+  background-color: var(--primary-blue) !important;
+}
+
+.bg-secondary-orange {
+  background-color: var(--secondary-orange) !important;
+}

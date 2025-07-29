@@ -1,13 +1,11 @@
 // Importações do React Bootstrap e componentes locais
 import { Col, Container, Row } from 'react-bootstrap';
-import TravelCarousel from './components/TravelCard/TravelCarousel.tsx';
-
+import { mockTravelPackages } from '../../data/mockData'; // Dados fictícios dos pacotes
 import imgBg from '../../imgs/img-home/img-bg.png';
 import '../../styles/home/heroSection.css';
-import SearchSection from './components/SearchSection/SearchSection.tsx';
-
-import { mockTravelPackages } from '../../data/mockData'; // Dados fictícios dos pacotes
 import { HeroSection, TravelCard } from './components'; // Componentes específicos da Home
+import SearchSection from './components/SearchSection/SearchSection.tsx';
+import TravelCarousel from './components/TravelCard/TravelCarousel.tsx';
 import './styles.css'; // Importa os estilos específicos da página Home
 
 // Componente Home - Página principal da aplicação

@@ -1,0 +1,53 @@
+{
+  "Users": [
+    {
+      "id": "1",
+      "name": "name",
+      "email": "",
+      "password": "",
+      "phone": "",
+      "document": "",
+      "role": "admin",
+      "companyId": null,
+      "isDeleted": false
+    },
+    {
+      "id": "09ab",
+      "email": "maria@email.com",
+      "phone": "(12) 31231-2312",
+      "document": "123.124.123-12",
+      "password": "123456",
+      "confirmPassword": "123456"
+    },
+    {
+      "id": "9111",
+      "email": "joao@email.com",
+      "phone": "(12) 12312-3123",
+      "document": "412.312.314-12",
+      "password": "123456",
+      "confirmPassword": "123456"
+    }
+  ],
+  "Acommodation": [
+    {
+      "id": "1",
+      "name": "Quarto 1",
+      "description": "Descrição do Quarto 1",
+      "img_url": "https://example.com/quarto1.jpg",
+      "available": true
+    },
+    {
+      "id": "2",
+      "name": "Quarto 2",
+      "description": "Descrição do Quarto 2",
+      "price": 150,
+      "available": false
+    }
+  ],
+  "Company": [
+    {
+      "id": "1",
+      "name": "Empresa 1"
+    }
+  ]
+}

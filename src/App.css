@@ -12,12 +12,6 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: var(--white);
 }
-
-.card-hover:hover {
-  transform: translateY(-5px);
-  transition: transform 0.3s ease;
-}
-
 .footer {
   margin-top: auto;
 }

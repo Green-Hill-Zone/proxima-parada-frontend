@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import MyTravels from './pages/MyTravels';
+import MyPayments from './pages/MyPayments';
 import Profile from './pages/Profile';
 import Payment from './pages/Payment';
 
@@ -41,6 +42,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <MyTravels />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-payments"
+              element={
+                <ProtectedRoute>
+                  <MyPayments />
                 </ProtectedRoute>
               }
             />

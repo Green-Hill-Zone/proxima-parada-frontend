@@ -24,6 +24,11 @@ const Dashboard = () => {
     navigate('/my-travels'); // Redireciona para a página de viagens
   };
 
+  // Função para navegar para a página de meus pagamentos
+  const handleMeusPagamentos = () => {
+    navigate('/my-payments'); // Redireciona para a página de pagamentos
+  };
+
   return (
     <>
 
@@ -102,6 +107,31 @@ const Dashboard = () => {
                         onClick={handleEditarPerfil}
                       >
                         Editar Perfil
+                      </Button>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+
+              {/* Segunda linha de cards */}
+              <Row className="dashboard-cards">
+                {/* Card - Meus Pagamentos */}
+                <Col md={4} className="mb-4">
+                  <Card className="dashboard-card h-100">
+                    <Card.Body className="text-center">
+                      <div className="dashboard-card-icon">
+                        💳
+                      </div>
+                      <Card.Title>Meus Pagamentos</Card.Title>
+                      <Card.Text>
+                        Acompanhe o status dos seus pagamentos e transações realizadas.
+                      </Card.Text>
+                      <Button
+                        variant="primary"
+                        className="dashboard-card-button btn-standard"
+                        onClick={handleMeusPagamentos}
+                      >
+                        Ver Pagamentos
                       </Button>
                     </Card.Body>
                   </Card>
@@ -215,17 +245,17 @@ const Dashboard = () => {
                       <Row>
                         <Col md={4}>
                           <Row>
-                            <Col sm={5}><strong>Bairro:</strong></Col>
-                            <Col sm={7}>{user?.neighborhood}</Col>
+                            <Col sm={4}><strong>Bairro:</strong></Col>
+                            <Col sm={8}>{user?.neighborhood}</Col>
                           </Row>
                         </Col>
-                        <Col md={5}>
+                        <Col md={4}>
                           <Row>
                             <Col sm={4}><strong>Cidade:</strong></Col>
                             <Col sm={8}>{user?.city}</Col>
                           </Row>
                         </Col>
-                        <Col md={3}>
+                        <Col md={4}>
                           <Row>
                             <Col sm={4}><strong>UF:</strong></Col>
                             <Col sm={8}>{user?.state}</Col>

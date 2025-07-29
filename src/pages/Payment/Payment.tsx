@@ -149,7 +149,7 @@ const Payment = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Função para processar o pagamento
+  // Função para processar o pagamento via Stripe
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -160,22 +160,44 @@ const Payment = () => {
     setIsLoading(true);
 
     try {
-      // Simular processamento do pagamento
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Simular criação de sessão no Stripe
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
+      // Dados para enviar ao backend/Stripe
+      const paymentSession = {
+        travelData,
+        paymentData,
+        amount: totalAmount,
+        installments: parseInt(paymentData.installments)
+      };
+
+      // Em produção: redirecionar para Stripe Checkout
+      // window.location.href = `https://checkout.stripe.com/pay?session_id=${sessionId}`;
+      
+      // Salvar dados da compra no localStorage para recuperar depois
+      localStorage.setItem('pendingPayment', JSON.stringify({
+        ...paymentSession,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        paymentId: `pay_${Date.now()}`
+      }));
+
+      // Redirecionar para o Stripe (em produção seria window.location.href = stripeUrl)
+      // Para demonstração, vamos simular o retorno do Stripe
       setShowSuccess(true);
       
-      // Redirecionar após sucesso
       setTimeout(() => {
-        navigate('/dashboard', { 
+        navigate('/my-payments', { 
           state: { 
-            message: 'Pagamento realizado com sucesso! Sua viagem foi confirmada.' 
+            message: 'Redirecionando para processamento do pagamento...',
+            paymentId: `pay_${Date.now()}`
           }
         });
-      }, 3000);
+      }, 2000);
       
     } catch (error) {
-      console.error('Erro no pagamento:', error);
+      console.error('Erro ao criar sessão de pagamento:', error);
+      alert('Erro ao processar pagamento. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
@@ -199,9 +221,9 @@ const Payment = () => {
 
               {/* Alert de sucesso */}
               {showSuccess && (
-                <Alert variant="success" className="payment-success-alert">
-                  <Alert.Heading>🎉 Pagamento realizado com sucesso!</Alert.Heading>
-                  <p>Sua viagem foi confirmada. Você receberá um e-mail com todos os detalhes.</p>
+                <Alert variant="info" className="payment-success-alert">
+                  <Alert.Heading>🔄 Redirecionando para pagamento...</Alert.Heading>
+                  <p>Você será redirecionado para o Stripe para concluir o pagamento de forma segura.</p>
                 </Alert>
               )}
 
@@ -412,10 +434,10 @@ const Payment = () => {
                             {isLoading ? (
                               <>
                                 <span className="spinner-border spinner-border-sm me-2" />
-                                Processando...
+                                Redirecionando...
                               </>
                             ) : (
-                              'Confirmar Pagamento'
+                              'Pagar com Stripe'
                             )}
                           </Button>
                         </div>

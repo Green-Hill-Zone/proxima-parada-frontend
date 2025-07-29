@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import MyTravels from './pages/MyTravels';
 import Profile from './pages/Profile';
+import UserRegister from './pages/UserRegister/UserRegister';
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<UserRegister />} />
+
           <Route
             path="/dashboard"
             element={

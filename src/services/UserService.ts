@@ -29,3 +29,33 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
     return null;
   }
 };
+
+export const getAllUsers = async (): Promise<User[]> => {
+  try {
+    const response = await api.get<User[]>('/Users');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching all users:', error);
+    return [];
+  }
+}
+
+export const getUserById = async (id: number): Promise<User | null> => {
+  try {
+    const response = await api.get<User>(`/Users/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user by ID:', error);
+    return null;
+  }
+}
+
+export const updateUser = async (id: number, user: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>): Promise<User | null> => {
+  try {
+    const response = await api.put<User>(`/Users/${id}`, user);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return null;
+  }
+};

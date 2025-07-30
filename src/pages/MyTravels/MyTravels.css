@@ -109,6 +109,39 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Estilos para cards clicáveis */
+.my-travels-stats .clickable-stat {
+  cursor: pointer;
+  user-select: none;
+}
+
+.my-travels-stats .clickable-stat:hover {
+  transform: translateY(-2px);
+}
+
+.my-travels-stats .clickable-stat:active {
+  transform: translateY(0px);
+}
+
+/* Card de estatística ativo (filtro selecionado) */
+.my-travels-stats .active-stat {
+  background-color: var(--primary-blue);
+  color: white;
+}
+
+.my-travels-stats .active-stat .stat-number {
+  color: white !important;
+}
+
+.my-travels-stats .active-stat .stat-label {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.my-travels-stats .active-stat::before {
+  background: var(--secondary-orange);
+  height: 6px;
+}
+
 .my-travels-stats .stat-card::before {
   content: '';
   position: absolute;

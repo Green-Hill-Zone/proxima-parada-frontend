@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Alert, Badge, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import type { TravelPackage } from '../../contexts/AuthContext';
+import type { TravelPackage } from '../../contexts/types';
 import { useAuth } from '../../hooks/useAuth';
 import './MyTravels.css';
 
@@ -59,6 +59,11 @@ const MyTravels = () => {
   // Função para voltar ao dashboard
   const handleBackToDashboard = () => {
     navigate('/dashboard');
+  };
+
+  // Função para filtrar por estatística (clique nos cards)
+  const handleStatisticFilter = (filterType: string) => {
+    setFilter(filterType);
   };
 
   // Função para formatar preço em Real
@@ -179,7 +184,11 @@ const MyTravels = () => {
               {/* Estatísticas rápidas */}
               <Row className="my-travels-stats mb-4">
                 <Col md={4}>
-                  <Card className="stat-card text-center">
+                  <Card 
+                    className={`stat-card text-center clickable-stat ${filter === 'all' ? 'active-stat' : ''}`}
+                    onClick={() => handleStatisticFilter('all')}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <Card.Body>
                       <h3 className="stat-number text-primary">{travels.length}</h3>
                       <p className="stat-label">Total de Viagens</p>
@@ -187,7 +196,11 @@ const MyTravels = () => {
                   </Card>
                 </Col>
                 <Col md={4}>
-                  <Card className="stat-card text-center">
+                  <Card 
+                    className={`stat-card text-center clickable-stat ${filter === 'completed' ? 'active-stat' : ''}`}
+                    onClick={() => handleStatisticFilter('completed')}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <Card.Body>
                       <h3 className="stat-number text-success">
                         {travels.filter(t => t.status === 'completed').length}
@@ -197,7 +210,11 @@ const MyTravels = () => {
                   </Card>
                 </Col>
                 <Col md={4}>
-                  <Card className="stat-card text-center">
+                  <Card 
+                    className={`stat-card text-center clickable-stat ${filter === 'upcoming' ? 'active-stat' : ''}`}
+                    onClick={() => handleStatisticFilter('upcoming')}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <Card.Body>
                       <h3 className="stat-number text-warning">
                         {travels.filter(t => t.status === 'upcoming').length}

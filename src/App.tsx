@@ -3,19 +3,19 @@ import { Container } from 'react-bootstrap';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import { Footer, Header, ProtectedRoute } from './components';
-import { AuthProvider } from './contexts/AuthContext';
-
+import { AuthProvider } from './contexts/AuthContext.tsx';
+import AdminPackageForm from './pages/Admin/AdminPackageForm';
+import AdminRegister from './pages/AdminRegister/index.ts';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import MyPayments from './pages/MyPayments';
 import MyTravels from './pages/MyTravels';
+import Pacotes from './pages/Pacotes';
 import Payment from './pages/Payment';
 import Profile from './pages/Profile';
 import { ReservationProvider } from './pages/Reservation/context/ReservationContext.tsx';
 import Reservation from './pages/Reservation/Reservation.tsx';
-import AdminPackageForm from './pages/Admin/AdminPackageForm';
-import Pacotes from './pages/Pacotes';
 import UserRegister from './pages/UserRegister/UserRegister';
 
 function App() {
@@ -23,9 +23,9 @@ function App() {
     <AuthProvider>
       <Router>
         <Header />
-  
         <Container>
           <Routes>
+            <Route path="/admin-register" element={<AdminRegister />} />
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<UserRegister />} />
@@ -42,6 +42,7 @@ function App() {
         <Footer />
       </Router>
     </AuthProvider>
+
   )
 }
 

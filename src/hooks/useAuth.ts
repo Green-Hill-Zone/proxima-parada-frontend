@@ -13,8 +13,8 @@
 
 // Importações necessárias
 import { useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
-import type { AuthContextType } from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/authContext';
+import type { AuthContextType } from '../contexts/types';
 
 /* ===================================================================== */
 /* HOOK PRINCIPAL DE AUTENTICAÇÃO                                       */

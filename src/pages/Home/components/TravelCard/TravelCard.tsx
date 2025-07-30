@@ -1,58 +1,66 @@
-import { Card, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-
-interface TravelPackage {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-}
+import React from 'react';
+import { Button, Card } from 'react-bootstrap';
+import { type TravelPackageListItem } from '../../../../Entities/TravelPackage';
 
 interface TravelCardProps {
-  travelPackage: TravelPackage,
-  onViewDetails?: (id: string) => void
+  travelPackage: TravelPackageListItem;
+  onViewDetails?: (id: number) => void;
 }
 
-const TravelCard = ({ travelPackage }: TravelCardProps) => {
-  const { title, description, price, imageUrl } = travelPackage;
-  const navigate = useNavigate();
+const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails }) => {
+  // Desestruturando propriedades do pacote de viagem
+  const { Id, Name, Description, BasePrice, Images, MainDestination, Duration } = travelPackage;
 
-  const handleBookNow = () => {
-    navigate('/payment', {
-      state: {
-        travelData: {
-          name: title,
-          date: "15/08/2025 - 22/08/2025",
-          price: price,
-          people: 1
-        }
-      }
-    });
-  };
+  // Encontrar a imagem principal ou usar a primeira disponível
+  const mainImage = Images?.find(img => img.IsMain) || Images?.[0];
+  const imageUrl = mainImage?.ImageUrl || 'https://via.placeholder.com/300x200?text=Sem+Imagem';
+  const imageAlt = mainImage?.AltText || Name;
+
+  // Truncar descrição para não ficar muito longa
+  const truncatedDescription = Description?.length > 120
+    ? `${Description.substring(0, 120)}...`
+    : Description;
 
   return (
     <Card className="h-100 shadow-sm">
-      <Card.Img variant="top" src={imageUrl} alt={title} />
+      <Card.Img
+        variant="top"
+        src={imageUrl}
+        alt={imageAlt}
+        style={{ height: '200px', objectFit: 'cover' }}
+      />
       <Card.Body className="d-flex flex-column">
-        <Card.Title>{title}</Card.Title>
-        <Card.Text className="flex-grow-1">
-          {description}
+        <Card.Title>{Name}</Card.Title>
+
+        {MainDestination && (
+          <Card.Subtitle className="mb-2 text-muted">
+            {MainDestination.Name}, {MainDestination.Country}
+          </Card.Subtitle>
+        )}
+
+        <Card.Text className="flex-grow-1 my-2">
+          {truncatedDescription}
         </Card.Text>
-        <div className="mt-auto">
-          <h5 className="text-primary mb-3">
-            {new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL'
-            }).format(price)}
-          </h5>
-          <Button 
-            variant="primary" 
-            className="w-100"
-            onClick={handleBookNow}
-          >
-            Reservar Agora
-          </Button>
+
+        <div className="d-flex justify-content-between align-items-center mt-auto">
+          <div>
+            <h5 className="text-primary mb-0">
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+              }).format(BasePrice)}
+            </h5>
+            <small className="text-muted">{Duration} dias</small>
+          </div>
+
+          {onViewDetails && (
+            <Button
+              variant="outline-primary"
+              onClick={() => onViewDetails(Id)}
+            >
+              Ver detalhes
+            </Button>
+          )}
         </div>
       </Card.Body>
     </Card>
@@ -60,5 +68,3 @@ const TravelCard = ({ travelPackage }: TravelCardProps) => {
 };
 
 export default TravelCard;
-export type { TravelPackage };
-

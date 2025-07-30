@@ -6,7 +6,7 @@ import { type TravelPackageListItem } from '../../Entities/TravelPackage';
 import imgBg from '../../imgs/img-home/img-bg.png';
 import { getFeaturedPackages } from '../../services/TravelPackageService';
 import '../../styles/home/heroSection.css';
-import { HeroSection, TravelCard } from './components'; // Componentes específicos da Home
+import { HeroSection } from './components'; // Componentes específicos da Home
 import SearchSection from './components/SearchSection/SearchSection.tsx';
 import TravelCarousel from './components/TravelCard/TravelCarousel.tsx';
 import './styles.css'; // Importa os estilos específicos da página Home
@@ -78,20 +78,6 @@ const Home = () => {
               onViewDetails={handleViewDetails}
             />
           </Col>
-        </Row>
-
-        <Row className="home-packages-grid mt-5">
-          <Col xs={12}>
-            <h3 className="mb-4">Todos os Pacotes</h3>
-          </Col>
-          {featuredPackages.map((travelPackage) => (
-            <Col key={travelPackage.Id} md={4} className="home-package-col mb-4">
-              <TravelCard
-                travelPackage={travelPackage}
-                onViewDetails={handleViewDetails}
-              />
-            </Col>
-          ))}
         </Row>
       </>
     );

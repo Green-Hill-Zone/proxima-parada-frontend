@@ -19,7 +19,6 @@ const Home = () => {
 
   return (
     <>
-
       {/* Conteúdo principal da página */}
       <main className="home-main">
         {/* Seção hero com título e subtítulo de destaque */}
@@ -34,7 +33,7 @@ const Home = () => {
           {/* Título da seção de pacotes */}
           <Row className="mb-4">
             <Col>
-              <h2 className="home-packages-title">Pacotes em Destaque</h2>
+              <h2 className="ages-title">Pacotes em Destaque</h2>
             </Col>
           </Row>
           <Row>
@@ -45,18 +44,7 @@ const Home = () => {
               />
             </Col>
           </Row>
-          {/* Grid de cartões de pacotes */}
-          <Row className="home-packages-grid">
-            {/* Mapeia cada pacote do array mockTravelPackages para um cartão */}
-            {mockTravelPackages.map((travelPackage) => (
-              <Col key={travelPackage.id} md={4} className="home-package-col"> {/* 3 colunas em tablets/desktop */}
-                <TravelCard
-                  travelPackage={travelPackage}        // Dados do pacote
-                  onViewDetails={handleViewDetails}    // Função de callback para detalhes
-                />
-              </Col>
-            ))}
-          </Row>
+        
         </Container>
       </main>
 

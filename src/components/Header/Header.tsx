@@ -35,14 +35,14 @@ const Header = () => {
         {/* Menu de navegação que se expande/contrai */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/hospedagem" className="header-nav-link">
-              <img src={iconHosp} alt="" className="menu-icon" /> Hospedagem
+            <Nav.Link as={Link} to="/pacotes" className="header-nav-link">
+              <img src={iconHosp} alt="" className="menu-icon" /> Pacotes
             </Nav.Link>
             <Nav.Link as={Link} to="/passagens" className="header-nav-link">
               <img src={iconAviao} alt="" className="menu-icon" /> Passagens
             </Nav.Link>
             <Nav.Link as={Link} to="/aluguel" className="header-nav-link">
-              <img src={iconCar} alt="" className="menu-icon" /> Aluguel de carros
+              <img src={iconCar} alt="" className="menu-icon" /> Hotel
             </Nav.Link>
             <Nav.Link as={Link} to="/passeios" className="header-nav-link">
               <img src={iconPasseio} alt="" className="menu-icon" /> Passeios e atividades

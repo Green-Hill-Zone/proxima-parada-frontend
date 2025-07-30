@@ -11,13 +11,13 @@
  */
 
 // Importações necessárias do React
-import React, { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Importações dos tipos e dados separados
-import type { User, AuthContextType, TravelPackage } from './types';
-import { mockUsers, mockTravelPackages } from './mockData';
 import { AuthContext } from './authContext';
+import { mockTravelPackages, mockUsers } from './mockData';
+import type { AuthContextType, TravelPackage, User } from './types';
 
 // Interface para as props do provider
 interface AuthProviderProps {
@@ -37,11 +37,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /* ================================================================= */
   /* EFEITO DE INICIALIZAÇÃO - VERIFICA SESSÃO SALVA                 */
   /* ================================================================= */
-  
+
   /* ================================================================= */
   /* EFEITO DE INICIALIZAÇÃO - VERIFICA SESSÃO SALVA                 */
   /* ================================================================= */
-  
+
   // useEffect executa uma vez quando o componente monta
   // Verifica se há um usuário logado salvo no localStorage
   useEffect(() => {
@@ -71,7 +71,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /* ================================================================= */
   /* FUNÇÃO DE LOGIN - AUTENTICA O USUÁRIO                           */
   /* ================================================================= */
-  
+
   // Função de login que simula autenticação com backend
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true); // Ativa estado de carregamento
@@ -89,7 +89,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (foundUser) {
         // ✅ USUÁRIO ENCONTRADO - LOGIN BEM-SUCEDIDO
-        
+
         // Cria objeto User sem a senha (por segurança)
         const userData: User = {
           id: foundUser.id,
@@ -116,20 +116,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         // Atualiza o estado da aplicação
         setUser(userData);
-        
+
         // Salva no localStorage para persistir a sessão
         localStorage.setItem('currentUser', JSON.stringify(userData));
-        
+
         // Log para debug (em produção, remover)
         console.log('✅ Login realizado com sucesso:', userData);
         return true; // Retorna true indicando sucesso
-        
+
       } else {
         // ❌ USUÁRIO NÃO ENCONTRADO - CREDENCIAIS INVÁLIDAS
         console.log('❌ Credenciais inválidas');
         return false; // Retorna false indicando falha
       }
-      
+
     } catch (error) {
       // ⚠️ ERRO INESPERADO DURANTE O LOGIN
       console.error('Erro durante o login:', error);
@@ -143,7 +143,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /* ================================================================= */
   /* FUNÇÃO DE LOGOUT - REMOVE AUTENTICAÇÃO                          */
   /* ================================================================= */
-  
+
   // Função de logout - limpa dados do usuário
   const logout = () => {
     setUser(null);                              // Remove usuário do estado
@@ -154,7 +154,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /* ================================================================= */
   /* FUNÇÃO DE CADASTRO - REGISTRA NOVO USUÁRIO                      */
   /* ================================================================= */
-  
+
   // Função de cadastro que simula criação de usuário
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     setIsLoading(true); // Ativa estado de carregamento
@@ -173,7 +173,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       // ✅ EMAIL DISPONÍVEL - CRIA NOVO USUÁRIO
-      
+
       // Cria objeto do novo usuário com informações padrão para novos cadastros
       const newUser: User = {
         id: Date.now().toString(),              // ID único baseado em timestamp
@@ -225,10 +225,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Atualiza estado e salva sessão (auto-login após cadastro)
       setUser(newUser);
       localStorage.setItem('currentUser', JSON.stringify(newUser));
-      
+
       console.log('✅ Cadastro realizado com sucesso:', newUser);
       return true;
-      
+
     } catch (error) {
       // ⚠️ ERRO INESPERADO DURANTE O CADASTRO
       console.error('Erro durante o cadastro:', error);
@@ -242,7 +242,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /* ================================================================= */
   /* FUNÇÃO PARA BUSCAR VIAGENS DO USUÁRIO                           */
   /* ================================================================= */
-  
+
   // Função para buscar as viagens de um usuário específico
   const getUserTravels = (userId: string): TravelPackage[] => {
     return mockTravelPackages[userId] || [];
@@ -251,7 +251,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /* ================================================================= */
   /* CONFIGURAÇÃO DO VALOR DO CONTEXTO                               */
   /* ================================================================= */
-  
+
   // Objeto que será fornecido pelo contexto para todos os componentes filhos
   const contextValue: AuthContextType = {
     user,           // Estado atual do usuário
@@ -265,7 +265,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /* ================================================================= */
   /* RENDERIZAÇÃO DO PROVIDER                                         */
   /* ================================================================= */
-  
+
   // Retorna o Provider que envolve toda a aplicação
   // Todos os componentes filhos terão acesso às funções e estado de autenticação
   return (
@@ -274,3 +274,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;

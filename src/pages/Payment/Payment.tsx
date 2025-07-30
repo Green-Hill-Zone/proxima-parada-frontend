@@ -4,15 +4,11 @@ import { Button, Card, Col, Container, Form, Row, Alert } from 'react-bootstrap'
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Payment.css';
 
-// Interface para dados do pagamento
+// Interface para dados do pagamento (simplificada para Stripe)
 interface PaymentData {
   fullName: string;
   email: string;
   cpf: string;
-  cardNumber: string;
-  expiryDate: string;
-  cvv: string;
-  installments: string;
 }
 
 // Interface para dados da viagem (recebidos via props/state)
@@ -36,15 +32,11 @@ const Payment = () => {
     people: 2
   };
 
-  // Estados do formulário
+  // Estados do formulário (simplificado para Stripe)
   const [paymentData, setPaymentData] = useState<PaymentData>({
     fullName: '',
     email: '',
-    cpf: '',
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    installments: '1'
+    cpf: ''
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -61,42 +53,13 @@ const Payment = () => {
       .replace(/(-\d{2})\d+?$/, '$1');
   };
 
-  // Função para formatar número do cartão
-  const formatCardNumber = (value: string) => {
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{4})(\d)/, '$1 $2')
-      .replace(/(\d{4})(\d)/, '$1 $2')
-      .replace(/(\d{4})(\d)/, '$1 $2')
-      .replace(/(\d{4})\d+?$/, '$1');
-  };
-
-  // Função para formatar data de validade
-  const formatExpiryDate = (value: string) => {
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '$1/$2')
-      .replace(/(\d{2}\/\d{2})\d+?$/, '$1');
-  };
-
   // Função para lidar com mudanças nos inputs
   const handleInputChange = (field: keyof PaymentData, value: string) => {
     let formattedValue = value;
 
-    // Aplicar formatação específica
-    switch (field) {
-      case 'cpf':
-        formattedValue = formatCPF(value);
-        break;
-      case 'cardNumber':
-        formattedValue = formatCardNumber(value);
-        break;
-      case 'expiryDate':
-        formattedValue = formatExpiryDate(value);
-        break;
-      case 'cvv':
-        formattedValue = value.replace(/\D/g, '').slice(0, 4);
-        break;
+    // Aplicar formatação específica apenas para CPF
+    if (field === 'cpf') {
+      formattedValue = formatCPF(value);
     }
 
     setPaymentData(prev => ({ ...prev, [field]: formattedValue }));
@@ -107,7 +70,7 @@ const Payment = () => {
     }
   };
 
-  // Validação dos campos
+  // Validação dos campos (simplificada para Stripe)
   const validateForm = (): boolean => {
     const newErrors: Partial<PaymentData> = {};
 
@@ -125,24 +88,6 @@ const Payment = () => {
       newErrors.cpf = 'CPF é obrigatório';
     } else if (paymentData.cpf.replace(/\D/g, '').length !== 11) {
       newErrors.cpf = 'CPF deve ter 11 dígitos';
-    }
-
-    if (!paymentData.cardNumber.trim()) {
-      newErrors.cardNumber = 'Número do cartão é obrigatório';
-    } else if (paymentData.cardNumber.replace(/\D/g, '').length !== 16) {
-      newErrors.cardNumber = 'Número do cartão deve ter 16 dígitos';
-    }
-
-    if (!paymentData.expiryDate.trim()) {
-      newErrors.expiryDate = 'Data de validade é obrigatória';
-    } else if (!/\d{2}\/\d{2}/.test(paymentData.expiryDate)) {
-      newErrors.expiryDate = 'Formato inválido (MM/AA)';
-    }
-
-    if (!paymentData.cvv.trim()) {
-      newErrors.cvv = 'CVV é obrigatório';
-    } else if (paymentData.cvv.length < 3) {
-      newErrors.cvv = 'CVV deve ter 3 ou 4 dígitos';
     }
 
     setErrors(newErrors);
@@ -167,8 +112,7 @@ const Payment = () => {
       const paymentSession = {
         travelData,
         paymentData,
-        amount: totalAmount,
-        installments: parseInt(paymentData.installments)
+        amount: totalAmount
       };
 
       // Em produção: redirecionar para Stripe Checkout
@@ -203,9 +147,8 @@ const Payment = () => {
     }
   };
 
-  // Calcular total com base no parcelamento
+  // Calcular total
   const totalAmount = travelData.price * travelData.people;
-  const installmentValue = totalAmount / parseInt(paymentData.installments);
 
   return (
     <>
@@ -255,20 +198,10 @@ const Payment = () => {
                         <span>R$ {travelData.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                       </div>
 
-                      <hr />
-                      
                       <div className="payment-summary-total">
                         <strong>Total:</strong>
                         <strong>R$ {totalAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
                       </div>
-
-                      {parseInt(paymentData.installments) > 1 && (
-                        <div className="payment-installment-info">
-                          <small>
-                            {paymentData.installments}x de R$ {installmentValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                          </small>
-                        </div>
-                      )}
                     </Card.Body>
                   </Card>
                 </Col>
@@ -339,87 +272,19 @@ const Payment = () => {
                           </Row>
                         </div>
 
-                        {/* Dados do Cartão */}
+                        {/* Seção de Pagamento via Stripe */}
                         <div className="payment-section">
-                          <h6 className="payment-section-title">Dados do Cartão</h6>
-                          
-                          <Row>
-                            <Col md={8} className="mb-3">
-                              <Form.Group>
-                                <Form.Label>Número do Cartão *</Form.Label>
-                                <Form.Control
-                                  type="text"
-                                  value={paymentData.cardNumber}
-                                  onChange={(e) => handleInputChange('cardNumber', e.target.value)}
-                                  isInvalid={!!errors.cardNumber}
-                                  placeholder="0000 0000 0000 0000"
-                                  maxLength={19}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                  {errors.cardNumber}
-                                </Form.Control.Feedback>
-                              </Form.Group>
-                            </Col>
-                            
-                            <Col md={4} className="mb-3">
-                              <Form.Group>
-                                <Form.Label>CVV *</Form.Label>
-                                <Form.Control
-                                  type="text"
-                                  value={paymentData.cvv}
-                                  onChange={(e) => handleInputChange('cvv', e.target.value)}
-                                  isInvalid={!!errors.cvv}
-                                  placeholder="000"
-                                  maxLength={4}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                  {errors.cvv}
-                                </Form.Control.Feedback>
-                              </Form.Group>
-                            </Col>
-                          </Row>
-                          
-                          <Row>
-                            <Col md={6} className="mb-3">
-                              <Form.Group>
-                                <Form.Label>Validade *</Form.Label>
-                                <Form.Control
-                                  type="text"
-                                  value={paymentData.expiryDate}
-                                  onChange={(e) => handleInputChange('expiryDate', e.target.value)}
-                                  isInvalid={!!errors.expiryDate}
-                                  placeholder="MM/AA"
-                                  maxLength={5}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                  {errors.expiryDate}
-                                </Form.Control.Feedback>
-                              </Form.Group>
-                            </Col>
-                            
-                            <Col md={6} className="mb-3">
-                              <Form.Group>
-                                <Form.Label>Parcelamento</Form.Label>
-                                <Form.Select
-                                  value={paymentData.installments}
-                                  onChange={(e) => handleInputChange('installments', e.target.value)}
-                                >
-                                  {Array.from({ length: 12 }, (_, i) => i + 1).map(num => (
-                                    <option key={num} value={num.toString()}>
-                                      {num}x {num === 1 ? 'à vista' : `de R$ ${(totalAmount / num).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                                    </option>
-                                  ))}
-                                </Form.Select>
-                              </Form.Group>
-                            </Col>
-                          </Row>
+                          <h6 className="payment-section-title">Pagamento</h6>
+                          <p className="text-muted mb-0">
+                            Você será redirecionado para o Stripe para finalizar o pagamento de forma segura.
+                          </p>
                         </div>
 
                         {/* Botões de ação */}
                         <div className="payment-actions">
                           <Button
                             variant="outline-secondary"
-                            onClick={() => navigate(-1)}
+                            onClick={() => navigate('/reservation')}
                             className="payment-back-button"
                             disabled={isLoading}
                           >
@@ -437,7 +302,7 @@ const Payment = () => {
                                 Redirecionando...
                               </>
                             ) : (
-                              'Pagar'
+                              'Pagar com Stripe'
                             )}
                           </Button>
                         </div>

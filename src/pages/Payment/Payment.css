@@ -18,10 +18,24 @@
 /* LAYOUT PRINCIPAL DA PÁGINA                                           */
 /* ===================================================================== */
 
+/* Garantir que o fundo ocupe toda a tela */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 .payment-main {
   min-height: calc(100vh - 140px); /* Altura mínima considerando header e footer */
   padding: 3rem 0;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  width: 100vw;
+  margin: 0;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
 
 /* ===================================================================== */
@@ -105,9 +119,9 @@
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--primary-blue);
-  padding: 1rem 0;
-  border-top: 2px solid #e9ecef;
-  margin-top: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid #e9ecef;
+  margin-top: 0.5rem;
 }
 
 /* Informação do parcelamento */
@@ -157,8 +171,8 @@
 /* ===================================================================== */
 
 .payment-section {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -167,7 +181,6 @@
   margin-bottom: 0;
   padding-bottom: 0;
 }
-
 .payment-section-title {
   color: var(--primary-blue);
   font-weight: 600;
@@ -176,11 +189,6 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.payment-section-title::before {
-  content: "💳";
-  font-size: 1.2rem;
 }
 
 .payment-section:first-of-type .payment-section-title::before {
@@ -239,9 +247,9 @@
 /* ===================================================================== */
 
 .payment-actions {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid #e9ecef;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
   display: flex;
   gap: 1rem;
   justify-content: space-between;

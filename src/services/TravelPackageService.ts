@@ -3,8 +3,7 @@ import type {
   TravelPackageCreateRequest,
   TravelPackageDetailResponse,
   TravelPackageListItem,
-  TravelPackageListParams,
-  TravelPackageListResponse
+  TravelPackageListParams
 } from '../Entities/TravelPackage';
 
 const api = axios.create({
@@ -30,13 +29,13 @@ export const createTravelPackage = async (
  */
 export const getTravelPackages = async (
   params?: TravelPackageListParams
-): Promise<TravelPackageListResponse> => {
+): Promise<TravelPackageListItem[]> => {
   try {
     const response = await api.get('/TravelPackages', { params });
-    return response.data;
+    return response.data; // json-server retorna um array
   } catch (error) {
     console.error('Error fetching travel packages:', error);
-    return { Data: [], Pagination: { CurrentPage: 1, TotalPages: 0, TotalItems: 0, PageSize: 10 } };
+    return [];
   }
 };
 

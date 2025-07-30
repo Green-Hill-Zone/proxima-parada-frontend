@@ -36,7 +36,7 @@ const Header = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/hospedagem" className="header-nav-link">
-              <img src={iconHosp} alt="" className="menu-icon" /> Hospedagem
+              <img src={iconHosp} alt="" className="menu-icon" /> Pacotes
             </Nav.Link>
             <Nav.Link as={Link} to="/passagens" className="header-nav-link">
               <img src={iconAviao} alt="" className="menu-icon" /> Passagens

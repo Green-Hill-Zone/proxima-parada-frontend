@@ -114,7 +114,7 @@ const Home = () => {
           {/* Título da seção de pacotes */}
           <Row className="mb-4">
             <Col>
-              <h2 className="home-packages-title">Pacotes em Destaque</h2>
+              <h2 className="ages-title">Pacotes em Destaque</h2>
             </Col>
           </Row>
 

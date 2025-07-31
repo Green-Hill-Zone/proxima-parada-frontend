@@ -1,12 +1,10 @@
-import React from 'react';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
-import { type TravelPackageListItem } from '../../../../Entities/TravelPackage';
-import TravelCard from './TravelCard';
+import { type TravelPackage } from './TravelCard';
 
 interface TravelCarouselProps {
-  travelPackages: TravelPackageListItem[];
-  onViewDetails?: (id: number) => void;
+  travelPackages: TravelPackage[];
+  onViewDetails?: (id: string) => void;
 }
 
 const responsive = {
@@ -27,7 +25,7 @@ const responsive = {
   }
 };
 
-const TravelCarousel: React.FC<TravelCarouselProps> = ({ travelPackages, onViewDetails }) => {
+const TravelCarousel = ({ travelPackages }: TravelCarouselProps) => {
   return (
     <Carousel
       responsive={responsive}
@@ -37,14 +35,35 @@ const TravelCarousel: React.FC<TravelCarouselProps> = ({ travelPackages, onViewD
       infinite={false}
       keyBoardControl={true}
       containerClass="carousel-container"
-      itemClass="px-3 py-2"
+      itemClass="px-3"
     >
-      {travelPackages.map((travelPackage: any) => (
-        <div key={travelPackage.id ?? travelPackage.Id} className="h-100">
-          <TravelCard
-            travelPackage={travelPackage}
-            onViewDetails={onViewDetails}
+      {travelPackages.map((pkg) => (
+        <div
+          key={pkg.id}
+          className="border rounded p-3 d-flex flex-column align-items-center"
+          style={{ height: '100%' }}
+        >
+          <img
+            src={pkg.imageUrl}
+            alt={pkg.title}
+            style={{
+              width: '100%',
+              height: '180px',
+              objectFit: 'cover',
+              borderRadius: '8px',
+              marginBottom: '1rem'
+            }}
           />
+          <h5>{pkg.title}</h5>
+          <p className="text-muted" style={{ minHeight: '60px' }}>
+            {pkg.description}
+          </p>
+          <h6 className="text-primary mb-3">
+            {new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL'
+            }).format(pkg.price)}
+          </h6>
         </div>
       ))}
     </Carousel>

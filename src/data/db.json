@@ -1,0 +1,575 @@
+{
+  "Users": [
+    {
+      "id": "1",
+      "name": "name",
+      "email": "",
+      "password": "",
+      "phone": "",
+      "document": "",
+      "role": "admin",
+      "companyId": null,
+      "isDeleted": false
+    },
+    {
+      "id": "09ab",
+      "email": "maria@email.com",
+      "phone": "(12) 31231-2312",
+      "document": "123.124.123-12",
+      "password": "123456",
+      "confirmPassword": "123456"
+    },
+    {
+      "id": "9111",
+      "email": "joao@email.com",
+      "phone": "(12) 12312-3123",
+      "document": "412.312.314-12",
+      "password": "123456",
+      "confirmPassword": "123456"
+    }
+  ],
+  "TravelPackages": [
+    {
+      "Id": 1,
+      "Name": "Praias Paradisíacas de Cancún",
+      "Description": "Desfrute de uma semana de sol, mar e areia em um dos destinos mais paradisíacos do Caribe. Pacote completo com resorts all-inclusive e passeios às ruínas maias.",
+      "BasePrice": 4899.99,
+      "Duration": 7,
+      "MaxCapacity": 30,
+      "IsActive": true,
+      "CreatedAt": "2023-05-15T10:00:00Z",
+      "Company": {
+        "Id": 1,
+        "Name": "Viagens & Cia",
+        "Phone": "(11) 3333-4444",
+        "Email": "contato@viagensecia.com.br"
+      },
+      "Destinations": [
+        {
+          "Id": 1,
+          "Name": "Cancún",
+          "Country": "México",
+          "Description": "Famosa por suas praias de areia branca e águas cristalinas do Caribe."
+        },
+        {
+          "Id": 2,
+          "Name": "Tulum",
+          "Country": "México",
+          "Description": "Ruínas maias à beira-mar, criando uma paisagem única."
+        }
+      ],
+      "Accommodations": [
+        {
+          "Id": 1,
+          "Name": "Grand Resort Cancún",
+          "Category": "5 estrelas",
+          "Address": "Zona Hoteleira, Cancún, México",
+          "Amenities": [
+            "Piscina",
+            "Spa",
+            "Academia",
+            "Restaurantes",
+            "Bar na praia"
+          ]
+        }
+      ],
+      "Airlines": [
+        {
+          "Id": 1,
+          "Name": "Latam Airlines",
+          "Code": "LA"
+        }
+      ],
+      "AvailableDates": [
+        {
+          "Id": 1,
+          "DepartureDate": "2024-01-15T08:00:00Z",
+          "ReturnDate": "2024-01-22T20:30:00Z",
+          "AvailableSpots": 15,
+          "Price": 4899.99
+        },
+        {
+          "Id": 2,
+          "DepartureDate": "2024-02-10T08:00:00Z",
+          "ReturnDate": "2024-02-17T20:30:00Z",
+          "AvailableSpots": 20,
+          "Price": 5299.99
+        }
+      ],
+      "Images": [
+        {
+          "Id": 1,
+          "ImageUrl": "https://soycancun.com.br/wp-content/uploads/2020/01/playa-delfines-in-cancun.jpg",
+          "AltText": "Praia de Cancún",
+          "IsMain": true
+        },
+        {
+          "Id": 2,
+          "ImageUrl": "https://dicasdecancun.com.br/wp-content/uploads/sites/19/2018/01/live-aqua-beach-resort-cancun.jpg",
+          "AltText": "Resort em Cancún",
+          "IsMain": false
+        }
+      ],
+      "RoomTypes": [
+        {
+          "Id": 1,
+          "Name": "Standard",
+          "Capacity": 2,
+          "PriceAdjustment": 0
+        },
+        {
+          "Id": 2,
+          "Name": "Luxo com Vista para o Mar",
+          "Capacity": 2,
+          "PriceAdjustment": 800
+        }
+      ],
+      "PaymentOptions": [
+        {
+          "Id": 1,
+          "Name": "À vista",
+          "Installments": 1,
+          "InterestRate": 0
+        },
+        {
+          "Id": 2,
+          "Name": "Parcelado",
+          "Installments": 10,
+          "InterestRate": 1.99
+        }
+      ]
+    },
+    {
+      "Id": 2,
+      "Name": "Aventura na Amazônia",
+      "Description": "Uma experiência única de imersão na maior floresta tropical do mundo. Conheça a fauna e flora amazônicas, navegue pelos rios e conviva com comunidades locais.",
+      "BasePrice": 3750.00,
+      "Duration": 5,
+      "MaxCapacity": 15,
+      "IsActive": true,
+      "CreatedAt": "2023-06-20T14:30:00Z",
+      "Company": {
+        "Id": 2,
+        "Name": "Ecoturismo Brasil",
+        "Phone": "(92) 2222-3333",
+        "Email": "contato@ecoturismobrasil.com.br"
+      },
+      "Destinations": [
+        {
+          "Id": 3,
+          "Name": "Manaus",
+          "Country": "Brasil",
+          "Description": "Portal de entrada para a floresta amazônica."
+        }
+      ],
+      "Accommodations": [
+        {
+          "Id": 2,
+          "Name": "Jungle Lodge",
+          "Category": "4 estrelas",
+          "Address": "Rio Negro, Manaus, AM",
+          "Amenities": [
+            "Passeios guiados",
+            "Observação de fauna",
+            "Alimentação regional"
+          ]
+        }
+      ],
+      "Airlines": [
+        {
+          "Id": 2,
+          "Name": "Gol Linhas Aéreas",
+          "Code": "G3"
+        }
+      ],
+      "AvailableDates": [
+        {
+          "Id": 3,
+          "DepartureDate": "2024-07-05T09:15:00Z",
+          "ReturnDate": "2024-07-10T16:40:00Z",
+          "AvailableSpots": 10,
+          "Price": 3750.00
+        }
+      ],
+      "Images": [
+        {
+          "Id": 3,
+          "ImageUrl": "https://manausjungletours.com/wp-content/uploads/2024/09/Aventuras-na-Selva-Amazonia.jpg.webp",
+          "AltText": "Trilha na Amazônia",
+          "IsMain": true
+        },
+        {
+          "Id": 4,
+          "ImageUrl": "https://viagemeturismo.abril.com.br/wp-content/uploads/2016/12/481.jpeg?crop=1&resize=1212,909",
+          "AltText": "Lodge na selva",
+          "IsMain": false
+        }
+      ],
+      "RoomTypes": [
+        {
+          "Id": 3,
+          "Name": "Cabana Compartilhada",
+          "Capacity": 4,
+          "PriceAdjustment": -200
+        },
+        {
+          "Id": 4,
+          "Name": "Cabana Privativa",
+          "Capacity": 2,
+          "PriceAdjustment": 300
+        }
+      ],
+      "PaymentOptions": [
+        {
+          "Id": 3,
+          "Name": "À vista",
+          "Installments": 1,
+          "InterestRate": 0
+        }
+      ]
+    },
+    {
+      "Id": 3,
+      "Name": "Cultura e História em Paris",
+      "Description": "Descubra a cidade luz em um roteiro completo pelos pontos turísticos mais famosos, museus renomados e a culinária francesa.",
+      "BasePrice": 8900.00,
+      "Duration": 10,
+      "MaxCapacity": 25,
+      "IsActive": true,
+      "CreatedAt": "2023-04-10T09:45:00Z",
+      "Company": {
+        "Id": 3,
+        "Name": "Europa Tours",
+        "Phone": "(21) 5555-6666",
+        "Email": "contato@europatours.com.br"
+      },
+      "Destinations": [
+        {
+          "Id": 4,
+          "Name": "Paris",
+          "Country": "França",
+          "Description": "A capital francesa, centro mundial de arte, moda e cultura."
+        }
+      ],
+      "Accommodations": [
+        {
+          "Id": 3,
+          "Name": "Hotel Champs-Élysées",
+          "Category": "4 estrelas",
+          "Address": "Avenue des Champs-Élysées, Paris, França",
+          "Amenities": [
+            "Café da manhã",
+            "Wi-Fi",
+            "Concierge",
+            "Serviço de quarto"
+          ]
+        }
+      ],
+      "Airlines": [
+        {
+          "Id": 3,
+          "Name": "Air France",
+          "Code": "AF"
+        }
+      ],
+      "AvailableDates": [
+        {
+          "Id": 4,
+          "DepartureDate": "2024-03-15T22:30:00Z",
+          "ReturnDate": "2024-03-25T15:20:00Z",
+          "AvailableSpots": 20,
+          "Price": 8900.00
+        },
+        {
+          "Id": 5,
+          "DepartureDate": "2024-05-10T22:30:00Z",
+          "ReturnDate": "2024-05-20T15:20:00Z",
+          "AvailableSpots": 15,
+          "Price": 9200.00
+        }
+      ],
+      "Images": [
+        {
+          "Id": 5,
+          "ImageUrl": "https://cdn-imgix.headout.com/media/images/c90f7eb7a5825e6f5e57a5a62d05399c-25058-BestofParis-EiffelTower-Cruise-Louvre-002.jpg",
+          "AltText": "Torre Eiffel",
+          "IsMain": true
+        },
+        {
+          "Id": 6,
+          "ImageUrl": "https://midias-turismo.eurodicas.com.br/wp-content/uploads/2025/02/arco-do-triunfo-1.jpg.webp",
+          "AltText": "Arco do Triunfo",
+          "IsMain": false
+        }
+      ],
+      "RoomTypes": [
+        {
+          "Id": 5,
+          "Name": "Quarto Standard",
+          "Capacity": 2,
+          "PriceAdjustment": 0
+        },
+        {
+          "Id": 6,
+          "Name": "Suíte com Vista para a Torre Eiffel",
+          "Capacity": 2,
+          "PriceAdjustment": 1500
+        }
+      ],
+      "PaymentOptions": [
+        {
+          "Id": 4,
+          "Name": "À vista",
+          "Installments": 1,
+          "InterestRate": 0
+        },
+        {
+          "Id": 5,
+          "Name": "Parcelado",
+          "Installments": 12,
+          "InterestRate": 2.5
+        }
+      ]
+    },
+    {
+      "Id": 4,
+      "Name": "Expedição na Patagônia",
+      "Description": "Uma incrível jornada pela Patagônia Argentina e Chilena, com trekking pelos parques nacionais, navegação entre geleiras e observação da fauna local.",
+      "BasePrice": 7200.00,
+      "Duration": 12,
+      "MaxCapacity": 18,
+      "IsActive": true,
+      "CreatedAt": "2023-07-05T16:20:00Z",
+      "Company": {
+        "Id": 4,
+        "Name": "Aventuras Sem Limites",
+        "Phone": "(11) 7777-8888",
+        "Email": "contato@aventurassemlimites.com.br"
+      },
+      "Destinations": [
+        {
+          "Id": 5,
+          "Name": "El Calafate",
+          "Country": "Argentina",
+          "Description": "Cidade próxima ao Glaciar Perito Moreno."
+        },
+        {
+          "Id": 6,
+          "Name": "Torres del Paine",
+          "Country": "Chile",
+          "Description": "Parque nacional com montanhas, glaciares e lagos."
+        }
+      ],
+      "Accommodations": [
+        {
+          "Id": 4,
+          "Name": "Patagonia Eco Lodge",
+          "Category": "3 estrelas",
+          "Address": "El Calafate, Santa Cruz, Argentina",
+          "Amenities": [
+            "Refeições incluídas",
+            "Transfer para passeios",
+            "Guias especializados"
+          ]
+        },
+        {
+          "Id": 5,
+          "Name": "Refúgio Torres",
+          "Category": "2 estrelas",
+          "Address": "Torres del Paine, Chile",
+          "Amenities": [
+            "Refeições básicas",
+            "Dormitórios compartilhados"
+          ]
+        }
+      ],
+      "Airlines": [
+        {
+          "Id": 4,
+          "Name": "Aerolíneas Argentinas",
+          "Code": "AR"
+        }
+      ],
+      "AvailableDates": [
+        {
+          "Id": 6,
+          "DepartureDate": "2024-10-05T08:45:00Z",
+          "ReturnDate": "2024-10-17T19:30:00Z",
+          "AvailableSpots": 12,
+          "Price": 7200.00
+        }
+      ],
+      "Images": [
+        {
+          "Id": 7,
+          "ImageUrl": "https://www.civitatis.com/f/argentina/el-calafate/barco-glaciar-perito-moreno-589x392.jpg",
+          "AltText": "Glaciar Perito Moreno",
+          "IsMain": true
+        },
+        {
+          "Id": 8,
+          "ImageUrl": "https://storage.googleapis.com/chile-travel-cdn/2024/09/b739f120-todo-lo-que-debes-saber-sobre-las-torres-del-paine-2.jpg",
+          "AltText": "Torres del Paine",
+          "IsMain": false
+        }
+      ],
+      "RoomTypes": [
+        {
+          "Id": 7,
+          "Name": "Dormitório Compartilhado",
+          "Capacity": 6,
+          "PriceAdjustment": -500
+        },
+        {
+          "Id": 8,
+          "Name": "Quarto Privativo",
+          "Capacity": 2,
+          "PriceAdjustment": 600
+        }
+      ],
+      "PaymentOptions": [
+        {
+          "Id": 6,
+          "Name": "À vista",
+          "Installments": 1,
+          "InterestRate": 0
+        },
+        {
+          "Id": 7,
+          "Name": "Parcelado",
+          "Installments": 8,
+          "InterestRate": 2.8
+        }
+      ]
+    },
+    {
+      "Id": 5,
+      "Name": "Relaxamento em Bali",
+      "Description": "Experimente a combinação perfeita entre relaxamento e cultura na paradisíaca ilha de Bali. Praias, templos, spa e gastronomia local em um único pacote.",
+      "BasePrice": 6500.00,
+      "Duration": 14,
+      "MaxCapacity": 20,
+      "IsActive": true,
+      "CreatedAt": "2023-08-15T11:10:00Z",
+      "Company": {
+        "Id": 5,
+        "Name": "Ásia Exótica Turismo",
+        "Phone": "(11) 9999-0000",
+        "Email": "contato@asiaexotica.com.br"
+      },
+      "Destinations": [
+        {
+          "Id": 7,
+          "Name": "Ubud",
+          "Country": "Indonésia",
+          "Description": "Centro cultural de Bali, conhecido por suas paisagens de arrozais e florestas."
+        },
+        {
+          "Id": 8,
+          "Name": "Seminyak",
+          "Country": "Indonésia",
+          "Description": "Área costeira com praias, resorts de luxo e vida noturna."
+        }
+      ],
+      "Accommodations": [
+        {
+          "Id": 6,
+          "Name": "Bali Tranquility Resort & Spa",
+          "Category": "5 estrelas",
+          "Address": "Jalan Monkey Forest, Ubud, Bali",
+          "Amenities": [
+            "Spa",
+            "Piscina infinita",
+            "Aulas de yoga",
+            "Restaurante gourmet",
+            "Serviço de mordomo"
+          ]
+        },
+        {
+          "Id": 7,
+          "Name": "Seminyak Beach Resort",
+          "Category": "5 estrelas",
+          "Address": "Jalan Kayu Aya, Seminyak, Bali",
+          "Amenities": [
+            "Acesso direto à praia",
+            "Piscina",
+            "Spa",
+            "Restaurantes",
+            "Bar"
+          ]
+        }
+      ],
+      "Airlines": [
+        {
+          "Id": 5,
+          "Name": "Qatar Airways",
+          "Code": "QR"
+        }
+      ],
+      "AvailableDates": [
+        {
+          "Id": 7,
+          "DepartureDate": "2024-04-10T23:40:00Z",
+          "ReturnDate": "2024-04-24T18:15:00Z",
+          "AvailableSpots": 15,
+          "Price": 6500.00
+        },
+        {
+          "Id": 8,
+          "DepartureDate": "2024-09-05T23:40:00Z",
+          "ReturnDate": "2024-09-19T18:15:00Z",
+          "AvailableSpots": 18,
+          "Price": 6200.00
+        }
+      ],
+      "Images": [
+        {
+          "Id": 9,
+          "ImageUrl": "https://viagenseoutrashistorias.com.br/wp-content/uploads/2018/07/templos-em-bali-29.jpg",
+          "AltText": "Templo em Bali",
+          "IsMain": true
+        },
+        {
+          "Id": 10,
+          "ImageUrl": "https://www.essemundoenosso.com.br/wp-content/uploads/2015/02/seminyak-bali-7.jpg",
+          "AltText": "Praia em Seminyak",
+          "IsMain": false
+        },
+        {
+          "Id": 11,
+          "ImageUrl": "https://www.vivernomundo.com/wp-content/uploads/2019/01/ubud-terra%C3%A7o-de-arroz-tegalalang.jpg",
+          "AltText": "Arrozais em Ubud",
+          "IsMain": false
+        }
+      ],
+      "RoomTypes": [
+        {
+          "Id": 9,
+          "Name": "Villa Deluxe",
+          "Capacity": 2,
+          "PriceAdjustment": 1200
+        },
+        {
+          "Id": 10,
+          "Name": "Villa com Piscina Privativa",
+          "Capacity": 2,
+          "PriceAdjustment": 2500
+        }
+      ],
+      "PaymentOptions": [
+        {
+          "Id": 8,
+          "Name": "À vista",
+          "Installments": 1,
+          "InterestRate": 0
+        },
+        {
+          "Id": 9,
+          "Name": "Parcelado",
+          "Installments": 10,
+          "InterestRate": 2.2
+        }
+      ]
+    }
+  ]
+}

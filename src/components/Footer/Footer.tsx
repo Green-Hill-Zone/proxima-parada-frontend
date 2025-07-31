@@ -1,40 +1,60 @@
-import { Container, Row, Col } from 'react-bootstrap';
+// Importação dos componentes do React Bootstrap
+import { Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import logo from '../../imgs/logo/logo.svg';
 
+import './Footer.css'; // Importa os estilos específicos do Footer
 
+// Componente Footer - Rodapé da aplicação
 const Footer = () => {
   return (
-    <footer className="custom-navbar text-light py-5 mt-5">
+    // Rodapé com classes CSS personalizadas
+    <footer className="footer-container">
       <Container>
         <Row className="mb-4">
-          <Col md={4}>
-            <img src={logo} alt="Logo" />
-            <p>Sua agência de viagens de confiança.</p>
+          {/* Seção da Logo e Descrição */}
+          <Col md={4} className="mb-4 mb-md-0">
+            <img src={logo} alt="Próxima Parada" className="mb-3 footer-logo" />
+            <p>
+              Sua plataforma de confiança para descobrir e planejar as melhores viagens.
+            </p>
           </Col>
 
-          <Col md={4}>
-            <h6 className="text-uppercase fw-bold">Links Rápidos</h6>
+          {/* Seção de Links Rápidos */}
+          <Col md={4} className="mb-4 mb-md-0">
+            <h6 className="text-uppercase fw-bold mb-3">Links Rápidos</h6>
             <ul className="list-unstyled">
-              <li><Link to="/hospedagem" className="text-light text-decoration-none">Hospedagem</Link></li>
-              <li><Link to="/passagens" className="text-light text-decoration-none">Passagens</Link></li>
-              <li><Link to="/aluguel" className="text-light text-decoration-none">Aluguel de carros</Link></li>
-              <li><Link to="/passeios" className="text-light text-decoration-none">Passeios e atividades</Link></li>
+              <li><Link to="/hospedagem">Hospedagem</Link></li>
+              <li><Link to="/passagens">Passagens</Link></li>
+              <li><Link to="/aluguel">Aluguel de carros</Link></li>
+              <li><Link to="/passeios">Passeios e atividades</Link></li>
             </ul>
           </Col>
 
+          {/* Seção de Contato */}
           <Col md={4}>
-            <h6 className="text-uppercase fw-bold">Contato</h6>
-            <p className="mb-1">contato@proximaparada.com</p>
-            <p className="mb-1">+55 (11) 99999-9999</p>
-            <p>Av. Central, 1234 - São Paulo/SP</p>
+            <h6 className="text-uppercase fw-bold mb-3">Contato</h6>
+            <div className="contact-info">
+              <p>contato@proximaparada.com</p>
+              <p>+55 (11) 99999-9999</p>
+              <p>Av. Central, 1234 - São Paulo/SP</p>
+            </div>
           </Col>
         </Row>
 
-        <Row>
+        {/* Linha de separação e direitos autorais */}
+        <hr className="footer-divider" />
+        <Row className="pt-3">
           <Col className="text-center">
-            <hr className="border-light" />
-            <p className="mb-0">&copy; 2025 Próxima Parada. Todos os direitos reservados.</p>
+            <div className="footer-content">
+              <p className="footer-text mb-0">
+                &copy; 2025 Próxima Parada. Todos os direitos reservados.
+                <span className="footer-separator">|</span>
+                <a href="/politica-privacidade" className="footer-link">
+                  Política de Privacidade
+                </a>
+              </p>
+            </div>
           </Col>
         </Row>
       </Container>

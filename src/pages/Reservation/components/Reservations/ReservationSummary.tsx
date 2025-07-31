@@ -1,11 +1,36 @@
 import { Card, Badge, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { useRequireAuth } from '../../../../hooks/useAuth';
 
 
 const ReservationSummary = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useRequireAuth();
+  
   const valuePerTraveler = 1610;
   const taxes = 205;
   const totalTravelers = 2;
   const finalPrice = (valuePerTraveler + taxes) * totalTravelers;
+
+  // Função para lidar com o clique no botão "Reservar Agora"
+  const handleReservarAgora = () => {
+    if (isAuthenticated) {
+      // Se o usuário estiver logado, vai para a página de pagamento
+      navigate('/payment', {
+        state: {
+          travelData: {
+            name: "Destino Selecionado", // Isso pode vir de props ou contexto
+            date: "15/08/2025 - 22/08/2025", // Isso pode vir de props ou contexto
+            price: valuePerTraveler + taxes,
+            people: totalTravelers
+          }
+        }
+      });
+    } else {
+      // Se não estiver logado, vai para a página de login
+      navigate('/login');
+    }
+  };
 
   return (
     <Card className="rounded-4 mb-0  stat-card">
@@ -42,6 +67,7 @@ const ReservationSummary = () => {
           <Button
             variant="warning"
             className="w-100 fw-bold text-dark py-2 rounded-pill"
+            onClick={handleReservarAgora}
           >
             Reservar Agora
           </Button>

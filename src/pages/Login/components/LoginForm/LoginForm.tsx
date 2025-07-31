@@ -186,7 +186,11 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                 <p className="login-form-signup-text">
                   Não tem uma conta?{' '}
                   {/* Botão estilizado como link para cadastro */}
-                  <Button variant="link" className="login-form-signup-link">
+                  <Button 
+                    variant="link" 
+                    className="login-form-signup-link"
+                    onClick={() => navigate('/register')}
+                  >
                     Cadastre-se
                   </Button>
                 </p>

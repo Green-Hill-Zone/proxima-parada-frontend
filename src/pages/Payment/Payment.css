@@ -26,8 +26,8 @@ body {
 }
 
 .payment-main {
-  min-height: calc(100vh - 140px); /* Altura mínima considerando header e footer */
-  padding: 3rem 0;
+   /* Ajuste para garantir espaço para header e footer */
+  padding: 3rem 0 5rem 0; /* padding-bottom extra para evitar sobreposição do footer */
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   width: 100vw;
   margin: 0;

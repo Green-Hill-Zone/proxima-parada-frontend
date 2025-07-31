@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container } from 'react-bootstrap';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import { Footer, Header, ProtectedRoute } from './components';
@@ -22,8 +21,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Header />
-        <Container>
+        <Header/>
           <Routes>
             <Route path="/admin-register" element={<AdminRegister />} />
             <Route path="/" element={<Home />} />
@@ -38,7 +36,6 @@ function App() {
             <Route path="/my-travels" element={<ProtectedRoute> <MyTravels /> </ProtectedRoute>} />
             <Route path="/my-payments" element={<ProtectedRoute> <MyPayments /> </ProtectedRoute>} />
           </Routes>
-        </Container>
         <Footer />
       </Router>
     </AuthProvider>

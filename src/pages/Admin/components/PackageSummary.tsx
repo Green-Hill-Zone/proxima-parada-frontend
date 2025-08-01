@@ -8,9 +8,10 @@ type Props = {
   roomType: any;
   hotelImages: File[];
   onFinalize: () => void;
+  onSave?: () => void;
 };
 
-const PackageSummary: React.FC<Props> = ({ form, flight, flightType, hotel, roomType, hotelImages, onFinalize }) => (
+const PackageSummary: React.FC<Props> = ({ form, flight, flightType, hotel, roomType, hotelImages, onFinalize, onSave }) => (
   <div className="bg-light p-4 rounded-3 border">
     <h4 className="mb-3">Resumo do Cadastro</h4>
     <div className="mb-3">
@@ -47,37 +48,10 @@ const PackageSummary: React.FC<Props> = ({ form, flight, flightType, hotel, room
         <li>Imagens: {hotelImages.length > 0 ? hotelImages.map(img => img.name).join(", ") : "Nenhuma"}</li>
       </ul>
     </div>
-    <button
-      className="btn btn-success w-100 mb-2"
-      type="button"
-      onClick={async () => {
-        const payload = {
-          pacote: form,
-          voo: flight,
-          tipoVoo: flightType,
-          hotel,
-          tipoQuarto: roomType,
-          imagens: hotelImages.map(img => img.name)
-        };
-        try {
-          const response = await fetch("/api/pacotes", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-          if (response.ok) {
-            alert("Cadastro realizado com sucesso!");
-            onFinalize();
-          } else {
-            alert("Erro ao salvar no banco de dados.");
-          }
-        } catch (err) {
-          alert("Erro de conexão com o banco de dados.");
-        }
-      }}
-    >
-      Finalizar Cadastro
-    </button>
+    <button className="btn btn-success w-100 mb-2" type="button" onClick={onFinalize}>Finalizar Cadastro</button>
+    {onSave && (
+      <button className="btn btn-warning w-100" type="button" onClick={onSave}>Salvar no banco de dados</button>
+    )}
   </div>
 );
 

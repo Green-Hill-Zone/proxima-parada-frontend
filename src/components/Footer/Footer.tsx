@@ -24,10 +24,9 @@ const Footer = () => {
           <Col md={4} className="mb-4 mb-md-0">
             <h6 className="text-uppercase fw-bold mb-3">Links Rápidos</h6>
             <ul className="list-unstyled">
-              <li><Link to="/hospedagem">Hospedagem</Link></li>
-              <li><Link to="/passagens">Passagens</Link></li>
-              <li><Link to="/aluguel">Aluguel de carros</Link></li>
-              <li><Link to="/passeios">Passeios e atividades</Link></li>
+              <li><Link to="/pacotes">Hospedagem</Link></li>
+              <li><Link to="/voos">Voos</Link></li>
+              <li><Link to="/aluguel">Hotéis</Link></li>
             </ul>
           </Col>
 

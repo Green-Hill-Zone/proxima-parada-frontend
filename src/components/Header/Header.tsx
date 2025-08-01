@@ -1,11 +1,8 @@
 // Importações necessárias do React Bootstrap e React Router
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import iconAviao from '../../imgs/icons-menu/icon-aviao.svg';
-import iconCar from '../../imgs/icons-menu/icon-car.svg';
-import iconHosp from '../../imgs/icons-menu/icon-hosp.svg';
-import iconPasseio from '../../imgs/icons-menu/icon-passeio.svg';
 import logo from '../../imgs/logo/logo.svg';
+import { FaBox, FaPlane, FaHotel, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
 import '../../styles/header/header.css';
 
 import { useAuth } from '../../hooks/useAuth';
@@ -26,26 +23,18 @@ const Header = () => {
         <Navbar.Brand as={Link} to="/">
           <img src={logo} alt="Logo" />
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-
-
-        {/* Botão hambúrguer para dispositivos móveis */}
-        <Navbar.Toggle aria-controls="basic-navbar-nav" className="header-toggler" />
 
         {/* Menu de navegação que se expande/contrai */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/packages" className="header-nav-link">
-              <img src={iconHosp} alt="" className="menu-icon" /> Pacotes
+            <Nav.Link as={Link} to="/Packages" className="header-nav-link">
+              <FaBox className="menu-icon" style={{ fontSize: '0.95em' }} /> Pacotes
             </Nav.Link>
-            <Nav.Link as={Link} to="/passagens" className="header-nav-link">
-              <img src={iconAviao} alt="" className="menu-icon" /> Passagens
+            <Nav.Link as={Link} to="/Flights" className="header-nav-link">
+              <FaPlane className="menu-icon" style={{ fontSize: '0.95em' }} /> Voos
             </Nav.Link>
-            <Nav.Link as={Link} to="/aluguel" className="header-nav-link">
-              <img src={iconCar} alt="" className="menu-icon" /> Hotel
-            </Nav.Link>
-            <Nav.Link as={Link} to="/passeios" className="header-nav-link">
-              <img src={iconPasseio} alt="" className="menu-icon" /> Passeios e atividades
+            <Nav.Link as={Link} to="/Hotels" className="header-nav-link">
+              <FaHotel className="menu-icon" style={{ fontSize: '0.95em' }} /> Hotéis
             </Nav.Link>
           </Nav>
           <Nav className="ms-auto">
@@ -80,8 +69,12 @@ const Header = () => {
               ) : (
                 // Link para login quando usuário não está logado
                 <div className="d-flex flex-row mb-3">
-                  <Nav.Link as={Link} to="/register" className="header-nav-link">Cadastre-se</Nav.Link>
-                  <Nav.Link as={Link} to="/login" className="header-nav-link">Login</Nav.Link>
+                  <Nav.Link as={Link} to="/register" className="header-nav-link">
+                    <FaUserPlus className="menu-icon" style={{ fontSize: '0.95em' }} /> Cadastre-se
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/login" className="header-nav-link">
+                    <FaSignInAlt className="menu-icon" style={{ fontSize: '0.95em' }} /> Login
+                  </Nav.Link>
 
                 </div>
               )}

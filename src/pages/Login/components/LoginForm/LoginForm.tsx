@@ -60,8 +60,18 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
         if (onSubmit) {
           onSubmit(formData);
         }
-        // Redireciona para o dashboard
-        navigate('/dashboard');
+        
+        // Verifica se o usuário logado é admin para redirecionar corretamente
+        // Como o contexto pode não ter sido atualizado ainda, verificamos pelos dados de login
+        const isAdminUser = formData.email === 'admin@email.com';
+        
+        if (isAdminUser) {
+          // Redireciona admin para dashboard administrativo
+          navigate('/admin/dashboard');
+        } else {
+          // Redireciona usuário comum para dashboard normal
+          navigate('/dashboard');
+        }
       } else {
         // Login falhou - mostra mensagem de erro
         setError('Email ou senha incorretos. Tente novamente.');

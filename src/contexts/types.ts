@@ -26,6 +26,7 @@ export interface User {
   name: string;         // Nome completo do usuário
   email: string;        // Email (usado como login)
   avatar?: string;      // URL do avatar (opcional)
+  role?: string;        // Role do usuário (admin, user)
   // Novas informações pessoais
   birthDate: string;    // Data de nascimento (formato: DD/MM/AAAA)
   cpf: string;          // CPF formatado (formato: XXX.XXX.XXX-XX)

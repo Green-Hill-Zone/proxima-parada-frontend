@@ -96,6 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           name: foundUser.name,
           email: foundUser.email,
           avatar: foundUser.avatar,
+          role: foundUser.role,
           // Inclui todas as informações pessoais
           birthDate: foundUser.birthDate,
           cpf: foundUser.cpf,
@@ -204,6 +205,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         name: newUser.name,
         email: newUser.email,
         password,                               // Senha (em produção seria hash)
+        role: 'user',                           // Role padrão para novos usuários
         avatar: newUser.avatar || '',
         birthDate: newUser.birthDate,
         cpf: newUser.cpf,

@@ -28,14 +28,10 @@ const Header = () => {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-
-        {/* Botão hambúrguer para dispositivos móveis */}
-        <Navbar.Toggle aria-controls="basic-navbar-nav" className="header-toggler" />
-
         {/* Menu de navegação que se expande/contrai */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/pacotes" className="header-nav-link">
+            <Nav.Link as={Link} to="/packages" className="header-nav-link">
               <img src={iconHosp} alt="" className="menu-icon" /> Pacotes
             </Nav.Link>
             <Nav.Link as={Link} to="/passagens" className="header-nav-link">

@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container } from 'react-bootstrap';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import { Footer, Header, ProtectedRoute } from './components';
@@ -11,7 +10,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import MyPayments from './pages/MyPayments';
 import MyTravels from './pages/MyTravels';
-import Pacotes from './pages/Pacotes';
+import Packages from './pages/Packages';
 import Payment from './pages/Payment';
 import Profile from './pages/Profile';
 import { ReservationProvider } from './pages/Reservation/context/ReservationContext.tsx';
@@ -22,8 +21,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Header />
-        <Container>
+        <Header/>
           <Routes>
             <Route path="/admin-register" element={<AdminRegister />} />
             <Route path="/" element={<Home />} />
@@ -31,7 +29,7 @@ function App() {
             <Route path="/register" element={<UserRegister />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/admin/packages" element={<AdminPackageForm />} />
-            <Route path="/pacotes" element={<Pacotes />} />
+            <Route path="/packages" element={<Packages />} />
             <Route path="/reservation" element={<ReservationProvider> <Reservation /> </ReservationProvider>} />
             <Route path="/reservation/:id" element={<Reservation />} />
             <Route path="/dashboard" element={<ProtectedRoute> <Dashboard /> </ProtectedRoute>} />
@@ -39,7 +37,6 @@ function App() {
             <Route path="/my-travels" element={<ProtectedRoute> <MyTravels /> </ProtectedRoute>} />
             <Route path="/my-payments" element={<ProtectedRoute> <MyPayments /> </ProtectedRoute>} />
           </Routes>
-        </Container>
         <Footer />
       </Router>
     </AuthProvider>

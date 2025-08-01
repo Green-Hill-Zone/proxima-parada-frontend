@@ -35,7 +35,7 @@ const FlightForm: React.FC<Props> = ({ flight, setFlight, handleSubmit, handleCh
         <input type="time" className="form-control" name="horario" value={flight.horario} onChange={handleChange} required />
       </div>
     </div>
-    <button type="submit" className="btn w-100" style={{ background: '#3246aa', color: '#fff' }}>Cadastrar Voo</button>
+    {/* Botão removido */}
   </form>
 );
 

@@ -39,8 +39,8 @@ const TravelCarousel: React.FC<TravelCarouselProps> = ({ travelPackages, onViewD
       containerClass="carousel-container"
       itemClass="px-3 py-2"
     >
-      {travelPackages.map((travelPackage) => (
-        <div key={travelPackage.Id} className="h-100">
+      {travelPackages.map((travelPackage: any) => (
+        <div key={travelPackage.id ?? travelPackage.Id} className="h-100">
           <TravelCard
             travelPackage={travelPackage}
             onViewDetails={onViewDetails}

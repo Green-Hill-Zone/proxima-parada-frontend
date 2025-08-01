@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import "./SearchSection.css";
 import {
   FaCalendarAlt,
   FaChevronDown,
@@ -39,7 +40,7 @@ const SearchBox = () => {
   return (
     <div
       className="search-box mx-auto my-4 p-3 bg-white shadow rounded"
-      style={{ maxWidth: "1100px" }}
+      style={{ maxWidth: "1300px", width: "100%" }}
     >
       <form>
         <div className="row g-3 align-items-end">
@@ -83,7 +84,7 @@ const SearchBox = () => {
           </div>
 
           {/* Hóspedes */}
-          <div className="col-12 col-md-4 position-relative" ref={guestRef}>
+          <div className="col-12 col-md-3 position-relative" ref={guestRef}>
             <label className="form-label fw-bold">
               <FaUser className="me-2" /> Hóspedes
             </label>
@@ -101,7 +102,7 @@ const SearchBox = () => {
             {showGuestOptions && (
               <div
                 className="position-absolute bg-white shadow rounded p-3 mt-1 w-100"
-                style={{ zIndex: 999 }}
+                style={{ zIndex: 2000, maxWidth: '100%', right: 0 }}
               >
                 {/* Adultos */}
                 <div className="d-flex justify-content-between align-items-center mb-2">
@@ -191,8 +192,8 @@ const SearchBox = () => {
           </div>
 
           {/* Botão de pesquisa */}
-          <div className="col-12 col-md-1 align-self-end">
-            <button className="btn btn-primary" style={{ height: "45px" }}>
+          <div className="col-12 col-md-2 d-flex justify-content-end">
+            <button className="btn btn-primary w-100" style={{ height: "45px", minWidth: 100 }}>
               Pesquisar
             </button>
           </div>

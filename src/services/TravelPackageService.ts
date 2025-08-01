@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { CollectionWrapper } from '../Entities/CollectionWrapper';
 import type {
   TravelPackageCreateRequest,
   TravelPackageDetailResponse,
@@ -8,8 +9,20 @@ import type {
 } from '../Entities/TravelPackage';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001', // ou o endereço onde está rodando o json-server
+  baseURL: 'https://localhost:7102/api',
 });
+
+/**
+ * Função utilitária para extrair valores de uma CollectionWrapper
+ * @param wrapper Objeto CollectionWrapper ou qualquer outro objeto
+ * @returns Array com os valores ou o objeto original se não for uma CollectionWrapper
+ */
+function unwrapCollection<T>(wrapper: CollectionWrapper<T> | any): T[] | any {
+  if (wrapper && wrapper.$values !== undefined) {
+    return wrapper.$values;
+  }
+  return wrapper;
+}
 
 /**
  * Cria um novo pacote de viagem
@@ -19,7 +32,7 @@ const api = axios.create({
 export const createTravelPackage = async (
   packageData: TravelPackageCreateRequest
 ): Promise<TravelPackageDetailResponse> => {
-  const response = await api.post('/TravelPackages', packageData);
+  const response = await api.post('/TravelPackage', packageData);
   return response.data;
 };
 
@@ -32,7 +45,22 @@ export const getTravelPackages = async (
   params?: TravelPackageListParams
 ): Promise<TravelPackageListResponse> => {
   try {
-    const response = await api.get('/TravelPackages', { params });
+    const response = await api.get('/TravelPackage', { params });
+    const packages = unwrapCollection(response.data);
+    
+    // Se a resposta era um CollectionWrapper, formata como TravelPackageListResponse
+    if (Array.isArray(packages) && packages !== response.data) {
+      return {
+        Data: packages,
+        Pagination: {
+          CurrentPage: params?.page || 1,
+          TotalPages: 1,
+          TotalItems: packages.length,
+          PageSize: params?.pageSize || 10
+        }
+      };
+    }
+    
     return response.data;
   } catch (error) {
     console.error('Error fetching travel packages:', error);
@@ -47,10 +75,8 @@ export const getTravelPackages = async (
  */
 export const getFeaturedPackages = async (limit: number = 6): Promise<TravelPackageListItem[]> => {
   try {
-    const response = await api.get('/TravelPackages', {
-      params: { featured: true, _limit: limit }
-    });
-    return response.data;
+    const response = await getTravelPackages({ page: 1, pageSize: limit });
+    return response.Data || [];
   } catch (error) {
     console.error('Error fetching featured packages:', error);
     return [];
@@ -65,9 +91,46 @@ export const getFeaturedPackages = async (limit: number = 6): Promise<TravelPack
 export const getTravelPackageById = async (
   id: number
 ): Promise<TravelPackageDetailResponse | null> => {
+  console.log(`Fetching travel package with ID: ${id} na rota ${api.getUri()}/TravelPackage/${id}`);
   try {
-    const response = await api.get(`/TravelPackages/${id}`);
-    return response.data;
+    const response = await api.get(`/TravelPackage/${id}`);
+    
+    if (response.data) {
+      const packageData = { ...response.data };
+      
+      // Transforma todos os campos que são CollectionWrapper usando a função unwrapCollection
+      if (packageData.images) {
+        packageData.Images = unwrapCollection(packageData.images);
+      }
+      
+      if (packageData.flights) {
+        packageData.Flights = unwrapCollection(packageData.flights);
+      }
+      
+      if (packageData.availableDates) {
+        packageData.AvailableDates = unwrapCollection(packageData.availableDates);
+      }
+      
+      if (packageData.paymentOptions) {
+        packageData.PaymentOptions = unwrapCollection(packageData.paymentOptions);
+      }
+      
+      if (packageData.accommodations) {
+        packageData.Accommodations = unwrapCollection(packageData.accommodations);
+      }
+
+      // Ajusta os nomes de campos para o padrão usado no frontend
+      if (packageData.title) packageData.Title = packageData.title;
+      if (packageData.description) packageData.Description = packageData.description;
+      if (packageData.price) packageData.Price = packageData.price;
+      if (packageData.destination) packageData.Destination = packageData.destination;
+      if (packageData.company) packageData.Company = packageData.company;
+      if (packageData.createdAt) packageData.CreatedAt = packageData.createdAt;
+      if (packageData.updatedAt) packageData.UpdatedAt = packageData.updatedAt;
+      
+      return packageData;
+    }
+    return null;
   } catch (error) {
     console.error(`Error fetching travel package with ID ${id}:`, error);
     return null;
@@ -85,7 +148,7 @@ export const updateTravelPackage = async (
   packageData: Partial<TravelPackageCreateRequest>
 ): Promise<TravelPackageDetailResponse | null> => {
   try {
-    const response = await api.put(`/TravelPackages/${id}`, packageData);
+    const response = await api.put(`/TravelPackage/${id}`, packageData);
     return response.data;
   } catch (error) {
     console.error(`Error updating travel package with ID ${id}:`, error);
@@ -100,7 +163,7 @@ export const updateTravelPackage = async (
  */
 export const deleteTravelPackage = async (id: number): Promise<void> => {
   try {
-    await api.delete(`/TravelPackages/${id}`);
+    await api.delete(`/TravelPackage/${id}`);
   } catch (error) {
     console.error(`Error deleting travel package with ID ${id}:`, error);
   }
@@ -115,12 +178,10 @@ export const getTravelPackagesByDestination = async (
   destinationName: string
 ): Promise<TravelPackageListItem[]> => {
   try {
-    // Para JSON Server, assume-se que há uma propriedade Destinations 
-    // que podemos filtrar usando query params
-    const response = await api.get('/TravelPackages', {
-      params: { 'Destinations.Name_like': destinationName }
+    const response = await api.get('/TravelPackage/by-destination', {
+      params: { destination: destinationName }
     });
-    return response.data;
+    return unwrapCollection(response.data) || [];
   } catch (error) {
     console.error(`Error fetching packages for destination ${destinationName}:`, error);
     return [];
@@ -138,10 +199,10 @@ export const getTravelPackagesByPriceRange = async (
   maxPrice: number
 ): Promise<TravelPackageListItem[]> => {
   try {
-    const response = await api.get('/TravelPackages', {
-      params: { BasePrice_gte: minPrice, BasePrice_lte: maxPrice }
+    const response = await api.get('/TravelPackage/by-price', {
+      params: { minPrice, maxPrice }
     });
-    return response.data;
+    return unwrapCollection(response.data) || [];
   } catch (error) {
     console.error(`Error fetching packages by price range:`, error);
     return [];

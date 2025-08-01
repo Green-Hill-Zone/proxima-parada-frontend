@@ -4,7 +4,7 @@ import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { type TravelPackageListItem } from '../../Entities/TravelPackage';
 import imgBg from '../../imgs/img-home/img-bg.png';
-import { getFeaturedPackages } from '../../services/TravelPackageService';
+import { getTravelPackages } from '../../services/TravelPackageService';
 import '../../styles/home/heroSection.css';
 import { HeroSection } from './components'; // Componentes específicos da Home
 import SearchSection from './components/SearchSection/SearchSection.tsx';
@@ -22,8 +22,12 @@ const Home = () => {
     const loadFeaturedPackages = async () => {
       try {
         setIsLoading(true);
-        const packages = await getFeaturedPackages(6); // Busca 6 pacotes em destaque
-        setFeaturedPackages(packages);
+        const response = await getTravelPackages({ page: 1, pageSize: 6 });
+        if (response && response.Data) {
+          setFeaturedPackages(response.Data);
+        } else {
+          setError('Formato de resposta inválido dos pacotes em destaque.');
+        }
       } catch (err) {
         console.error('Erro ao carregar pacotes em destaque:', err);
         setError('Não foi possível carregar os pacotes em destaque. Tente novamente mais tarde.');

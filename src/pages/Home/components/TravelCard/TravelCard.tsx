@@ -9,12 +9,12 @@ interface TravelCardProps {
 
 const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails }) => {
   // Desestruturando propriedades do pacote de viagem
-  const { Id, Name, Description, BasePrice, Images, MainDestination, Duration } = travelPackage;
+  const { Id, Title, Description, Price, Images, Destination, Duration } = travelPackage;
 
   // Encontrar a imagem principal ou usar a primeira disponível
   const mainImage = Images?.find(img => img.IsMain) || Images?.[0];
   const imageUrl = mainImage?.ImageUrl || 'https://via.placeholder.com/300x200?text=Sem+Imagem';
-  const imageAlt = mainImage?.AltText || Name;
+  const imageAlt = mainImage?.AltText || Title;
 
   // Truncar descrição para não ficar muito longa
   const truncatedDescription = Description?.length > 120
@@ -30,11 +30,11 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
         style={{ height: '200px', objectFit: 'cover' }}
       />
       <Card.Body className="d-flex flex-column">
-        <Card.Title>{Name}</Card.Title>
+        <Card.Title>{Title}</Card.Title>
 
-        {MainDestination && (
+        {Destination && (
           <Card.Subtitle className="mb-2 text-muted">
-            {MainDestination.Name}, {MainDestination.Country}
+            {Destination.Name}, {Destination.Country}
           </Card.Subtitle>
         )}
 
@@ -48,7 +48,7 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
-              }).format(BasePrice)}
+              }).format(Price)}
             </h5>
             <small className="text-muted">{Duration} dias</small>
           </div>

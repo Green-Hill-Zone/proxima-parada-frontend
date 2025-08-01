@@ -33,6 +33,7 @@ function App() {
             <Route path="/admin/packages" element={<AdminPackageForm />} />
             <Route path="/pacotes" element={<Pacotes />} />
             <Route path="/reservation" element={<ReservationProvider> <Reservation /> </ReservationProvider>} />
+            <Route path="/reservation/:id" element={<Reservation />} />
             <Route path="/dashboard" element={<ProtectedRoute> <Dashboard /> </ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute> <Profile /> </ProtectedRoute>} />
             <Route path="/my-travels" element={<ProtectedRoute> <MyTravels /> </ProtectedRoute>} />

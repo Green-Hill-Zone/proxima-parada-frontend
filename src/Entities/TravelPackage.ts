@@ -2,33 +2,17 @@
  * Interfaces para Pacotes de Viagem
  */
 
+import type { Accommodation } from "./Accommodation";
+import type { Destination } from "./Destination";
+import type { Flight } from "./Flight";
+import type { Image } from "./Image";
+
 // Entidades básicas
 export interface Company {
   Id: number;
   Name: string;
   Phone?: string;
   Email?: string;
-}
-
-export interface Destination {
-  Id: number;
-  Name: string;
-  Country: string;
-  Description?: string;
-}
-
-export interface Accommodation {
-  Id: number;
-  Name: string;
-  Category: string;
-  Address?: string;
-  Amenities?: string[];
-}
-
-export interface Airline {
-  Id: number;
-  Name: string;
-  Code: string;
 }
 
 export interface AvailableDate {
@@ -39,12 +23,7 @@ export interface AvailableDate {
   Price: number;
 }
 
-export interface Image {
-  Id: number;
-  ImageUrl: string;
-  AltText: string;
-  IsMain: boolean;
-}
+
 
 export interface RoomType {
   Id: number;
@@ -69,9 +48,9 @@ export interface Pagination {
 
 // Request para criação de pacote
 export interface TravelPackageCreateRequest {
-  Name: string;
+  Title: string;
   Description: string;
-  BasePrice: number;
+  Price: number;
   Duration: number;
   MaxCapacity: number;
   CategoryId: number;
@@ -83,15 +62,15 @@ export interface TravelPackageCreateRequest {
 
 // Response de um pacote resumido (listagem)
 export interface TravelPackageListItem {
+  $id: string;
   Id: number;
-  Name: string;
+  Title: string;
   Description: string;
-  BasePrice: number;
+  Price: number;
   Duration: number;
-  MaxCapacity: number;
   IsActive: boolean;
+  Destination: Destination;
   Company: Company;
-  MainDestination: Destination;
   Images: Image[];
 }
 
@@ -103,22 +82,21 @@ export interface TravelPackageListResponse {
 
 // Response completa de um pacote detalhado
 export interface TravelPackageDetailResponse {
+  $id: string;
   Id: number;
-  Name: string;
+  Title: string;
   Description: string;
-  BasePrice: number;
+  Price: number;
   Duration: number;
-  MaxCapacity: number;
-  IsActive: boolean;
-  CreatedAt: string; // ISO date string
+  Destination: Destination;
   Company: Company;
-  Destinations: Destination[];
   Accommodations: Accommodation[];
-  Airlines: Airline[];
+  Flights: Flight[];
   AvailableDates: AvailableDate[];
   Images: Image[];
-  RoomTypes: RoomType[];
   PaymentOptions: PaymentOption[];
+  CreatedAt: string; // ISO date string
+  UpdatedAt: string | null;
 }
 
 // Parâmetros de query para listar pacotes
@@ -129,4 +107,9 @@ export interface TravelPackageListParams {
   minPrice?: number;
   maxPrice?: number;
   duration?: number;
+}
+
+export interface GetAllTravelPackagesResponse {
+  $id: string;
+  $values: TravelPackageListItem[];
 }

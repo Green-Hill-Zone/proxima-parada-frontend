@@ -17,7 +17,7 @@ const FlightTypeForm: React.FC<Props> = ({ flightType, setFlightType, handleSubm
       <label className="form-label">Descrição</label>
       <textarea className="form-control" name="descricao" value={flightType.descricao} onChange={handleChange} rows={3} required />
     </div>
-    {/* Botão removido */}
+    <button type="submit" className="btn w-100" style={{ background: '#3246aa', color: '#fff' }}>Cadastrar Tipo de Voo</button>
   </form>
 );
 

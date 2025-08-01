@@ -28,10 +28,6 @@ const Header = () => {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-
-        {/* Botão hambúrguer para dispositivos móveis */}
-        <Navbar.Toggle aria-controls="basic-navbar-nav" className="header-toggler" />
-
         {/* Menu de navegação que se expande/contrai */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">

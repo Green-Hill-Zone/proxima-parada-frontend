@@ -69,3 +69,17 @@ export const useRequireAuth = () => {
     isAuthenticated: !!user         // true se user existe, false caso contrário
   };
 };
+
+/* ===================================================================== */
+/* HOOK PARA VERIFICAÇÃO DE ADMINISTRADOR                              */
+/* ===================================================================== */
+
+/**
+ * Hook para verificar se o usuário atual é um administrador
+ * 
+ * @returns {boolean} true se usuário é admin, false caso contrário
+ */
+export const useIsAdmin = (): boolean => {
+  const { user } = useAuth();
+  return user?.role === 'admin';
+};

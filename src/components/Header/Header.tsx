@@ -8,12 +8,13 @@ import iconPasseio from '../../imgs/icons-menu/icon-passeio.svg';
 import logo from '../../imgs/logo/logo.svg';
 import '../../styles/header/header.css';
 
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth, useIsAdmin } from '../../hooks/useAuth';
 import './Header.css'; // Importa os estilos específicos do Header
 
 // Componente Header - Cabeçalho da aplicação
 const Header = () => {
   const { user, logout } = useAuth();
+  const isAdmin = useIsAdmin();
 
   const handleLogout = () => {
     logout();
@@ -56,18 +57,42 @@ const Header = () => {
                   id="user-dropdown"
                   className="header-nav-link"
                 >
-                  <NavDropdown.Item as={Link} to="/dashboard">
-                    Dashboard
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/my-travels">
-                    Minhas Viagens
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/my-payments">
-                    Meus Pagamentos
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/profile">
-                    Perfil
-                  </NavDropdown.Item>
+                  {isAdmin ? (
+                    // Menu para administradores
+                    <>
+                      <NavDropdown.Item as={Link} to="/admin/dashboard">
+                        Dashboard Admin
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/admin/hotels">
+                        Gerenciar Hotéis
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/admin/flights">
+                        Gerenciar Voos
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/admin/packages">
+                        Gerenciar Pacotes
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/admin/sales">
+                        Relatórios de Vendas
+                      </NavDropdown.Item>
+                    </>
+                  ) : (
+                    // Menu para clientes
+                    <>
+                      <NavDropdown.Item as={Link} to="/dashboard">
+                        Dashboard
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/my-travels">
+                        Minhas Viagens
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/my-payments">
+                        Meus Pagamentos
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/profile">
+                        Perfil
+                      </NavDropdown.Item>
+                    </>
+                  )}
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={handleLogout}>
                     Sair

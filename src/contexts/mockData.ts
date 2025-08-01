@@ -11,6 +11,7 @@ export const mockUsers = [
     name: 'João Silva',
     email: 'joao@email.com',                    // ✅ Email corrigido para teste
     password: '123456',                          // ✅ Senha simples para teste
+    role: 'user',                               // Role padrão
     avatar: 'https://via.placeholder.com/150/007bff/fff?text=JS',
     // Informações pessoais completas
     birthDate: '15/03/1990',
@@ -34,6 +35,7 @@ export const mockUsers = [
     name: 'Maria Santos',
     email: 'maria@email.com',                   // ✅ Email corrigido para teste
     password: '123456',                          // ✅ Senha simples para teste
+    role: 'user',                               // Role padrão
     avatar: 'https://via.placeholder.com/150/28a745/fff?text=MS',
     // Informações pessoais completas
     birthDate: '22/07/1985',
@@ -57,6 +59,7 @@ export const mockUsers = [
     name: 'Carlos Oliveira',
     email: 'carlos@email.com',                  // ✅ Email corrigido para teste
     password: '123456',                          // ✅ Senha simples para teste
+    role: 'user',                               // Role padrão
     avatar: 'https://via.placeholder.com/150/dc3545/fff?text=CO',
     // Informações pessoais completas
     birthDate: '08/12/1992',
@@ -73,6 +76,30 @@ export const mockUsers = [
     neighborhood: 'Centro',
     city: 'Belo Horizonte',
     state: 'MG',
+    country: 'Brasil'
+  },
+  {
+    id: 'admin1',
+    name: 'Admin Sistema',
+    email: 'admin@email.com',                   // ✅ Email para teste de admin
+    password: '123456',                          // ✅ Senha simples para teste
+    role: 'admin',                               // Role de administrador
+    avatar: 'https://via.placeholder.com/150/6f42c1/fff?text=AD',
+    // Informações pessoais completas
+    birthDate: '01/01/1980',
+    cpf: '000.000.000-00',
+    gender: 'Masculino',
+    phone: '(11) 99999-0000',
+    phone2: '',
+    memberSince: 'Janeiro 2023',
+    // Informações de endereço
+    cep: '01310-100',
+    street: 'Av. Paulista',
+    streetNumber: '1000',
+    complement: 'Andar Admin',
+    neighborhood: 'Bela Vista',
+    city: 'São Paulo',
+    state: 'SP',
     country: 'Brasil'
   }
 ];

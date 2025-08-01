@@ -21,7 +21,7 @@ const RoomTypeForm: React.FC<Props> = ({ roomType, setRoomType, handleSubmit, ha
       <label className="form-label">Preço</label>
       <input type="number" className="form-control" name="preco" value={roomType.preco} onChange={handleChange} required />
     </div>
-    {/* Botão removido */}
+    <button type="submit" className="btn w-100" style={{ background: '#3246aa', color: '#fff' }}>Cadastrar Tipo de Quarto</button>
   </form>
 );
 

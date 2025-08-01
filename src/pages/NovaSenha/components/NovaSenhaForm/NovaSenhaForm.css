@@ -1,0 +1,160 @@
+/* Estilos para o formulário de definição de nova senha */
+.nova-senha-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 140px); /* Ajuste conforme o tamanho do seu header/footer */
+  padding: 2rem 1rem;
+}
+
+.nova-senha-form-row {
+  width: 100%;
+  justify-content: center;
+}
+
+.nova-senha-form-col {
+  display: flex;
+  justify-content: center;
+}
+
+.nova-senha-form-card {
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  border: none;
+}
+
+.nova-senha-form-card-body {
+  padding: 2rem;
+}
+
+.nova-senha-form-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.nova-senha-form-title {
+  color: var(--bs-primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.nova-senha-form-subtitle {
+  color: var(--bs-gray-600);
+  font-size: 0.9rem;
+}
+
+.nova-senha-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.nova-senha-form-btn-primary {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+/* Estilo para o indicador de força de senha */
+.password-strength-meter {
+  height: 5px;
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  background-color: #eee;
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.password-strength-meter div {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease-in-out;
+}
+
+.strength-weak {
+  background-color: var(--bs-danger);
+  width: 25%;
+}
+
+.strength-medium {
+  background-color: var(--bs-warning);
+  width: 50%;
+}
+
+.strength-good {
+  background-color: var(--bs-info);
+  width: 75%;
+}
+
+.strength-strong {
+  background-color: var(--bs-success);
+  width: 100%;
+}
+
+.password-strength-text {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.text-weak {
+  color: var(--bs-danger);
+}
+
+.text-medium {
+  color: var(--bs-warning);
+}
+
+.text-good {
+  color: var(--bs-info);
+}
+
+.text-strong {
+  color: var(--bs-success);
+}
+
+/* Estilo para botão de mostrar/ocultar senha */
+.password-toggle-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--bs-gray-600);
+}
+
+.password-toggle-btn:hover {
+  color: var(--bs-primary);
+}
+
+.password-field-container {
+  position: relative;
+}
+
+.password-criteria {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--bs-gray-600);
+}
+
+.criteria-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.criteria-icon {
+  margin-right: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.criteria-met {
+  color: var(--bs-success);
+}
+
+.criteria-not-met {
+  color: var(--bs-gray-500);
+}

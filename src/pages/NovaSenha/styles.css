@@ -1,0 +1,30 @@
+/* Estilos específicos para a página de definição de nova senha */
+
+.nova-senha-error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 140px);
+  padding: 2rem 1rem;
+}
+
+.nova-senha-error {
+  text-align: center;
+  max-width: 500px;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nova-senha-error h3 {
+  color: var(--bs-danger);
+  margin-bottom: 1rem;
+}
+
+.nova-senha-error p {
+  margin-bottom: 1.5rem;
+  color: var(--bs-gray-700);
+}
+
+/* Estilos adicionais específicos para esta página */

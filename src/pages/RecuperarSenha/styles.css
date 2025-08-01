@@ -1,0 +1,14 @@
+/* Estilos específicos para a página de recuperação de senha */
+.recuperar-senha-title {
+  color: var(--bs-primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.recuperar-senha-subtitle {
+  color: var(--bs-gray-600);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Caso precise de outros estilos específicos para esta página */

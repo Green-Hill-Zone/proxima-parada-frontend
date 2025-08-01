@@ -6,11 +6,13 @@ import HotelForm from "./components/HotelForm";
 import RoomTypeForm from "./components/RoomTypeForm";
 import FlightTypeForm from "./components/FlightTypeForm";
 import ImageUpload from "./components/ImageUpload";
+import PackageSummary from "./components/PackageSummary";
 
 const TABS = [
-  { key: "pacote", label: "Pacote" },
-  { key: "voo", label: "Voo" },
-  { key: "hotel", label: "Hotel" },
+    { key: "voo", label: "Voo" },
+    { key: "hotel", label: "Hotel" },
+    { key: "pacote", label: "Pacote" },
+    { key: "finalizar", label: "Finalizar" },
 ];
 
 const AdminPackageForm = () => {
@@ -122,11 +124,26 @@ const AdminPackageForm = () => {
       </ul>
 
       {activeTab === "pacote" && (
-        <PackageForm
+        <>
+          <PackageForm
+            form={form}
+            setForm={setForm}
+            handleSubmit={e => e.preventDefault()}
+            handleChange={e => handleChange(e, setForm)}
+            goToFinalize={() => setActiveTab("finalizar")}
+          />
+        </>
+      )}
+      {activeTab === "finalizar" && (
+        <PackageSummary
           form={form}
-          setForm={setForm}
-          handleSubmit={handlePackageSubmit}
-          handleChange={e => handleChange(e, setForm)}
+          flight={flight}
+          flightType={flightType}
+          hotel={hotel}
+          roomType={roomType}
+          hotelImages={hotelImages}
+          onFinalize={() => handlePackageSubmit({ preventDefault: () => {} } as React.FormEvent)}
+          // Botão de salvar removido
         />
       )}
       {activeTab === "voo" && (
@@ -134,7 +151,7 @@ const AdminPackageForm = () => {
           <FlightForm
             flight={flight}
             setFlight={setFlight}
-            handleSubmit={handleFlightSubmit}
+            handleSubmit={e => e.preventDefault()}
             handleChange={e => handleChange(e, setFlight)}
           />
           <div className="mt-4">
@@ -142,10 +159,11 @@ const AdminPackageForm = () => {
             <FlightTypeForm
               flightType={flightType}
               setFlightType={setFlightType}
-              handleSubmit={handleFlightTypeSubmit}
+              handleSubmit={e => e.preventDefault()}
               handleChange={e => handleChange(e, setFlightType)}
             />
           </div>
+          <button className="btn btn-primary mt-3" type="button" onClick={() => setActiveTab("hotel")}>Próxima etapa</button>
         </>
       )}
       {activeTab === "hotel" && (
@@ -153,7 +171,7 @@ const AdminPackageForm = () => {
           <HotelForm
             hotel={hotel}
             setHotel={setHotel}
-            handleSubmit={handleHotelSubmit}
+            handleSubmit={e => e.preventDefault()}
             handleChange={e => handleChange(e, setHotel)}
           />
           <ImageUpload label="Fotos do Hotel" images={hotelImages} setImages={setHotelImages} />
@@ -162,10 +180,11 @@ const AdminPackageForm = () => {
             <RoomTypeForm
               roomType={roomType}
               setRoomType={setRoomType}
-              handleSubmit={handleRoomTypeSubmit}
+              handleSubmit={e => e.preventDefault()}
               handleChange={e => handleChange(e, setRoomType)}
             />
           </div>
+          <button className="btn btn-primary mt-3" type="button" onClick={() => setActiveTab("pacote")}>Próxima etapa</button>
         </>
       )}
     </div>

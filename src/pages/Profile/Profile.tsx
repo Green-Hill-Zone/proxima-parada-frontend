@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { updateUser } from '../../services/UserService';
 import './Profile.css';
 
 // Interface para os dados do formulário
@@ -27,7 +28,7 @@ interface ProfileFormData {
 
 // Componente Profile - Página de edição de perfil do usuário
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, updateUser: updateUserInContext } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -172,6 +173,13 @@ const Profile = () => {
     setShowError(false);
     setShowSuccess(false);
 
+    // Verifica se usuário está logado
+    if (!user || !user.id) {
+      setError('Usuário não identificado. Faça login novamente.');
+      setShowError(true);
+      return;
+    }
+
     // Valida formulário antes de prosseguir
     if (!validateForm()) {
       return;
@@ -180,24 +188,71 @@ const Profile = () => {
     setIsLoading(true);
 
     try {
-      // Simula delay de API
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Prepara dados para atualização (apenas campos que podem ser editados)
+      const updateData = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        // Nota: O backend atual suporta name, email, phone, role, document, companyId
+        // Outros campos do formulário (endereço, CPF, etc.) precisariam ser adicionados ao backend
+      };
 
-      // Aqui seria feita a chamada para API real
-      // const response = await updateUserProfile(formData);
+      console.log('🔄 Enviando dados para atualização:', updateData);
 
-      // Por enquanto, simula sucesso
+      // Chama a API real para atualizar usuário
+      const updatedUser = await updateUser(parseInt(user.id), updateData);
+
+      console.log('✅ Usuário atualizado com sucesso:', updatedUser);
+
+      // Cria dados completos do usuário mesclando dados do backend com dados do formulário
+      const completeUserData = {
+        id: updatedUser.id.toString(),
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        avatar: `https://via.placeholder.com/150/007bff/fff?text=${updatedUser.name.charAt(0).toUpperCase()}`,
+        // Informações do formulário
+        birthDate: formData.birthDate,
+        cpf: formData.cpf,
+        gender: formData.gender,
+        phone: updatedUser.phone || formData.phone,
+        phone2: formData.phone2,
+        memberSince: user?.memberSince || new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
+        // Informações de endereço do formulário
+        cep: formData.cep,
+        street: formData.street,
+        streetNumber: formData.streetNumber,
+        complement: formData.complement,
+        neighborhood: formData.neighborhood,
+        city: formData.city,
+        state: formData.state,
+        country: formData.country
+      };
+
+      // Atualiza o contexto com dados completos
+      updateUserInContext(completeUserData);
+
+      // Mostra mensagem de sucesso
       setShowSuccess(true);
 
       // Auto-hide da mensagem de sucesso após 3 segundos
       setTimeout(() => setShowSuccess(false), 3000);
 
-      console.log('✅ Perfil atualizado com sucesso:', formData);
-
-    } catch (error) {
-      setError('Erro ao atualizar perfil. Tente novamente.');
-      setShowError(true);
+    } catch (error: any) {
       console.error('❌ Erro ao atualizar perfil:', error);
+      
+      // Trata diferentes tipos de erro
+      if (error.message.includes('não encontrado')) {
+        setError('Usuário não encontrado. Faça login novamente.');
+      } else if (error.message.includes('Dados inválidos')) {
+        setError('Dados fornecidos são inválidos. Verifique as informações.');
+      } else if (error.message.includes('Email já está em uso')) {
+        setError('Este email já está sendo usado por outro usuário.');
+      } else {
+        setError(error.message || 'Erro ao atualizar perfil. Tente novamente.');
+      }
+      
+      setShowError(true);
     } finally {
       setIsLoading(false);
     }

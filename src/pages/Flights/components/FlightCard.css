@@ -1,0 +1,220 @@
+/* ===================================================================== */
+/* ESTILOS DO FLIGHT CARD                                              */
+/* ===================================================================== */
+
+.flight-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  overflow: hidden; /* Para que o header colorido não ultrapasse as bordas */
+}
+
+.flight-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.flight-card-clickable {
+  cursor: pointer;
+}
+
+.flight-card-clickable:hover {
+  border-color: #007bff;
+}
+
+/* Header Colorido da Companhia Aérea */
+.airline-header {
+  width: 100%;
+  height: 6px;
+  margin: 0;
+  padding: 0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.flight-card:hover .airline-header {
+  height: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Efeito de brilho sutil no header */
+.airline-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.flight-card:hover .airline-header::after {
+  opacity: 1;
+}
+
+/* Header do Card */
+.flight-header {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem !important;
+}
+
+.airline-name {
+  color: #333;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  transition: color 0.3s ease;
+}
+
+.airline-name.colored {
+  font-weight: 700;
+}
+
+.airline-name .airline-icon {
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.flight-number {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.flight-class .badge {
+  font-size: 0.75rem;
+  padding: 0.4em 0.6em;
+}
+
+/* Rota do Voo */
+.flight-route {
+  margin-bottom: 1rem !important;
+}
+
+.time-display {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.location-display {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.location-display strong {
+  color: #333;
+}
+
+.flight-arrow {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.flight-duration {
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.arrow-icon {
+  font-size: 1.2rem;
+  color: #007bff;
+}
+
+/* Preço e Disponibilidade */
+.flight-pricing {
+  margin-bottom: 1rem !important;
+}
+
+.price-display {
+  text-align: left;
+}
+
+.price-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #007bff;
+  display: block;
+}
+
+.availability-info {
+  font-size: 0.85rem;
+}
+
+.btn-book-flight {
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.btn-book-flight:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+/* Informações Adicionais */
+.flight-extras {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.flight-extras .border-top {
+  border-color: #f0f0f0 !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .flight-card {
+    margin-bottom: 1rem;
+  }
+  
+  .time-display {
+    font-size: 1rem;
+  }
+  
+  .price-value {
+    font-size: 1.1rem;
+  }
+  
+  .btn-book-flight {
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .airline-name {
+    font-size: 0.9rem;
+  }
+  
+  .flight-number {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .flight-route {
+    text-align: center;
+  }
+  
+  .arrival-info {
+    text-align: center !important;
+  }
+  
+  .flight-pricing {
+    text-align: center;
+  }
+  
+  .price-display {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+}

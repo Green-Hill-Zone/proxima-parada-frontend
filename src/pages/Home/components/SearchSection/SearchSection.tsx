@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./SearchSection.css";
 import {
   FaCalendarAlt,
@@ -9,11 +10,15 @@ import {
 } from "react-icons/fa";
 
 const SearchBox = () => {
+  const [destination, setDestination] = useState("");
+  const [checkInDate, setCheckInDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState("");
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [rooms, setRooms] = useState(1);
   const [showGuestOptions, setShowGuestOptions] = useState(false);
   const guestRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Fecha o dropdown ao clicar fora
   useEffect(() => {
@@ -37,12 +42,29 @@ const SearchBox = () => {
     rooms > 1 ? "s" : ""
   }`;
 
+  // Função para realizar a busca
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // KISS: construir URL simples com parâmetros de busca
+    const searchParams = new URLSearchParams();
+    if (destination.trim()) searchParams.append('destination', destination.trim());
+    if (checkInDate) searchParams.append('checkIn', checkInDate);
+    if (checkOutDate) searchParams.append('checkOut', checkOutDate);
+    searchParams.append('adults', adults.toString());
+    searchParams.append('children', children.toString());
+    searchParams.append('rooms', rooms.toString());
+
+    // Navegar para página de resultados
+    navigate(`/packages?${searchParams.toString()}`);
+  };
+
   return (
     <div
       className="search-box mx-auto my-4 p-3 bg-white shadow rounded"
       style={{ maxWidth: "1300px", width: "100%" }}
     >
-      <form>
+      <form onSubmit={handleSearch}>
         <div className="row g-3 align-items-end">
           {/* Destino */}
           <div className="col-12 col-md-3">
@@ -54,6 +76,8 @@ const SearchBox = () => {
               placeholder="Digite o destino"
               className="form-control"
               style={{ height: "45px" }}
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
             />
           </div>
 
@@ -68,6 +92,8 @@ const SearchBox = () => {
                   type="date"
                   className="form-control"
                   style={{ height: "45px" }}
+                  value={checkInDate}
+                  onChange={(e) => setCheckInDate(e.target.value)}
                 />
               </div>
               <div className="col-6">
@@ -78,6 +104,8 @@ const SearchBox = () => {
                   type="date"
                   className="form-control"
                   style={{ height: "45px" }}
+                  value={checkOutDate}
+                  onChange={(e) => setCheckOutDate(e.target.value)}
                 />
               </div>
             </div>
@@ -193,7 +221,11 @@ const SearchBox = () => {
 
           {/* Botão de pesquisa */}
           <div className="col-12 col-md-2 d-flex justify-content-end">
-            <button className="btn btn-primary w-100" style={{ height: "45px", minWidth: 100 }}>
+            <button 
+              type="submit" 
+              className="btn btn-primary w-100" 
+              style={{ height: "45px", minWidth: 100 }}
+            >
               Pesquisar
             </button>
           </div>

@@ -1,18 +1,67 @@
 import { useState } from "react";
-import { Card, Badge } from "react-bootstrap";
+import { Card, Badge, Button } from "react-bootstrap";
 import { useReservation } from "../../context/ReservationContext";
-import { FaHotel, FaCoffee } from "react-icons/fa";
+import { FaHotel, FaCoffee, FaExchangeAlt, FaEdit, FaCalendarAlt } from "react-icons/fa";
+import { calculateNights, formatDisplayDate, formatWeekday } from "../../../../utils/dateHelpers";
 
-const HotelInfo = () => {
-  const { reservation } = useReservation();
-  const hotel = reservation.hotel;
+interface HotelInfoProps {
+  onChangeHotel?: () => void;
+  isActive?: boolean;
+}
+
+const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
+  const { reservationData } = useReservation();
   const [selectedSuite, setSelectedSuite] = useState("master");
 
+  // Se não há dados de reserva, não renderiza nada
+  if (!reservationData) {
+    return null;
+  }
+
+  // Obter datas do pacote de viagem
+  const availableDates = reservationData.travelPackage.availableDates[0];
+  const checkInDate = availableDates?.departureDate || '2025-07-28';
+  const checkOutDate = availableDates?.returnDate || '2025-07-31';
+  
+  // Calcular número de diárias
+  const numberOfNights = calculateNights(checkInDate, checkOutDate);
+
+  // Dados do hotel (simulados baseados no pacote)
+  const hotel = {
+    name: `Hotel em ${reservationData.travelPackage.destination.name}`,
+    image: '/path/to/default-hotel.jpg',
+    rating: 4.5,
+    location: reservationData.travelPackage.destination.name,
+    suite: 'Quarto Duplo Standard'
+  };
+
   return (
-    <Card className="rounded-4 mb-0 stat-card">
+    <Card 
+      className={`rounded-4 mb-0 ${isActive ? 'shadow-lg' : ''} stat-card`}
+      style={{
+        borderWidth: isActive ? '2px' : '1px',
+        borderColor: isActive ? '#0d6efd' : '#dee2e6',
+        borderStyle: 'solid',
+        backgroundColor: isActive ? '#f8f9ff' : 'white',
+        transition: 'all 0.3s ease',
+        position: 'relative'
+      }}
+    >
+      {isActive && (
+        <div 
+          className="position-absolute top-0 end-0 m-2"
+          style={{ zIndex: 10 }}
+        >
+          <Badge bg="primary" className="d-flex align-items-center gap-1">
+            <FaEdit size={12} />
+            Editando
+          </Badge>
+        </div>
+      )}
+      
       <Card.Header
         className="rounded-top-4 d-flex justify-content-between align-items-center border-0"
-        style={{ background: "#3246aa" }}
+        style={{ background: isActive ? "#1d4ed8" : "#3246aa" }}
       >
         <header aria-level={2} className="d-flex gap-2 align-items-center">
           <FaHotel className="text-white" />
@@ -37,10 +86,10 @@ const HotelInfo = () => {
           <div className="col">
             <h5 className="fw-bold mb-1">{hotel.name}</h5>
             <div className="text-muted small mb-2">
-              {hotel.address} ·{" "}
+              {hotel.location} ·{" "}
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  hotel.address
+                  hotel.location
                 )}`}
                 className="fw-semibold text-decoration-none"
                 target="_blank"
@@ -56,15 +105,28 @@ const HotelInfo = () => {
             <div className="d-flex justify-content-between text-center mb-3">
               <div>
                 <div className="fw-bold text-uppercase text-primary">
-                  jul 28
+                  {formatDisplayDate(checkInDate)}
                 </div>
-                <div className="text-muted small">Entrada na segunda-feira</div>
+                <div className="text-muted small">Entrada na {formatWeekday(checkInDate)}</div>
               </div>
+              
+              {/* Badge de diárias no centro */}
+              <div className="d-flex align-items-center">
+                <Badge 
+                  bg="info" 
+                  className="rounded-pill px-3 py-2 d-flex align-items-center gap-1"
+                  style={{ fontSize: '0.85rem' }}
+                >
+                  <FaCalendarAlt size={12} />
+                  {numberOfNights} {numberOfNights === 1 ? 'diária' : 'diárias'}
+                </Badge>
+              </div>
+              
               <div>
                 <div className="fw-bold text-uppercase text-primary">
-                  jul 31
+                  {formatDisplayDate(checkOutDate)}
                 </div>
-                <div className="text-muted small">Saída na quinta-feira</div>
+                <div className="text-muted small">Saída na {formatWeekday(checkOutDate)}</div>
               </div>
             </div>
 
@@ -117,12 +179,53 @@ const HotelInfo = () => {
               Café da Manhã
             </Badge>
           </div>
-        </Card>
-        <div className="mt-2 fw-semibold">
-              <Badge bg="success" text="white">
-                Reembolsável
-              </Badge>
+
+          {/* Seção de preço por diária */}
+          <div className="mt-3 p-2 bg-light rounded-3">
+            <div className="d-flex justify-content-between align-items-center">
+              <small className="text-muted">Valor por diária:</small>
+              <span className="fw-bold text-primary">
+                R$ {(() => {
+                  // Definir preços baseados no tipo de suite
+                  const prices = {
+                    master: 450,
+                    simples: 280,
+                    premium: 680
+                  };
+                  return (prices[selectedSuite as keyof typeof prices] || 350).toLocaleString();
+                })()}
+              </span>
             </div>
+            <div className="d-flex justify-content-between align-items-center">
+              <small className="text-muted">Total {numberOfNights} {numberOfNights === 1 ? 'diária' : 'diárias'}:</small>
+              <span className="fw-bold text-success">
+                R$ {(() => {
+                  const prices = {
+                    master: 450,
+                    simples: 280,
+                    premium: 680
+                  };
+                  const dailyPrice = prices[selectedSuite as keyof typeof prices] || 350;
+                  return (dailyPrice * numberOfNights).toLocaleString();
+                })()}
+              </span>
+            </div>
+          </div>
+        </Card>
+        <div className="mt-2 d-flex justify-content-between align-items-center">
+          <Badge bg="success" text="white">
+            Reembolsável
+          </Badge>
+          <Button 
+            variant="outline-primary" 
+            size="sm"
+            onClick={onChangeHotel}
+            className="d-flex align-items-center gap-1"
+          >
+            <FaExchangeAlt size={12} />
+            Trocar Hotel
+          </Button>
+        </div>
       </Card.Body>
     </Card>
   );

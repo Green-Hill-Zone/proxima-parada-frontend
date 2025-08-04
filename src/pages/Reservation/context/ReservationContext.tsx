@@ -1,15 +1,22 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import mockReservation from '../../../data/mockReservation';
-
-type Reservation = typeof mockReservation;
+import { useLocation } from 'react-router-dom';
+import { initializeReservation, type ReservationData } from '../../../services/ReservationService';
 
 interface ReservationContextType {
-  reservation: Reservation;
+  reservationData: ReservationData | null;
+  setReservationData: (data: ReservationData | null) => void;
+  isLoading: boolean;
+  error: string | null;
+  loadReservation: (travelPackageId: number) => Promise<void>;
 }
 
 export const ReservationContext = createContext<ReservationContextType>({
-  reservation: mockReservation,
+  reservationData: null,
+  setReservationData: () => {},
+  isLoading: false,
+  error: null,
+  loadReservation: async () => {},
 });
 
 export const useReservation = () => useContext(ReservationContext);
@@ -19,8 +26,53 @@ interface Props {
 }
 
 export const ReservationProvider = ({ children }: Props) => {
+  const [reservationData, setReservationData] = useState<ReservationData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
+
+  const loadReservation = async (travelPackageId: number) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      console.log(`🎫 Carregando reserva para pacote ${travelPackageId}...`);
+      const data = await initializeReservation(travelPackageId);
+      
+      if (data) {
+        setReservationData(data);
+        console.log('✅ Reserva carregada com sucesso');
+      } else {
+        setError('Erro ao carregar dados da reserva');
+      }
+    } catch (err) {
+      console.error('❌ Erro ao carregar reserva:', err);
+      setError(err instanceof Error ? err.message : 'Erro desconhecido');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Detectar ID do pacote da URL ou estado de navegação
+  useEffect(() => {
+    // Primeiro, tentar pegar do estado de navegação (quando vem de um clique)
+    const packageIdFromState = location.state?.packageId;
+    
+    // Se não há ID no estado, usar ID padrão para teste
+    const packageId = packageIdFromState || 1;
+    
+    console.log('🎫 ID do pacote detectado:', packageId);
+    loadReservation(packageId);
+  }, [location.state]);
+
   return (
-    <ReservationContext.Provider value={{ reservation: mockReservation }}>
+    <ReservationContext.Provider value={{ 
+      reservationData, 
+      setReservationData,
+      isLoading, 
+      error, 
+      loadReservation 
+    }}>
       {children}
     </ReservationContext.Provider>
   );

@@ -10,13 +10,24 @@ interface TravelCardProps {
 
 
 const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails }) => {
-  const { Id, id, Name, Description, BasePrice, Images, MainDestination, Duration } = travelPackage as any;
-  const mainImage = Images?.find((img: any) => img.IsMain) || Images?.[0];
-  const imageUrl = mainImage?.ImageUrl || 'https://via.placeholder.com/300x200?text=Sem+Imagem';
-  const imageAlt = mainImage?.AltText || Name;
-  const truncatedDescription = Description?.length > 120
-    ? `${Description.substring(0, 120)}...`
-    : Description;
+  // Ajustando para a nova estrutura do backend
+  const packageData = travelPackage as any; // Cast para acessar as propriedades do backend
+  const id = packageData.id || packageData.Id;
+  const title = packageData.title || packageData.Name;
+  const description = packageData.description || packageData.Description;
+  const price = packageData.price || packageData.BasePrice;
+  const destination = packageData.destination || packageData.MainDestination;
+  
+  // Extrair imagens da nova estrutura do backend
+  const imagesData = packageData.images;
+  const imageArray = imagesData?.$values || imagesData || [];
+  const mainImage = Array.isArray(imageArray) ? imageArray[0] : null;
+  const imageUrl = mainImage?.url || mainImage?.ImageUrl || 'https://picsum.photos/300/200?text=Sem+Imagem';
+  const imageAlt = mainImage?.altText || mainImage?.AltText || title;
+  
+  const truncatedDescription = description?.length > 120
+    ? `${description.substring(0, 120)}...`
+    : description;
 
 
   const [showModal, setShowModal] = useState(false);
@@ -25,7 +36,12 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
   const handleShowDetails = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
   const handleReserve = () => {
-    navigate('/reservation');
+    // Navegar para reserva passando o ID do pacote
+    navigate('/reservation', { 
+      state: { 
+        packageId: id 
+      } 
+    });
   };
 
   return (
@@ -38,11 +54,11 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
           style={{ height: '200px', objectFit: 'cover' }}
         />
         <Card.Body className="d-flex flex-column">
-          <Card.Title>{Name}</Card.Title>
+          <Card.Title>{title}</Card.Title>
 
-          {MainDestination && (
+          {destination && (
             <Card.Subtitle className="mb-2 text-muted">
-              {MainDestination.Name}, {MainDestination.Country}
+              {destination.name || destination.Name}, {destination.country || destination.Country}
             </Card.Subtitle>
           )}
 
@@ -56,9 +72,9 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
                 {new Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL'
-                }).format(BasePrice)}
+                }).format(price)}
               </h5>
-              <small className="text-muted">{Duration} dias</small>
+              <small className="text-muted">Pacote de viagem</small>
             </div>
           </div>
         </Card.Body>
@@ -66,7 +82,7 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
 
       <Modal show={showModal} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>{Name}</Modal.Title>
+          <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <img
@@ -74,10 +90,9 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
             alt={imageAlt}
             style={{ width: '100%', height: '200px', objectFit: 'cover', marginBottom: 16 }}
           />
-          <p><strong>Destino:</strong> {MainDestination?.Name}, {MainDestination?.Country}</p>
-          <p><strong>Descrição:</strong> {Description}</p>
-          <p><strong>Preço:</strong> {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(BasePrice)}</p>
-          <p><strong>Duração:</strong> {Duration} dias</p>
+          <p><strong>Destino:</strong> {destination?.name || destination?.Name}, {destination?.country || destination?.Country}</p>
+          <p><strong>Descrição:</strong> {description}</p>
+          <p><strong>Preço:</strong> {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={handleReserve}>

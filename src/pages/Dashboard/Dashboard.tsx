@@ -40,7 +40,7 @@ const Dashboard = () => {
             <Col lg={10}>
               {/* Título de boas-vindas */}
               <div className="dashboard-welcome">
-                <h1>Bem-vindo, {user?.name}!</h1>
+                <h1>Olá, {user?.name}!</h1>
                 <p className="lead">Gerencie suas viagens e explore novos destinos.</p>
               </div>
 
@@ -143,7 +143,7 @@ const Dashboard = () => {
                 <Col>
                   <Card className="dashboard-user-info">
                     <Card.Header>
-                      <h5 className="mb-0">Informações da Conta</h5>
+                      <h5 className="mb-0">Informações da Conta - {user?.name}</h5>
                     </Card.Header>
                     <Card.Body>
                       {/* Primeira linha - Nome e Email */}

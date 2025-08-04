@@ -13,6 +13,8 @@ import AdminHotelRegister from './pages/AdminHotelRegister';
 import AdminFlightRegister from './pages/AdminFlightRegister';
 import AdminPackageRegister from './pages/AdminPackageRegister';
 import Dashboard from './pages/Dashboard';
+import Flights from './pages/Flights';
+import Hotels from './pages/Hotels';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import MyPayments from './pages/MyPayments';
@@ -44,6 +46,8 @@ function App() {
             <Route path="/admin/packages/register" element={<AdminRoute><AdminPackageRegister /></AdminRoute>} />
             <Route path="/admin/sales" element={<AdminRoute><AdminSalesReports /></AdminRoute>} />
             <Route path="/packages" element={<Packages />} />
+            <Route path="/flights" element={<Flights />} />
+            <Route path="/hotels" element={<Hotels />} />
             <Route path="/reservation" element={<ReservationProvider> <Reservation /> </ReservationProvider>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

@@ -30,10 +30,10 @@ const Header = () => {
             <Nav.Link as={Link} to="/Packages" className="header-nav-link">
               <FaBox className="menu-icon" style={{ fontSize: '0.95em' }} /> Pacotes
             </Nav.Link>
-            <Nav.Link as={Link} to="/Flights" className="header-nav-link">
+            <Nav.Link as={Link} to="/flights" className="header-nav-link">
               <FaPlane className="menu-icon" style={{ fontSize: '0.95em' }} /> Voos
             </Nav.Link>
-            <Nav.Link as={Link} to="/Hotels" className="header-nav-link">
+            <Nav.Link as={Link} to="/hotels" className="header-nav-link">
               <FaHotel className="menu-icon" style={{ fontSize: '0.95em' }} /> Hotéis
             </Nav.Link>
           </Nav>

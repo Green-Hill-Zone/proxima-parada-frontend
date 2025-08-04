@@ -1,0 +1,424 @@
+/* ===================================================================== */
+/* ESTILOS DA PÁGINA DE HOTÉIS                                         */
+/* ===================================================================== */
+/*
+ * Estilos para a página de hotéis seguindo:
+ * - Consistência com a página de voos
+ * - Design responsivo
+ * - Hierarquia visual clara
+ * - Acessibilidade
+ */
+
+/* ===================================================================== */
+/* LAYOUT PRINCIPAL                                                     */
+/* ===================================================================== */
+
+.hotels-page {
+  /* min-height: 100vh; */
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 2rem 0;
+}
+
+/* ===================================================================== */
+/* CABEÇALHO DA PÁGINA                                                  */
+/* ===================================================================== */
+
+.hotels-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.hotels-header h1 {
+  color: #333;
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hotels-header .lead {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin-bottom: 0;
+}
+
+/* ===================================================================== */
+/* FILTROS DE BUSCA                                                     */
+/* ===================================================================== */
+
+.search-filters {
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.search-filters .card-header {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+}
+
+.search-filters .card-header h5 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.search-filters .card-body {
+  padding: 1.5rem;
+  background: white;
+}
+
+.search-filters .form-label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.search-filters .form-control,
+.search-filters .form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.search-filters .form-control:focus,
+.search-filters .form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.search-filters .btn {
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.search-filters .btn-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border: none;
+}
+
+.search-filters .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.search-filters .btn-outline-secondary {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+.search-filters .btn-outline-secondary:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  transform: translateY(-1px);
+}
+
+/* ===================================================================== */
+/* CONTADOR DE RESULTADOS                                               */
+/* ===================================================================== */
+
+.hotels-count {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #007bff;
+}
+
+.hotels-count h5 {
+  color: #333;
+  font-weight: 600;
+  margin: 0;
+}
+
+.hotels-count small {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+/* ===================================================================== */
+/* PAGINAÇÃO                                                            */
+/* ===================================================================== */
+
+.hotels-pagination {
+  margin-bottom: 0;
+}
+
+.hotels-pagination .page-link {
+  color: #007bff;
+  border: 1px solid #dee2e6;
+  padding: 0.5rem 0.75rem;
+  margin: 0 2px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.hotels-pagination .page-link:hover {
+  background-color: #e9ecef;
+  border-color: #007bff;
+  transform: translateY(-1px);
+}
+
+.hotels-pagination .page-item.active .page-link {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border-color: #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.hotels-pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+/* ===================================================================== */
+/* ESTADOS DE CARREGAMENTO E ERRO                                       */
+/* ===================================================================== */
+
+.hotels-page .spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.3em;
+  color: #007bff;
+}
+
+.hotels-page .alert {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.hotels-page .alert-danger {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  color: #721c24;
+}
+
+.hotels-page .alert-info {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  color: #0c5460;
+}
+
+.hotels-page .alert-heading {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hotels-page .alert ul {
+  margin: 0.5rem 0;
+}
+
+.hotels-page .alert li {
+  margin-bottom: 0.25rem;
+}
+
+/* ===================================================================== */
+/* RESPONSIVIDADE                                                       */
+/* ===================================================================== */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .hotels-page {
+    padding: 1rem 0;
+  }
+  
+  .hotels-header {
+    padding: 1.5rem 0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .hotels-header h1 {
+    font-size: 2rem;
+  }
+  
+  .search-filters .card-body {
+    padding: 1rem;
+  }
+  
+  .hotels-count {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hotels-page {
+    padding: 0.5rem 0;
+  }
+  
+  .hotels-header {
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+  }
+  
+  .hotels-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .hotels-header .lead {
+    font-size: 1rem;
+  }
+  
+  .search-filters .card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .search-filters .card-body {
+    padding: 0.75rem;
+  }
+  
+  .search-filters .form-label {
+    font-size: 0.85rem;
+  }
+  
+  .search-filters .form-control,
+  .search-filters .form-select {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.6rem;
+  }
+  
+  .search-filters .btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .hotels-count {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .hotels-count h5 {
+    font-size: 1rem;
+  }
+  
+  .hotels-count small {
+    font-size: 0.8rem;
+  }
+  
+  /* Paginação mobile */
+  .hotels-pagination .page-link {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    margin: 0 1px;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 576px) {
+  .hotels-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .search-filters .card-header h5 {
+    font-size: 1rem;
+  }
+  
+  .search-filters .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Esconde algumas páginas da paginação no mobile */
+  .hotels-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .hotels-pagination .page-item:not(.active):not(:first-child):not(:last-child):not(.page-item:nth-child(2)):not(.page-item:nth-last-child(2)) {
+    display: none;
+  }
+}
+
+/* ===================================================================== */
+/* ANIMAÇÕES E TRANSIÇÕES                                              */
+/* ===================================================================== */
+
+.hotels-page * {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Animação de entrada dos cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hotels-page .col {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.hotels-page .col:nth-child(1) { animation-delay: 0.1s; }
+.hotels-page .col:nth-child(2) { animation-delay: 0.2s; }
+.hotels-page .col:nth-child(3) { animation-delay: 0.3s; }
+.hotels-page .col:nth-child(4) { animation-delay: 0.4s; }
+
+/* Transições suaves */
+.hotels-page .card,
+.hotels-page .btn,
+.hotels-page .form-control,
+.hotels-page .form-select {
+  transition: all 0.2s ease;
+}
+
+/* Estados de hover melhorados */
+.search-filters .form-control:hover,
+.search-filters .form-select:hover {
+  border-color: #007bff;
+}
+
+.hotels-count:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* ===================================================================== */
+/* ACESSIBILIDADE                                                       */
+/* ===================================================================== */
+
+/* Focus visível */
+.hotels-page .btn:focus,
+.hotels-page .form-control:focus,
+.hotels-page .form-select:focus,
+.hotels-page .page-link:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Alto contraste para textos importantes */
+.hotels-page h1,
+.hotels-page h5,
+.hotels-page .form-label {
+  color: #212529;
+}
+
+/* Indicadores de estado para leitores de tela */
+.hotels-page .visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}

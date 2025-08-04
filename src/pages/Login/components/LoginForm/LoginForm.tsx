@@ -1,5 +1,5 @@
 // Importações necessárias do React e React Bootstrap
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 // Importação das imagens dos logos para login social
@@ -24,7 +24,7 @@ interface LoginFormProps {
 // Componente LoginForm - Formulário de autenticação
 const LoginForm = ({ onSubmit }: LoginFormProps) => {
   // Hooks de autenticação e navegação
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, user } = useAuth();
   const navigate = useNavigate();
   
   // Estado do React para armazenar os dados do formulário
@@ -36,6 +36,20 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
   // Estado para mensagens de erro
   const [error, setError] = useState<string>('');
   const [showError, setShowError] = useState<boolean>(false);
+
+  // Effect para redirecionamento automático quando o usuário muda
+  useEffect(() => {
+    if (user) {
+      // Usuário foi logado com sucesso, redireciona baseado na role
+      if (user.role === 'admin') {
+        console.log('🔄 Redirecionando admin para dashboard administrativo');
+        navigate('/admin/dashboard');
+      } else {
+        console.log('🔄 Redirecionando usuário para dashboard normal');
+        navigate('/dashboard');
+      }
+    }
+  }, [user, navigate]);
 
   // Função que atualiza os campos do formulário quando o usuário digita
   const handleInputChange = (field: keyof LoginFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,17 +75,9 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
           onSubmit(formData);
         }
         
-        // Verifica se o usuário logado é admin para redirecionar corretamente
-        // Como o contexto pode não ter sido atualizado ainda, verificamos pelos dados de login
-        const isAdminUser = formData.email === 'admin@email.com';
+        // O redirecionamento será feito automaticamente pelo useEffect
+        // quando o contexto do usuário for atualizado
         
-        if (isAdminUser) {
-          // Redireciona admin para dashboard administrativo
-          navigate('/admin/dashboard');
-        } else {
-          // Redireciona usuário comum para dashboard normal
-          navigate('/dashboard');
-        }
       } else {
         // Login falhou - mostra mensagem de erro
         setError('Email ou senha incorretos. Tente novamente.');

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, Badge, Button } from "react-bootstrap";
 import { useReservation } from "../../context/ReservationContext";
-import { FaHotel, FaCoffee, FaExchangeAlt, FaEdit, FaCalendarAlt } from "react-icons/fa";
+import { FaHotel, FaExchangeAlt, FaEdit, FaCalendarAlt } from "react-icons/fa";
 import { calculateNights, formatDisplayDate, formatWeekday } from "../../../../utils/dateHelpers";
 
 interface HotelInfoProps {

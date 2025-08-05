@@ -14,8 +14,8 @@
 import axios from 'axios';
 import type { User as AuthUser } from '../contexts/types';
 
-// URL base da API - deve corresponder ao backend .NET
-const API_BASE_URL = 'http://localhost:5079/api';
+// URL base da API - usando proxy do Vite para evitar problemas de CORS
+const API_BASE_URL = '/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -72,6 +72,7 @@ interface BackendUserDto {
   phone?: string;
   document?: string;
   companyId?: number;
+  isEmailConfirmed?: boolean;
 }
 
 // Interface da resposta de criação de usuário
@@ -93,7 +94,7 @@ const mapBackendToFrontend = (backendUser: BackendUserDto): User => {
     phone: backendUser.phone,
     document: backendUser.document,
     companyId: backendUser.companyId,
-    isEmailConfirmed: false, // Valor padrão, pode ser ajustado conforme backend
+    isEmailConfirmed: backendUser.isEmailConfirmed || false, // Mapeia do backend
   };
 };
 
@@ -104,6 +105,7 @@ export const adaptUserToAuthUser = (user: User, existingData?: AuthUser): AuthUs
     name: user.name,
     email: user.email,
     role: user.role,
+    isEmailConfirmed: user.isEmailConfirmed, // Mapeia o status de confirmação de email
     avatar: `https://via.placeholder.com/150/007bff/fff?text=${user.name.charAt(0).toUpperCase()}`,
     // Preserva informações existentes ou usa padrões
     birthDate: existingData?.birthDate || '01/01/1990',
@@ -135,20 +137,6 @@ const mapFrontendToBackend = (createRequest: CreateUserRequest): BackendUserDto 
     phone: createRequest.phone,
     document: createRequest.document,
     companyId: createRequest.companyId,
-  };
-};
-
-// Mapeia dados de atualização do frontend para o backend
-const mapUpdateToBackend = (id: number, updateRequest: UpdateUserRequest, currentPassword: string = ''): BackendUserDto => {
-  return {
-    id,
-    name: updateRequest.name || '',
-    email: updateRequest.email || '',
-    password: currentPassword, // Mantém a senha atual se não fornecida
-    role: updateRequest.role || 'customer',
-    phone: updateRequest.phone,
-    document: updateRequest.document,
-    companyId: updateRequest.companyId,
   };
 };
 
@@ -427,6 +415,68 @@ export const updateUser = async (id: number, updateData: UpdateUserRequest): Pro
     }
     
     throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
+ * Verifica se o email do usuário está confirmado
+ * @param userId O ID do usuário
+ * @returns true se o email estiver confirmado, false caso contrário
+ */
+export const checkEmailConfirmationStatus = async (userId: number): Promise<boolean> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/AppUser/${userId}/email-status`);
+    return response.data?.isEmailConfirmed || false;
+  } catch (error) {
+    console.error('Erro ao verificar status de confirmação de email:', error);
+    return false;
+  }
+};
+
+/**
+ * Reenvia o email de confirmação para o usuário
+ * @param userId O ID do usuário
+ * @returns true se o reenvio foi bem-sucedido, false caso contrário
+ */
+export const resendEmailConfirmation = async (userId: number): Promise<boolean> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/AppUser/send-confirmation-email/${userId}`);
+    return response.status === 200;
+  } catch (error) {
+    console.error('Erro ao reenviar email de confirmação:', error);
+    return false;
+  }
+};
+
+/**
+ * Confirma o email do usuário usando o token de confirmação
+ * @param token O token de confirmação de email
+ * @returns true se a confirmação foi bem-sucedida, false caso contrário
+ */
+export const confirmEmail = async (token: string): Promise<boolean> => {
+  try {
+    console.log('🔄 Enviando requisição GET para:', `${API_BASE_URL}/AppUser/confirm-email?token=${token}`);
+    console.log('📝 Token enviado:', token);
+    
+    const response = await axios.get(`${API_BASE_URL}/AppUser/confirm-email?token=${encodeURIComponent(token)}`);
+    
+    console.log('✅ Resposta recebida:', response.status, response.data);
+    return response.status === 200;
+  } catch (error: any) {
+    console.error('❌ Erro ao confirmar email:', error);
+    
+    if (error.response) {
+      console.error('📋 Detalhes do erro:');
+      console.error('  - Status:', error.response.status);
+      console.error('  - Data:', error.response.data);
+      console.error('  - Headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('📡 Sem resposta do servidor:', error.request);
+    } else {
+      console.error('⚙️ Erro na configuração da requisição:', error.message);
+    }
+    
+    return false;
   }
 };
 

@@ -193,9 +193,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /* FUNÇÃO PARA BUSCAR VIAGENS DO USUÁRIO                           */
   /* ================================================================= */
 
-  // Função para buscar as viagens de um usuário específico
-  const getUserTravels = (userId: string): TravelPackage[] => {
-    return mockTravelPackages[userId] || [];
+  // Função para buscar as viagens de um usuário específico usando o serviço real
+  const getUserTravels = async (userId: string): Promise<TravelPackage[]> => {
+    try {
+      console.log(`🔄 Buscando viagens para usuário ID: ${userId}`);
+      
+      // Se não há usuário logado, retorna array vazio
+      if (!user) {
+        console.log('❌ Nenhum usuário logado');
+        return [];
+      }
+
+      // Importa dinamicamente o serviço de reservas para evitar dependência circular
+      const { getUserReservations } = await import('../services/ReservationService');
+      
+      // Busca reservas usando o email do usuário logado
+      const userReservations = await getUserReservations(user.email);
+      
+      console.log(`✅ Encontradas ${userReservations.length} viagens para o usuário`);
+      return userReservations;
+      
+    } catch (error) {
+      console.error('❌ Erro ao buscar viagens do usuário:', error);
+      
+      // Em caso de erro, tenta retornar dados mock como fallback
+      console.log('🔄 Usando dados mock como fallback');
+      return mockTravelPackages[userId] || [];
+    }
   };
 
   /* ================================================================= */

@@ -1,5 +1,15 @@
 @import '.././variables.css';
 
+/* Menu responsivo: tablet (md) - mostrar itens em linha quando aberto */
+@media (min-width: 768px) and (max-width: 991px) {
+  .navbar-collapse.show .nav {
+    flex-direction: row !important;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
 .custom-navbar {
   background-color: var(--primary-blue) !important;
 }

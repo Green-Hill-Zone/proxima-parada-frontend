@@ -9,9 +9,9 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Função para navegar para a página de explorar destinos
+  // Função para navegar para a página de pacotes
   const handleExplorarDestinos = () => {
-    navigate('/'); // Redireciona para a página principal
+    navigate('/packages'); // Redireciona para a página de pacotes
   };
 
   // Função para navegar para a página de perfil

@@ -14,7 +14,7 @@ import axios from 'axios';
 import { getAllAccommodations, type Accommodation } from './AccommodationService';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5079/api', // Backend .NET API
+  baseURL: 'https://localhost:7102/api', // Backend .NET API
 });
 
 /* ===================================================================== */

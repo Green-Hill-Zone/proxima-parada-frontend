@@ -7,7 +7,7 @@ import type {
 } from '../Entities/TravelPackage';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5079/api', // Backend .NET API
+  baseURL: 'https://localhost:7102/api', // Backend .NET API
 });
 
 // Adapter para mapear dados do backend para o frontend

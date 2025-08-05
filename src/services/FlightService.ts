@@ -12,7 +12,7 @@
 import axios from 'axios';
 
 // Base URL da API
-const API_BASE_URL = 'http://localhost:5079/api';
+const API_BASE_URL = 'https://localhost:7102/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */

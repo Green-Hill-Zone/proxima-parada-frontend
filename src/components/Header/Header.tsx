@@ -24,6 +24,7 @@ const Header = () => {
         <Navbar.Brand as={Link} to="/">
           <img src={logo} alt="Logo" />
         </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
         {/* Menu de navegação que se expande/contrai */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">

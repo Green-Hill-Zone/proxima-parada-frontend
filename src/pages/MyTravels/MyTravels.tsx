@@ -4,10 +4,14 @@ import { Alert, Badge, Button, Card, Col, Container, Form, Row } from 'react-boo
 import { useNavigate } from 'react-router-dom';
 import type { TravelPackage } from '../../contexts/types';
 import { useAuth } from '../../hooks/useAuth';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import './MyTravels.css';
 
 // Componente MyTravels - Página de histórico de viagens do usuário
 const MyTravels = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.MY_TRAVELS);
+  
   const { user, getUserTravels } = useAuth();
   const navigate = useNavigate();
   const [travels, setTravels] = useState<TravelPackage[]>([]);

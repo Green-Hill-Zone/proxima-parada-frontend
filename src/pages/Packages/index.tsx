@@ -5,8 +5,12 @@ import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import PackageCard from './components/PackageCard';
 import { getTravelPackages, searchTravelPackages } from '../../services/TravelPackageService';
 import { type TravelPackageListItem } from '../../Entities/TravelPackage';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 
 const Packages = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.PACKAGES);
+  
   const [travelPackages, setTravelPackages] = useState<TravelPackageListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

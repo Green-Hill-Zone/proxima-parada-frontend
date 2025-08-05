@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import PackageForm from "../Admin/components/PackageForm";
 
 const AdminPackageRegister = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_PACKAGE_REGISTER);
   const navigate = useNavigate();
 
   // Pacote

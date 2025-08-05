@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import { updateUser } from '../../services/UserService';
 import './Profile.css';
 
@@ -28,6 +29,9 @@ interface ProfileFormData {
 
 // Componente Profile - Página de edição de perfil do usuário
 const Profile = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.PROFILE);
+  
   const { user, updateUser: updateUserInContext } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);

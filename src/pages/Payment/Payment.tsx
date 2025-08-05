@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Button, Card, Col, Container, Form, Row, Alert } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import './Payment.css';
 
 // Interface para dados do pagamento (simplificada para Stripe)
@@ -21,6 +22,9 @@ interface TravelData {
 
 // Componente Payment - Tela de Pagamento
 const Payment = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.PAYMENT);
+  
   const navigate = useNavigate();
   const location = useLocation();
   

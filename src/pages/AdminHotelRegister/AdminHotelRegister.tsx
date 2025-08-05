@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import HotelForm from "../Admin/components/HotelForm";
 import RoomTypeForm from "../Admin/components/RoomTypeForm";
 import ImageUpload from "../Admin/components/ImageUpload";
 
 const AdminHotelRegister = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_HOTEL_REGISTER);
   const navigate = useNavigate();
 
   // Hotel

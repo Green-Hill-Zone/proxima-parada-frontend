@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import CombinedFlightForm from "../Admin/components/CombinedFlightForm";
 
 const AdminFlightRegister = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_FLIGHT_REGISTER);
   const navigate = useNavigate();
 
   // Voo

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Row, Badge, Alert } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import './MyPayments.css';
 
 // Interface para dados do pagamento
@@ -27,6 +28,9 @@ interface Payment {
 
 // Componente MyPayments - Página de Meus Pagamentos
 const MyPayments = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.MY_PAYMENTS);
+  
   const navigate = useNavigate();
   const location = useLocation();
   

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Card, Col, Container, Modal, Row, Table } from 'react-bootstrap';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import HotelForm from '../Admin/components/HotelForm';
 
 interface Hotel {
@@ -15,6 +16,9 @@ interface Hotel {
 }
 
 const AdminHotels = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_HOTELS);
+  
   const navigate = useNavigate();
   const [hotels] = useState<Hotel[]>([
     {

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Card, Col, Container, Modal, Row, Table } from 'react-bootstrap';
 import { FaEdit, FaPlane, FaPlus, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import CombinedFlightForm from '../Admin/components/CombinedFlightForm';
 
 interface Flight {
@@ -17,6 +18,9 @@ interface Flight {
 }
 
 const AdminFlights = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_FLIGHTS);
+  
   const navigate = useNavigate();
   const [flights] = useState<Flight[]>([
     {

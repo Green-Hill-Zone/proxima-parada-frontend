@@ -13,11 +13,14 @@ import { useEffect, useState } from 'react';
 import { Container, Row, Col, Spinner, Alert, Form, Button, Card, Pagination } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { getAllFlights, getFlightsByRoute, type Flight } from '../../services/FlightService';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import FlightCard from './components/FlightCard';
 import './Flights.css';
 
 // Componente principal da página de voos
 const Flights = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.FLIGHTS);
   // Estados do componente
   const [flights, setFlights] = useState<Flight[]>([]);
   const [isLoading, setIsLoading] = useState(true);

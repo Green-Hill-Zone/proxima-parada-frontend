@@ -2,10 +2,14 @@
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import './Dashboard.css';
 
 // Componente Dashboard - Página para usuários autenticados
 const Dashboard = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.DASHBOARD);
+  
   const { user } = useAuth();
   const navigate = useNavigate();
 

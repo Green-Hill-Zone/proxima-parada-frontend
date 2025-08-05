@@ -26,6 +26,7 @@ export interface User {
   name: string;         // Nome completo do usuário
   email: string;        // Email (usado como login)
   avatar?: string;      // URL do avatar (opcional)
+  role?: string;        // Role do usuário (admin, user)
   // Novas informações pessoais
   birthDate: string;    // Data de nascimento (formato: DD/MM/AAAA)
   cpf: string;          // CPF formatado (formato: XXX.XXX.XXX-XX)
@@ -51,5 +52,6 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>; // Função de login assíncrona
   logout: () => void;                   // Função de logout
   register: (name: string, email: string, password: string) => Promise<boolean>; // Função de cadastro
+  updateUser: (updatedUser: User) => void; // Função para atualizar dados do usuário no contexto
   getUserTravels: (userId: string) => TravelPackage[]; // Função para buscar viagens do usuário
 }

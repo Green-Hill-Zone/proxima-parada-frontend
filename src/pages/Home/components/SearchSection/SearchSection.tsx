@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./SearchSection.css";
 import {
   FaCalendarAlt,
   FaChevronDown,
@@ -8,11 +10,15 @@ import {
 } from "react-icons/fa";
 
 const SearchBox = () => {
+  const [destination, setDestination] = useState("");
+  const [checkInDate, setCheckInDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState("");
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [rooms, setRooms] = useState(1);
   const [showGuestOptions, setShowGuestOptions] = useState(false);
   const guestRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Fecha o dropdown ao clicar fora
   useEffect(() => {
@@ -36,12 +42,29 @@ const SearchBox = () => {
     rooms > 1 ? "s" : ""
   }`;
 
+  // Função para realizar a busca
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // KISS: construir URL simples com parâmetros de busca
+    const searchParams = new URLSearchParams();
+    if (destination.trim()) searchParams.append('destination', destination.trim());
+    if (checkInDate) searchParams.append('checkIn', checkInDate);
+    if (checkOutDate) searchParams.append('checkOut', checkOutDate);
+    searchParams.append('adults', adults.toString());
+    searchParams.append('children', children.toString());
+    searchParams.append('rooms', rooms.toString());
+
+    // Navegar para página de resultados
+    navigate(`/packages?${searchParams.toString()}`);
+  };
+
   return (
     <div
       className="search-box mx-auto my-4 p-3 bg-white shadow rounded"
-      style={{ maxWidth: "1100px" }}
+      style={{ maxWidth: "1300px", width: "100%" }}
     >
-      <form>
+      <form onSubmit={handleSearch}>
         <div className="row g-3 align-items-end">
           {/* Destino */}
           <div className="col-12 col-md-3">
@@ -53,6 +76,8 @@ const SearchBox = () => {
               placeholder="Digite o destino"
               className="form-control"
               style={{ height: "45px" }}
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
             />
           </div>
 
@@ -67,6 +92,8 @@ const SearchBox = () => {
                   type="date"
                   className="form-control"
                   style={{ height: "45px" }}
+                  value={checkInDate}
+                  onChange={(e) => setCheckInDate(e.target.value)}
                 />
               </div>
               <div className="col-6">
@@ -77,13 +104,15 @@ const SearchBox = () => {
                   type="date"
                   className="form-control"
                   style={{ height: "45px" }}
+                  value={checkOutDate}
+                  onChange={(e) => setCheckOutDate(e.target.value)}
                 />
               </div>
             </div>
           </div>
 
           {/* Hóspedes */}
-          <div className="col-12 col-md-4 position-relative" ref={guestRef}>
+          <div className="col-12 col-md-3 position-relative" ref={guestRef}>
             <label className="form-label fw-bold">
               <FaUser className="me-2" /> Hóspedes
             </label>
@@ -101,7 +130,7 @@ const SearchBox = () => {
             {showGuestOptions && (
               <div
                 className="position-absolute bg-white shadow rounded p-3 mt-1 w-100"
-                style={{ zIndex: 999 }}
+                style={{ zIndex: 2000, maxWidth: '100%', right: 0 }}
               >
                 {/* Adultos */}
                 <div className="d-flex justify-content-between align-items-center mb-2">
@@ -191,8 +220,12 @@ const SearchBox = () => {
           </div>
 
           {/* Botão de pesquisa */}
-          <div className="col-12 col-md-1 align-self-end">
-            <button className="btn btn-primary" style={{ height: "45px" }}>
+          <div className="col-12 col-md-2 d-flex justify-content-end">
+            <button 
+              type="submit" 
+              className="btn btn-primary w-100" 
+              style={{ height: "45px", minWidth: 100 }}
+            >
               Pesquisar
             </button>
           </div>

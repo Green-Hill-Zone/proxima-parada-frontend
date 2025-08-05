@@ -25,7 +25,7 @@ const HotelForm: React.FC<Props> = ({ hotel, setHotel, handleSubmit, handleChang
       <label className="form-label">Estrelas</label>
       <input type="number" className="form-control" name="estrelas" value={hotel.estrelas} onChange={handleChange} min="1" max="5" required />
     </div>
-    <button type="submit" className="btn w-100" style={{ background: '#3246aa', color: '#fff' }}>Cadastrar Hotel</button>
+    {/* Botão removido */}
   </form>
 );
 

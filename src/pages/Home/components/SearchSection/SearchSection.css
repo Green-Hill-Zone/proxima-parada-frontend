@@ -1,0 +1,4 @@
+.search-box {
+  border: 2.5px solid var(--secondary-orange, #FFAD33);
+  box-shadow: 0 4px 24px 0 rgba(50, 70, 170, 0.10);
+}

@@ -5,9 +5,10 @@ type Props = {
   setForm: (cb: any) => void;
   handleSubmit: (e: React.FormEvent) => void;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  goToFinalize?: () => void;
 };
 
-const PackageForm: React.FC<Props> = ({ form, setForm, handleSubmit, handleChange }) => (
+const PackageForm: React.FC<Props> = ({ form, handleSubmit, handleChange, goToFinalize }) => (
   <form onSubmit={handleSubmit} className="bg-light p-4 rounded-3 border">
     <div className="mb-3">
       <label className="form-label">Nome do Pacote</label>
@@ -35,7 +36,12 @@ const PackageForm: React.FC<Props> = ({ form, setForm, handleSubmit, handleChang
         <input type="date" className="form-control" name="dataFim" value={form.dataFim} onChange={handleChange} required />
       </div>
     </div>
-    <button type="submit" className="btn w-100" style={{ background: '#3246aa', color: '#fff' }}>Cadastrar Pacote</button>
+    <button type="submit" className="btn w-100 mb-2" style={{ background: '#3246aa', color: '#fff' }}>Cadastrar Pacote</button>
+    {goToFinalize && (
+      <button type="button" className="btn btn-success w-100" onClick={goToFinalize}>
+        Próxima etapa
+      </button>
+    )}
   </form>
 );
 

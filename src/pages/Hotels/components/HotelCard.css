@@ -1,0 +1,359 @@
+/* ===================================================================== */
+/* ESTILOS DO HOTEL CARD                                               */
+/* ===================================================================== */
+/*
+ * Estilos para o componente HotelCard seguindo:
+ * - Design consistente com FlightCard
+ * - Responsividade mobile-first
+ * - Hierarquia visual clara
+ * - Cores harmoniosas
+ */
+
+/* ===================================================================== */
+/* CARD PRINCIPAL                                                       */
+/* ===================================================================== */
+
+.hotel-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+}
+
+.hotel-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  border-color: #007bff;
+}
+
+/* ===================================================================== */
+/* HEADER DO CARD                                                       */
+/* ===================================================================== */
+
+.hotel-card-header {
+  border-bottom: none;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--header-color, #007bff) 0%, rgba(0, 0, 0, 0.1) 100%);
+}
+
+.hotel-card-header h6 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.hotel-card-header small {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.hotel-icon {
+  font-size: 1.3rem;
+  margin-right: 0.5rem;
+}
+
+.star-rating {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #333 !important;
+  font-weight: 600;
+}
+
+/* ===================================================================== */
+/* CORPO DO CARD                                                        */
+/* ===================================================================== */
+
+.hotel-card .card-body {
+  padding: 1.25rem;
+  background: #fff;
+}
+
+/* Informações do Hotel */
+.hotel-info .info-item {
+  margin-bottom: 0.75rem;
+}
+
+.hotel-info .info-item small {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.hotel-info .info-item .fw-semibold {
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.3;
+}
+
+/* Seção de Preços */
+.price-section {
+  text-align: right;
+}
+
+.price-per-night small {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.price-amount {
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  color: #28a745 !important;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.total-price .badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.6rem;
+}
+
+/* Descrição do Hotel */
+.hotel-description {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border-left: 3px solid #007bff;
+}
+
+.hotel-description small {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.hotel-description p {
+  color: #495057;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* Informações de Contato */
+.contact-info {
+  /* background: #f8f9fa; */
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.contact-info small {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* ===================================================================== */
+/* FOOTER DO CARD                                                       */
+/* ===================================================================== */
+
+.hotel-card .card-footer {
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  padding: 0.75rem 1.25rem;
+}
+
+.hotel-card .card-footer small {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+/* ===================================================================== */
+/* BOTÕES DE AÇÃO                                                       */
+/* ===================================================================== */
+
+.hotel-card .btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.hotel-card .btn-outline-primary {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.hotel-card .btn-outline-primary:hover {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.hotel-card .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.hotel-card .btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* ===================================================================== */
+/* CORES ESPECÍFICAS POR CATEGORIA                                     */
+/* ===================================================================== */
+
+/* Hotel 5 estrelas - Dourado */
+.hotel-card[data-category="luxury"] .hotel-card-header {
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+.hotel-card[data-category="luxury"] .price-amount {
+  color: #f39c12 !important;
+}
+
+/* Hotel 4 estrelas - Azul */
+.hotel-card[data-category="premium"] .hotel-card-header {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.hotel-card[data-category="premium"] .price-amount {
+  color: #3498db !important;
+}
+
+/* Hotel 3 estrelas - Verde */
+.hotel-card[data-category="standard"] .hotel-card-header {
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+}
+
+.hotel-card[data-category="standard"] .price-amount {
+  color: #27ae60 !important;
+}
+
+/* Hotel 1-2 estrelas - Cinza */
+.hotel-card[data-category="basic"] .hotel-card-header {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+}
+
+.hotel-card[data-category="basic"] .price-amount {
+  color: #6c757d !important;
+}
+
+/* ===================================================================== */
+/* RESPONSIVIDADE                                                       */
+/* ===================================================================== */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .hotel-card .card-body {
+    padding: 1rem;
+  }
+  
+  .price-section {
+    text-align: left;
+    margin-top: 1rem;
+  }
+  
+  .hotel-card-header h6 {
+    font-size: 1rem;
+  }
+  
+  .price-amount {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hotel-card {
+    margin-bottom: 1rem;
+  }
+  
+  .hotel-card-header {
+    padding: 0.75rem;
+  }
+  
+  .hotel-card .card-body {
+    padding: 0.75rem;
+  }
+  
+  .hotel-card .card-footer {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .hotel-info .info-item {
+    margin-bottom: 0.5rem;
+  }
+  
+  .contact-info {
+    padding: 0.5rem;
+  }
+  
+  .hotel-description {
+    padding: 0.5rem;
+  }
+  
+  /* Botões empilhados no mobile */
+  .hotel-card .btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 576px) {
+  .hotel-card-header small {
+    font-size: 0.8rem;
+  }
+  
+  .star-rating {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .price-amount {
+    font-size: 1.1rem !important;
+  }
+  
+  .contact-info {
+    font-size: 0.8rem;
+  }
+}
+
+/* ===================================================================== */
+/* ANIMAÇÕES E TRANSIÇÕES                                              */
+/* ===================================================================== */
+
+.hotel-card * {
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.hotel-card:hover .hotel-icon {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.hotel-card:hover .price-amount {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* Estados de Loading */
+.hotel-card.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.hotel-card.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

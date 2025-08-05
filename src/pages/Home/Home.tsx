@@ -22,8 +22,8 @@ const Home = () => {
     const loadFeaturedPackages = async () => {
       try {
         setIsLoading(true);
-        const packages = await getFeaturedPackages(6); // Busca 6 pacotes em destaque
-        setFeaturedPackages(packages);
+        const packages = await getFeaturedPackages(); // Busca pacotes em destaque
+        setFeaturedPackages(packages.slice(0, 6)); // Limita a 6 pacotes
       } catch (err) {
         console.error('Erro ao carregar pacotes em destaque:', err);
         setError('Não foi possível carregar os pacotes em destaque. Tente novamente mais tarde.');
@@ -37,8 +37,12 @@ const Home = () => {
 
   // Função executada quando usuário clica em "Ver detalhes" de um pacote
   const handleViewDetails = (packageId: number) => {
-    console.log('Ver detalhes do pacote:', packageId);
-    navigate(`/pacotes/${packageId}`);
+    console.log('Navegando para reserva do pacote:', packageId);
+    navigate('/reservation', { 
+      state: { 
+        packageId: packageId 
+      } 
+    });
   };
 
   const renderPackagesContent = () => {

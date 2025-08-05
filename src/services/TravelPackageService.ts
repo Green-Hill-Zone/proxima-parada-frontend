@@ -7,142 +7,172 @@ import type {
 } from '../Entities/TravelPackage';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001', // ou o endereço onde está rodando o json-server
+  baseURL: 'https://localhost:7102/api', // Backend .NET API
 });
 
-/**
- * Cria um novo pacote de viagem
- * @param packageData Dados do pacote a ser criado
- * @returns Promise com o pacote criado
- */
-export const createTravelPackage = async (
-  packageData: TravelPackageCreateRequest
-): Promise<TravelPackageDetailResponse> => {
-  const response = await api.post('/TravelPackages', packageData);
-  return response.data;
+// Adapter para mapear dados do backend para o frontend
+const mapBackendToFrontend = (backendData: any): TravelPackageListItem => {
+  // Manter a estrutura original das imagens do backend
+  const images = backendData.images || backendData.Images || [];
+
+  // Garantir que Destination seja um objeto válido
+  let destination = backendData.destination || backendData.Destination;
+  if (!destination) {
+    destination = {
+      Id: 0,
+      Name: 'Destino não informado',
+      Country: 'País não informado'
+    };
+  } else {
+    // Mapear propriedades do destino para garantir consistência
+    destination = {
+      Id: destination.id || destination.Id || 0,
+      Name: destination.name || destination.Name || 'Destino não informado',
+      Country: destination.country || destination.Country || 'País não informado'
+    };
+  }
+
+  // Garantir que Company seja um objeto válido
+  let company = backendData.company || backendData.Company;
+  if (!company) {
+    company = {
+      Id: 0,
+      Name: 'Empresa não informada'
+    };
+  }
+
+  // Retornar os dados originais do backend sem muita transformação
+  return {
+    ...backendData, // Manter todas as propriedades originais do backend
+    Id: backendData.id || backendData.Id,
+    Name: backendData.title || backendData.Title || 'Pacote sem nome',
+    Description: backendData.description || backendData.Description || 'Sem descrição',
+    BasePrice: backendData.price || backendData.Price || 0,
+    Duration: 5, // Valor padrão simplificado
+    MaxCapacity: 50, // Valor padrão por enquanto
+    IsActive: true, // Valor padrão por enquanto
+    Images: images, // Manter estrutura original
+    MainDestination: destination,
+    Company: company
+  };
 };
 
-/**
- * Obtém lista de pacotes de viagem com opção de filtros
- * @param params Parâmetros de filtro e paginação
- * @returns Promise com lista de pacotes
- */
-export const getTravelPackages = async (
-  params?: TravelPackageListParams
-): Promise<TravelPackageListItem[]> => {
+export const getTravelPackages = async (): Promise<TravelPackageListItem[]> => {
   try {
-    const response = await api.get('/TravelPackages', { params });
-    return response.data; // json-server retorna um array
+    console.log('🏝️ Buscando pacotes de viagem...');
+    const response = await api.get('/TravelPackage');
+    
+    let travelPackagesData = response.data;
+    
+    // Se há $values, é um array serializado
+    if (travelPackagesData && travelPackagesData.$values) {
+      travelPackagesData = travelPackagesData.$values;
+    }
+    
+    // Se não é array, tornar array
+    if (!Array.isArray(travelPackagesData)) {
+      travelPackagesData = [travelPackagesData];
+    }
+    
+    const mappedPackages = travelPackagesData.map(mapBackendToFrontend);
+    console.log(`✅ ${mappedPackages.length} pacotes encontrados`);
+    
+    return mappedPackages;
   } catch (error) {
-    console.error('Error fetching travel packages:', error);
+    console.error('❌ Erro ao buscar pacotes:', error);
     return [];
   }
 };
 
-/**
- * Obtém pacotes de viagem em destaque
- * @param limit Número máximo de pacotes a retornar
- * @returns Promise com lista de pacotes destacados
- */
-export const getFeaturedPackages = async (limit: number = 6): Promise<TravelPackageListItem[]> => {
+export const searchTravelPackages = async (params: TravelPackageListParams): Promise<TravelPackageListItem[]> => {
   try {
-    const response = await api.get('/TravelPackages', {
-      params: { featured: true, _limit: limit }
-    });
-    return response.data;
+    console.log('🔍 Buscando pacotes com filtros:', params);
+    
+    // Por enquanto busca todos e filtra no frontend (YAGNI)
+    const allPackages = await getTravelPackages();
+    
+    let filteredPackages = allPackages;
+    
+    // Filtro por destino
+    if (params.destination) {
+      const searchTerm = params.destination.toLowerCase();
+      filteredPackages = filteredPackages.filter(pkg => {
+        // Verificar se MainDestination existe
+        if (!pkg.MainDestination) {
+          console.warn('⚠️ Pacote sem MainDestination:', pkg);
+          return false;
+        }
+        
+        const destinationName = pkg.MainDestination.Name || '';
+        const destinationCountry = pkg.MainDestination.Country || '';
+        
+        return destinationName.toLowerCase().includes(searchTerm) ||
+               destinationCountry.toLowerCase().includes(searchTerm);
+      });
+    }
+    
+    // Filtro por preço
+    if (params.maxPrice) {
+      filteredPackages = filteredPackages.filter(pkg => pkg.BasePrice <= params.maxPrice!);
+    }
+    
+    if (params.minPrice) {
+      filteredPackages = filteredPackages.filter(pkg => pkg.BasePrice >= params.minPrice!);
+    }
+    
+    console.log(`✅ ${filteredPackages.length} pacotes encontrados após filtros`);
+    return filteredPackages;
   } catch (error) {
-    console.error('Error fetching featured packages:', error);
+    console.error('❌ Erro na busca com filtros:', error);
     return [];
   }
 };
 
-/**
- * Obtém um pacote de viagem específico pelo ID
- * @param id ID do pacote de viagem
- * @returns Promise com os detalhes do pacote ou null se não encontrado
- */
-export const getTravelPackageById = async (
-  id: number
-): Promise<TravelPackageDetailResponse | null> => {
+export const getFeaturedPackages = async (): Promise<TravelPackageListItem[]> => {
   try {
-    const response = await api.get(`/TravelPackages/${id}`);
-    return response.data;
+    console.log('⭐ Buscando pacotes em destaque...');
+    const allPackages = await getTravelPackages();
+    
+    // Por enquanto retorna os primeiros 6 (YAGNI)
+    const featuredPackages = allPackages.slice(0, 6);
+    
+    console.log(`✅ ${featuredPackages.length} pacotes em destaque`);
+    return featuredPackages;
   } catch (error) {
-    console.error(`Error fetching travel package with ID ${id}:`, error);
+    console.error('❌ Erro ao buscar pacotes em destaque:', error);
+    return [];
+  }
+};
+
+export const getTravelPackageById = async (id: number): Promise<TravelPackageDetailResponse | null> => {
+  try {
+    console.log(`🏝️ Buscando pacote ${id}...`);
+    const response = await api.get(`/TravelPackage/${id}`);
+    
+    if (response.data) {
+      // Mapear dados detalhados (pode expandir depois conforme necessário)
+      const packageData = response.data;
+      
+      console.log(`✅ Pacote ${id} encontrado:`, packageData.title || packageData.Title);
+      return packageData;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error(`❌ Erro ao buscar pacote ${id}:`, error);
     return null;
   }
 };
 
-/**
- * Atualiza um pacote de viagem existente
- * @param id ID do pacote de viagem
- * @param packageData Dados do pacote a serem atualizados
- * @returns Promise com o pacote atualizado ou null em caso de erro
- */
-export const updateTravelPackage = async (
-  id: number,
-  packageData: Partial<TravelPackageCreateRequest>
-): Promise<TravelPackageDetailResponse | null> => {
+export const createTravelPackage = async (data: TravelPackageCreateRequest): Promise<TravelPackageDetailResponse | null> => {
   try {
-    const response = await api.put(`/TravelPackages/${id}`, packageData);
+    console.log('➕ Criando novo pacote de viagem...');
+    const response = await api.post('/TravelPackage', data);
+    
+    console.log('✅ Pacote criado com sucesso');
     return response.data;
   } catch (error) {
-    console.error(`Error updating travel package with ID ${id}:`, error);
-    return null;
-  }
-};
-
-/**
- * Exclui um pacote de viagem
- * @param id ID do pacote de viagem
- * @returns Promise void
- */
-export const deleteTravelPackage = async (id: number): Promise<void> => {
-  try {
-    await api.delete(`/TravelPackages/${id}`);
-  } catch (error) {
-    console.error(`Error deleting travel package with ID ${id}:`, error);
-  }
-};
-
-/**
- * Busca pacotes de viagem por destino
- * @param destinationName Nome do destino
- * @returns Promise com lista de pacotes correspondentes
- */
-export const getTravelPackagesByDestination = async (
-  destinationName: string
-): Promise<TravelPackageListItem[]> => {
-  try {
-    // Para JSON Server, assume-se que há uma propriedade Destinations 
-    // que podemos filtrar usando query params
-    const response = await api.get('/TravelPackages', {
-      params: { 'Destinations.Name_like': destinationName }
-    });
-    return response.data;
-  } catch (error) {
-    console.error(`Error fetching packages for destination ${destinationName}:`, error);
-    return [];
-  }
-};
-
-/**
- * Busca pacotes de viagem por faixa de preço
- * @param minPrice Preço mínimo
- * @param maxPrice Preço máximo
- * @returns Promise com lista de pacotes correspondentes
- */
-export const getTravelPackagesByPriceRange = async (
-  minPrice: number,
-  maxPrice: number
-): Promise<TravelPackageListItem[]> => {
-  try {
-    const response = await api.get('/TravelPackages', {
-      params: { BasePrice_gte: minPrice, BasePrice_lte: maxPrice }
-    });
-    return response.data;
-  } catch (error) {
-    console.error(`Error fetching packages by price range:`, error);
-    return [];
+    console.error('❌ Erro ao criar pacote:', error);
+    throw error;
   }
 };

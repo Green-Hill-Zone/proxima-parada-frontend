@@ -16,8 +16,11 @@ import React, { useEffect, useState } from 'react';
 
 // Importações dos tipos e dados separados
 import { AuthContext } from './authContext';
-import { mockTravelPackages, mockUsers } from './mockData';
+import { mockTravelPackages } from './mockData';
 import type { AuthContextType, TravelPackage, User } from './types';
+
+// Importação do serviço real de usuários
+import { createUser, loginUser, adaptUserToAuthUser, type CreateUserRequest } from '../services/UserService';
 
 // Interface para as props do provider
 interface AuthProviderProps {
@@ -72,61 +75,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /* FUNÇÃO DE LOGIN - AUTENTICA O USUÁRIO                           */
   /* ================================================================= */
 
-  // Função de login que simula autenticação com backend
+  // Função de login que autentica com backend real
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true); // Ativa estado de carregamento
 
     try {
-      // Simula delay de requisição para API (1.5 segundos)
-      // Em produção, aqui seria: const response = await fetch('/api/login', {...})
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('🔄 Realizando login com backend...', { email });
+      
+      // Chama o serviço real de login
+      const userData = await loginUser({ email, password });
 
-      // Busca o usuário nos dados simulados
-      // Em produção, isso seria feito pelo servidor
-      const foundUser = mockUsers.find(
-        user => user.email === email && user.password === password
-      );
-
-      if (foundUser) {
-        // ✅ USUÁRIO ENCONTRADO - LOGIN BEM-SUCEDIDO
-
-        // Cria objeto User sem a senha (por segurança)
-        const userData: User = {
-          id: foundUser.id,
-          name: foundUser.name,
-          email: foundUser.email,
-          avatar: foundUser.avatar,
-          // Inclui todas as informações pessoais
-          birthDate: foundUser.birthDate,
-          cpf: foundUser.cpf,
-          gender: foundUser.gender,
-          phone: foundUser.phone,
-          phone2: foundUser.phone2,
-          memberSince: foundUser.memberSince,
-          // Inclui informações de endereço
-          cep: foundUser.cep,
-          street: foundUser.street,
-          streetNumber: foundUser.streetNumber,
-          complement: foundUser.complement,
-          neighborhood: foundUser.neighborhood,
-          city: foundUser.city,
-          state: foundUser.state,
-          country: foundUser.country
-        };
-
+      if (userData) {
+        // ✅ LOGIN BEM-SUCEDIDO
+        console.log('✅ Login realizado com sucesso:', userData);
+        
+        // Verifica se há dados salvos do usuário para preservar informações extras
+        const savedUserData = localStorage.getItem('currentUser');
+        let existingData: User | null = null;
+        
+        if (savedUserData) {
+          try {
+            existingData = JSON.parse(savedUserData);
+          } catch (error) {
+            console.log('Dados salvos inválidos, usando dados padrão');
+          }
+        }
+        
+        // Adapta dados do backend preservando informações locais
+        const authUserData = adaptUserToAuthUser(userData, existingData || undefined);
+        
         // Atualiza o estado da aplicação
-        setUser(userData);
+        setUser(authUserData);
 
         // Salva no localStorage para persistir a sessão
-        localStorage.setItem('currentUser', JSON.stringify(userData));
+        localStorage.setItem('currentUser', JSON.stringify(authUserData));
 
-        // Log para debug (em produção, remover)
-        console.log('✅ Login realizado com sucesso:', userData);
         return true; // Retorna true indicando sucesso
 
       } else {
-        // ❌ USUÁRIO NÃO ENCONTRADO - CREDENCIAIS INVÁLIDAS
-        console.log('❌ Credenciais inválidas');
+        // ❌ CREDENCIAIS INVÁLIDAS
+        console.log('❌ Credenciais inválidas ou usuário não encontrado');
         return false; // Retorna false indicando falha
       }
 
@@ -155,83 +143,45 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /* FUNÇÃO DE CADASTRO - REGISTRA NOVO USUÁRIO                      */
   /* ================================================================= */
 
-  // Função de cadastro que simula criação de usuário
+  // Função de cadastro que cria usuário no backend real
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     setIsLoading(true); // Ativa estado de carregamento
 
     try {
-      // Simula delay de requisição para API
-      // Em produção: const response = await fetch('/api/register', {...})
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Verifica se o email já existe nos dados simulados
-      const existingUser = mockUsers.find(user => user.email === email);
-      if (existingUser) {
-        // ❌ EMAIL JÁ EXISTE - IMPEDE CADASTRO DUPLICADO
-        console.log('❌ Email já cadastrado');
-        return false;
-      }
-
-      // ✅ EMAIL DISPONÍVEL - CRIA NOVO USUÁRIO
-
-      // Cria objeto do novo usuário com informações padrão para novos cadastros
-      const newUser: User = {
-        id: Date.now().toString(),              // ID único baseado em timestamp
-        name,                                   // Nome fornecido
-        email,                                  // Email fornecido
-        avatar: `https://via.placeholder.com/150/007bff/fff?text=${name.charAt(0).toUpperCase()}`, // Avatar placeholder
-        // Informações padrão para novos usuários (podem ser editadas no perfil depois)
-        birthDate: '01/01/1990',              // Data padrão
-        cpf: '000.000.000-00',                // CPF a ser preenchido
-        gender: 'Não informado',              // Gênero a ser preenchido
-        phone: '(00) 00000-0000',             // Telefone a ser preenchido
-        phone2: '(00) 00000-0000',            // Telefone 2 a ser preenchido
-        memberSince: new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }), // Data atual
-        // Informações de endereço padrão (a serem preenchidas)
-        cep: '00000-000',
-        street: 'A definir',
-        streetNumber: '0',
-        complement: '',
-        neighborhood: 'A definir',
-        city: 'A definir',
-        state: 'SP',
-        country: 'Brasil'
+      console.log('🔄 Criando usuário no backend...', { name, email });
+      
+      // Prepara dados para envio ao backend
+      const createUserData: CreateUserRequest = {
+        name,
+        email,
+        password,
+        role: 'customer', // Role padrão para novos usuários
       };
 
-      // Adiciona aos dados simulados (em produção seria enviado para API)
-      mockUsers.push({
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        password,                               // Senha (em produção seria hash)
-        avatar: newUser.avatar || '',
-        birthDate: newUser.birthDate,
-        cpf: newUser.cpf,
-        gender: newUser.gender,
-        phone: newUser.phone,
-        phone2: newUser.phone2 || '',
-        memberSince: newUser.memberSince,
-        // Informações de endereço padrão
-        cep: newUser.cep,
-        street: newUser.street,
-        streetNumber: newUser.streetNumber,
-        complement: newUser.complement || '',
-        neighborhood: newUser.neighborhood,
-        city: newUser.city,
-        state: newUser.state,
-        country: newUser.country || 'Brasil'
-      });
+      // Chama o serviço real de criação de usuário
+      const newUser = await createUser(createUserData);
+
+      // ✅ USUÁRIO CRIADO COM SUCESSO
+      console.log('✅ Cadastro realizado com sucesso:', newUser);
+
+      // Adapta dados do backend para o formato do contexto de autenticação (sem dados anteriores no registro)
+      const authUserData = adaptUserToAuthUser(newUser, undefined);
 
       // Atualiza estado e salva sessão (auto-login após cadastro)
-      setUser(newUser);
-      localStorage.setItem('currentUser', JSON.stringify(newUser));
+      setUser(authUserData);
+      localStorage.setItem('currentUser', JSON.stringify(authUserData));
 
-      console.log('✅ Cadastro realizado com sucesso:', newUser);
       return true;
 
     } catch (error) {
-      // ⚠️ ERRO INESPERADO DURANTE O CADASTRO
+      // ⚠️ ERRO DURANTE O CADASTRO
       console.error('Erro durante o cadastro:', error);
+      
+      // Mostra mensagens de erro mais específicas se possível
+      if (error instanceof Error) {
+        console.error('Detalhes do erro:', error.message);
+      }
+      
       return false;
     } finally {
       // Sempre desativa o loading
@@ -249,6 +199,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   /* ================================================================= */
+  /* FUNÇÃO PARA ATUALIZAR DADOS DO USUÁRIO NO CONTEXTO              */
+  /* ================================================================= */
+
+  // Função para atualizar os dados do usuário no contexto após edição
+  const updateUser = (updatedUser: User): void => {
+    console.log('🔄 Atualizando usuário no contexto:', updatedUser);
+    
+    // Atualiza o estado do usuário
+    setUser(updatedUser);
+    
+    // Atualiza também no localStorage para persistir
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    
+    console.log('✅ Usuário atualizado no contexto com sucesso');
+  };
+
+  /* ================================================================= */
   /* CONFIGURAÇÃO DO VALOR DO CONTEXTO                               */
   /* ================================================================= */
 
@@ -259,6 +226,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,          // Função de login
     logout,         // Função de logout
     register,       // Função de cadastro
+    updateUser,     // Função para atualizar usuário no contexto
     getUserTravels  // Função para buscar viagens
   };
 

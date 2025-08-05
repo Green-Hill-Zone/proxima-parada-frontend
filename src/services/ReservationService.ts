@@ -507,7 +507,14 @@ interface BackendReservation {
     price: number;
     departureDate?: string;
     returnDate?: string;
-    destination?: string;
+    destination: {
+      id: number;
+      name?: string;
+      country?: string;
+      state?: string;
+      city?: string;
+      coordinates?: string;
+    };
     company: any;
     images: { $values: any[] };
     availableDates: { $values: any[] };
@@ -665,6 +672,45 @@ const mapReservationToTravelPackage = (reservation: BackendReservation): TravelP
   const category = getCategory(reservation.travelPackage.title);
   const status = getStatus();
 
+  // Função para formatar o destino a partir do objeto Destination
+  const getDestination = (): string => {
+    const dest = reservation.travelPackage.destination;
+    
+    console.log('🌍 Dados do destino recebidos:', dest);
+    console.log('🌍 TravelPackage completo:', reservation.travelPackage);
+    
+    if (!dest) {
+      console.log('⚠️ Objeto destination é null/undefined');
+      return 'Destino não informado';
+    }
+    
+    // Constrói o destino no formato: "Nome, Cidade, Estado" ou "Nome, País"
+    const parts: string[] = [];
+    
+    if (dest.name) {
+      parts.push(dest.name);
+      console.log('✅ Nome encontrado:', dest.name);
+    }
+    
+    if (dest.city) {
+      parts.push(dest.city);
+      console.log('✅ Cidade encontrada:', dest.city);
+    }
+    
+    if (dest.state) {
+      parts.push(dest.state);
+      console.log('✅ Estado encontrado:', dest.state);
+    } else if (dest.country) {
+      parts.push(dest.country);
+      console.log('✅ País encontrado:', dest.country);
+    }
+    
+    const finalDestination = parts.length > 0 ? parts.join(', ') : 'Destino não informado';
+    console.log('🏁 Destino final formatado:', finalDestination);
+    
+    return finalDestination;
+  };
+
   // Calcula o preço usando múltiplas fontes (prioridade: payment amount > travel package price)
   const getPrice = (): number => {
     // 1ª prioridade: valor pago na reserva (mais preciso)
@@ -704,7 +750,7 @@ const mapReservationToTravelPackage = (reservation: BackendReservation): TravelP
   return {
     id: reservation.id.toString(),
     title: reservation.travelPackage.title,
-    destination: reservation.travelPackage.destination || 'Destino não informado',
+    destination: getDestination(),
     startDate: formatDate(reservation.availableDate.departureDate),
     endDate: formatDate(reservation.availableDate.returnDate),
     duration,

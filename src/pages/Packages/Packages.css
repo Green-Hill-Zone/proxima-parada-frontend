@@ -1,0 +1,195 @@
+/* Estilos da Barra de Pesquisa */
+.search-container {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  border: 2px solid #e9ecef;
+  border-radius: 12px 0 0 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.search-icon {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: 2px solid #007bff;
+  border-left: none;
+  border-radius: 0 12px 12px 0;
+  color: white;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  transition: all 0.3s ease;
+}
+
+.search-icon svg {
+  width: 18px;
+  height: 18px;
+  color: white;
+}
+
+.search-icon:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-1px);
+}
+
+.clear-button {
+  border: 2px solid #e9ecef;
+  border-left: none;
+  border-right: none;
+  background-color: #f8f9fa;
+  color: #6c757d;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+}
+
+.clear-button:hover {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+  transform: translateY(-1px);
+}
+
+.clear-button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .search-input {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .search-icon,
+  .clear-button {
+    min-width: 40px;
+    font-size: 0.9rem;
+  }
+  
+  .search-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .search-container {
+    margin-bottom: 1rem;
+  }
+  
+  .search-input {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.7rem;
+  }
+  
+  .search-icon,
+  .clear-button {
+    min-width: 35px;
+    font-size: 0.8rem;
+  }
+  
+  .search-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Melhorar a aparência dos resultados */
+.ages-title {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.text-muted {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Estados de carregamento e erro */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.3em;
+}
+
+.loading-container,
+.error-container,
+.no-results-container {
+  padding: 3rem 1rem;
+  text-align: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  margin: 2rem 0;
+}
+
+.error-container {
+  background: linear-gradient(135deg, #ffeaea, #fdd);
+  color: #dc3545;
+}
+
+.no-results-container {
+  background: linear-gradient(135deg, #fff3cd, #ffeeba);
+  color: #856404;
+}
+
+/* Estilo para destaque dos termos de busca (futura implementação) */
+.search-highlight {
+  background-color: #fff3cd;
+  padding: 0.1rem 0.2rem;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+/* Hover effects para melhor UX */
+.input-group:hover .search-input {
+  border-color: #007bff;
+}
+
+.input-group:hover .search-icon {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Focus dentro do grupo */
+.input-group:focus-within .search-icon {
+  border-color: #007bff;
+  background: linear-gradient(135deg, #0056b3, #004085);
+}

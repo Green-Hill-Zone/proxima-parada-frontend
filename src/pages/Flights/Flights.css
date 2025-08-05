@@ -26,6 +26,87 @@
   font-size: 1.1rem;
 }
 
+/* Barra de Pesquisa Rápida */
+.quick-search {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+}
+
+.quick-search .card-body {
+  padding: 1.5rem;
+}
+
+.quick-search .search-input {
+  border: 2px solid #e9ecef;
+  border-radius: 12px 0 0 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.quick-search .search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+  outline: none;
+}
+
+.quick-search .search-input::placeholder {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.quick-search .search-icon {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: 2px solid #007bff;
+  border-left: none;
+  border-radius: 0 12px 12px 0;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  transition: all 0.3s ease;
+}
+
+.quick-search .search-icon svg {
+  width: 18px;
+  height: 18px;
+  color: white;
+}
+
+.quick-search .search-icon:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-1px);
+}
+
+.quick-search .clear-button {
+  border: 2px solid #e9ecef;
+  border-left: none;
+  border-right: none;
+  background-color: #f8f9fa;
+  color: #6c757d;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+}
+
+.quick-search .clear-button:hover {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+  transform: translateY(-1px);
+}
+
+.quick-search .clear-button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
 /* Filtros de Busca */
 .search-filters {
   border: none;
@@ -73,6 +154,53 @@
 .flights-count p {
   font-size: 0.95rem;
   margin-bottom: 0;
+}
+
+/* Filtros Ativos */
+.active-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.active-filters .badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.active-filters .badge.bg-primary {
+  background-color: #007bff !important;
+}
+
+.active-filters .badge.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+.active-filters .badge.bg-info {
+  background-color: #17a2b8 !important;
+}
+
+.active-filters .badge.bg-success {
+  background-color: #28a745 !important;
+}
+
+.active-filters .badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.active-filters .btn-link {
+  font-size: 0.75rem;
+  color: #dc3545 !important;
+  font-weight: 500;
+}
+
+.active-filters .btn-link:hover {
+  color: #a71e2a !important;
+  text-decoration: underline !important;
 }
 
 /* Paginação */
@@ -202,12 +330,35 @@
     font-size: 1.75rem;
   }
   
+  .quick-search .card-body {
+    padding: 1rem;
+  }
+  
+  .quick-search .search-input {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .quick-search .search-icon,
+  .quick-search .clear-button {
+    min-width: 40px;
+  }
+  
+  .quick-search .search-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+  
   .search-filters .card-body {
     padding: 1rem;
   }
   
   .search-filters .col-md-2 .d-flex {
     justify-content: center;
+  }
+  
+  .active-filters {
+    margin-top: 0.5rem;
   }
 }
 
@@ -220,6 +371,21 @@
     font-size: 1rem;
   }
   
+  .quick-search .search-input {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.7rem;
+  }
+  
+  .quick-search .search-icon,
+  .quick-search .clear-button {
+    min-width: 35px;
+  }
+  
+  .quick-search .search-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+  
   .search-filters .d-flex.gap-2 {
     flex-direction: column;
     gap: 0.5rem !important;
@@ -227,6 +393,17 @@
   
   .search-filters .btn {
     width: 100%;
+  }
+  
+  .active-filters {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .active-filters .badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
   }
   
   /* Paginação móvel */

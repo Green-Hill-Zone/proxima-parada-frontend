@@ -67,6 +67,24 @@ export interface AccommodationFilters {
   maxStars?: number;
 }
 
+// Interface para criar uma nova acomodação
+export interface AccommodationCreateRequest {
+  destinationId: number;
+  roomTypeId: number;
+  name: string;
+  description?: string;
+  streetName?: string;
+  phone?: string;
+  email?: string;
+  checkInTime?: string; // Formato: "HH:MM:SS"
+  checkOutTime?: string; // Formato: "HH:MM:SS"
+  starRating?: number;
+  pricePerNight?: number;
+  district?: string;
+  addressNumber?: string;
+  geoCoordinates?: string;
+}
+
 /* ===================================================================== */
 /* FUNÇÕES DE BUSCA E LISTAGEM                                         */
 /* ===================================================================== */
@@ -270,6 +288,59 @@ export const getStarRating = (rating: number): string => {
 };
 
 /**
+ * Cria uma nova acomodação no sistema
+ * @param accommodationData - Dados da acomodação a ser criada
+ * @returns Promise com a acomodação criada
+ */
+export const createAccommodation = async (accommodationData: AccommodationCreateRequest): Promise<Accommodation | null> => {
+  try {
+    console.log('🔄 Criando nova acomodação:', accommodationData);
+    
+    // Formatação dos dados conforme esperado pelo backend
+    const requestData = {
+      destinationId: accommodationData.destinationId,
+      roomTypeId: accommodationData.roomTypeId,
+      name: accommodationData.name,
+      description: accommodationData.description || '',
+      streetName: accommodationData.streetName || '',
+      phone: accommodationData.phone || '',
+      email: accommodationData.email || '',
+      checkInTime: accommodationData.checkInTime || '14:00:00',
+      checkOutTime: accommodationData.checkOutTime || '12:00:00',
+      starRating: accommodationData.starRating || 3,
+      pricePerNight: accommodationData.pricePerNight || 0,
+      district: accommodationData.district || '',
+      addressNumber: accommodationData.addressNumber || '',
+      geoCoordinates: accommodationData.geoCoordinates || ''
+    };
+    
+    console.log('📤 Enviando dados para API:', requestData);
+    
+    const response = await axios.post(`${API_BASE_URL}/Accommodation`, requestData);
+    
+    console.log('📥 Resposta do servidor:', response.data);
+    
+    // Mapeia a resposta para o formato do frontend
+    if (response.data) {
+      const createdAccommodation = mapBackendToFrontend(response.data);
+      return createdAccommodation;
+    }
+    
+    return null;
+    
+  } catch (error) {
+    console.error('❌ Erro ao criar acomodação:', error);
+    
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || 'Erro desconhecido do servidor';
+      throw new Error(`Erro ao criar acomodação: ${errorMessage}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
  * YAGNI: Busca acomodações por ID do destino
  * @param destinationId - ID do destino
  * @returns Promise com lista de acomodações do destino
@@ -304,6 +375,59 @@ export const getAccommodationsByDestination = async (destinationId: number): Pro
     
     if (axios.isAxiosError(error)) {
       throw new Error(`Erro do servidor: ${error.response?.status}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
+ * Associa imagens a uma acomodação existente
+ * @param accommodationId - ID da acomodação
+ * @param imageIds - Array de IDs das imagens a serem associadas
+ * @returns Promise com booleano indicando sucesso
+ */
+export const addImagesToAccommodation = async (accommodationId: number, imageIds: number[]): Promise<boolean> => {
+  try {
+    console.log(`🖼️ Associando imagens à acomodação ${accommodationId}:`, imageIds);
+    
+    await axios.post(`${API_BASE_URL}/Accommodation/${accommodationId}/images`, imageIds);
+    
+    console.log(`✅ Imagens associadas com sucesso à acomodação ${accommodationId}`);
+    return true;
+    
+  } catch (error) {
+    console.error(`❌ Erro ao associar imagens à acomodação ${accommodationId}:`, error);
+    
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || `Erro ${error.response?.status}`;
+      throw new Error(`Erro ao associar imagens: ${errorMessage}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
+ * Exclui uma acomodação do sistema
+ * @param id - ID da acomodação a ser excluída
+ * @returns Promise com booleano indicando sucesso
+ */
+export const deleteAccommodation = async (id: number): Promise<boolean> => {
+  try {
+    console.log(`🗑️ Excluindo acomodação ${id}...`);
+    
+    await axios.delete(`${API_BASE_URL}/Accommodation/${id}`);
+    
+    console.log(`✅ Acomodação ${id} excluída com sucesso`);
+    return true;
+    
+  } catch (error) {
+    console.error(`❌ Erro ao excluir acomodação ${id}:`, error);
+    
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || `Erro ${error.response?.status}`;
+      throw new Error(`Erro ao excluir: ${errorMessage}`);
     }
     
     throw new Error('Erro de conexão com o servidor');

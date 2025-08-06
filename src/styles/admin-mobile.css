@@ -1,0 +1,177 @@
+/* ===================================================================== */
+/* ESTILOS RESPONSIVOS GLOBAIS PARA ÁREA ADMINISTRATIVA                */
+/* ===================================================================== */
+
+/* iPhone 14 e dispositivos similares (max-width: 430px) */
+@media (max-width: 430px) {
+  /* Container geral das páginas admin */
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  /* Tabelas responsivas */
+  .table-responsive {
+    font-size: 0.85rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Botões em mobile */
+  .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .btn-sm {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Cards responsivos */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  /* Modais em mobile */
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+  
+  .modal-content {
+    border-radius: 6px;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  /* Flexbox adjustments */
+  .d-flex.gap-2,
+  .d-flex.gap-3 {
+    flex-wrap: wrap;
+    gap: 0.5rem !important;
+  }
+  
+  /* Títulos e texto */
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.3rem;
+  }
+  
+  h3 {
+    font-size: 1.1rem;
+  }
+  
+  h4, h5, h6 {
+    font-size: 1rem;
+  }
+  
+  /* Formulários */
+  .form-control,
+  .form-select {
+    padding: 0.65rem;
+    font-size: 0.9rem;
+  }
+  
+  .form-label {
+    font-size: 0.9rem;
+    margin-bottom: 0.375rem;
+  }
+  
+  /* Colunas em mobile */
+  .col-md-6,
+  .col-lg-4,
+  .col-lg-6,
+  .col-lg-8 {
+    margin-bottom: 1rem;
+  }
+  
+  /* Espaçamentos */
+  .mb-4 {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .mt-4 {
+    margin-top: 1.5rem !important;
+  }
+  
+  .my-4 {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+/* Dispositivos muito pequenos (max-width: 374px) */
+@media (max-width: 374px) {
+  .container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.375rem 0.125rem;
+    font-size: 0.75rem;
+  }
+  
+  .btn {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.85rem;
+  }
+  
+  .btn-sm {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.75rem;
+  }
+  
+  .modal-dialog {
+    margin: 0.25rem;
+  }
+  
+  .form-control,
+  .form-select {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .form-label {
+    font-size: 0.85rem;
+  }
+  
+  h1 {
+    font-size: 1.3rem;
+  }
+  
+  h2 {
+    font-size: 1.2rem;
+  }
+  
+  h3 {
+    font-size: 1rem;
+  }
+}
+
+/* Orientação paisagem em mobile */
+@media (max-width: 844px) and (orientation: landscape) {
+  .container {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .my-4 {
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+}

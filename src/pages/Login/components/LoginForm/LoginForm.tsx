@@ -1,7 +1,8 @@
 // Importações necessárias do React e React Bootstrap
 import { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Alert, Spinner, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 // Importação das imagens dos logos para login social
 import googleLogo from '../../../../assets/google.png';
 import facebookLogo from '../../../../assets/facebook.png';
@@ -36,6 +37,9 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
   // Estado para mensagens de erro
   const [error, setError] = useState<string>('');
   const [showError, setShowError] = useState<boolean>(false);
+  
+  // Estado para controlar visibilidade da senha
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   // Effect para redirecionamento automático quando o usuário muda
   useEffect(() => {
@@ -128,17 +132,28 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                   />
                 </Form.Group>
 
-                {/* Campo de senha */}
+                {/* Campo de senha com botão para mostrar/ocultar */}
                 <Form.Group className="login-form-group">
                   <Form.Label>Senha</Form.Label>
-                  <Form.Control
-                    type="password"                                 // Tipo password para mascarar a entrada
-                    placeholder="Digite sua senha"                 // Texto de exemplo
-                    value={formData.password}                      // Valor controlado pelo estado
-                    onChange={handleInputChange('password')}       // Função para atualizar o estado
-                    required                                        // Campo obrigatório
-                    disabled={isLoading}                           // Desabilita durante carregamento
-                  />
+                  <InputGroup>
+                    <Form.Control
+                      type={showPassword ? "text" : "password"}      // Alterna entre text e password
+                      placeholder="Digite sua senha"                 // Texto de exemplo
+                      value={formData.password}                      // Valor controlado pelo estado
+                      onChange={handleInputChange('password')}       // Função para atualizar o estado
+                      required                                        // Campo obrigatório
+                      disabled={isLoading}                           // Desabilita durante carregamento
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isLoading}
+                      className="password-toggle-btn"
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </Button>
+                  </InputGroup>
                 </Form.Group>
 
                 {/* Botão principal de login */}

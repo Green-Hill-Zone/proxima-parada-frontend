@@ -8,10 +8,121 @@
   --black: #000000;
 }
 
+/* ===================================================================== */
+/* ESTILOS GLOBAIS BASE                                                 */
+/* ===================================================================== */
+
 .hero-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: var(--white);
 }
+
 .footer {
   margin-top: auto;
+}
+
+/* ===================================================================== */
+/* RESPONSIVIDADE GLOBAL                                               */
+/* ===================================================================== */
+
+/* Base para todos os dispositivos */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Containers responsivos */
+.container {
+  max-width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* ===================================================================== */
+/* OTIMIZAÇÕES PARA iPHONE 14 (390x844px)                              */
+/* ===================================================================== */
+
+@media (max-width: 430px) {
+  /* Padding reduzido para aproveitar melhor o espaço */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Cards e componentes mais compactos */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  /* Botões full-width em mobile */
+  .btn-mobile-full {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Headers mais compactos */
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.3rem;
+  }
+  
+  /* Formulários responsivos */
+  .form-control {
+    font-size: 16px; /* Evita zoom no iOS */
+  }
+  
+  /* Melhor espaçamento em mobile */
+  .mb-4 {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .mt-4 {
+    margin-top: 1.5rem !important;
+  }
+  
+  .py-4 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+}
+
+/* ===================================================================== */
+/* TELAS MUITO PEQUENAS (< 375px)                                       */
+/* ===================================================================== */
+
+@media (max-width: 374px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  h1 {
+    font-size: 1.6rem;
+  }
+  
+  h2 {
+    font-size: 1.4rem;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+  }
+  
+  .card-body {
+    padding: 0.75rem;
+  }
 }

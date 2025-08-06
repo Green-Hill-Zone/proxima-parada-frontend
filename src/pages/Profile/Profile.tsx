@@ -268,9 +268,9 @@ const Profile = () => {
 
       {/* Conteúdo principal do perfil */}
       <main className="profile-main">
-        <Container>
+        <Container fluid="xl">
           <Row className="justify-content-center">
-            <Col lg={8}>
+            <Col lg={10} xl={12}>
 
               {/* Título da página */}
               <div className="profile-header">
@@ -301,9 +301,9 @@ const Profile = () => {
                   {/* Formulário de perfil */}
                   <Form onSubmit={handleSubmit}>
 
-                    {/* Primeira linha - Nome e Email */}
+                    {/* Primeira linha - 4 colunas de informações básicas */}
                     <Row className="mb-3">
-                      <Col md={6}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>
                             Nome Completo <span className="text-danger">*</span>
@@ -318,7 +318,7 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={6}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>
                             Email <span className="text-danger">*</span>
@@ -333,11 +333,7 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                    </Row>
-
-                    {/* Segunda linha - Data de Nascimento e CPF */}
-                    <Row className="mb-3">
-                      <Col md={6}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>
                             Data de Nascimento <span className="text-danger">*</span>
@@ -356,7 +352,7 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={6}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>
                             CPF <span className="text-danger">*</span>
@@ -374,9 +370,9 @@ const Profile = () => {
                       </Col>
                     </Row>
 
-                    {/* Terceira linha - Gênero e Telefone */}
+                    {/* Segunda linha - 4 colunas de contato */}
                     <Row className="mb-3">
-                      <Col md={6}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>Gênero</Form.Label>
                           <Form.Select
@@ -392,7 +388,7 @@ const Profile = () => {
                           </Form.Select>
                         </Form.Group>
                       </Col>
-                      <Col md={6}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>
                             Telefone <span className="text-danger">*</span>
@@ -408,11 +404,7 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                    </Row>
-
-                    {/* Quarta linha - Telefone 2 */}
-                    <Row className="mb-4">
-                      <Col md={6}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>Telefone 2</Form.Label>
                           <Form.Control
@@ -425,16 +417,7 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                    </Row>
-
-                    {/* Seção de Endereço */}
-                    <div className="profile-section-divider">
-                      <h6 className="text-primary mb-3">Endereço</h6>
-                    </div>
-
-                    {/* Primeira linha de endereço - CEP e Logradouro */}
-                    <Row className="mb-3">
-                      <Col md={4}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>
                             CEP <span className="text-danger">*</span>
@@ -450,7 +433,16 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={8}>
+                    </Row>
+
+                    {/* Seção de Endereço */}
+                    <div className="profile-section-divider">
+                      <h6 className="text-primary mb-3">Endereço</h6>
+                    </div>
+
+                    {/* Primeira linha de endereço - 4 colunas */}
+                    <Row className="mb-3">
+                      <Col xl={6} lg={8} md={8}>
                         <Form.Group>
                           <Form.Label>
                             Logradouro <span className="text-danger">*</span>
@@ -465,11 +457,7 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                    </Row>
-
-                    {/* Segunda linha de endereço - Número e Complemento */}
-                    <Row className="mb-3">
-                      <Col md={4}>
+                      <Col xl={2} lg={2} md={2}>
                         <Form.Group>
                           <Form.Label>
                             Número <span className="text-danger">*</span>
@@ -484,12 +472,12 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={8}>
+                      <Col xl={4} lg={2} md={2}>
                         <Form.Group>
                           <Form.Label>Complemento</Form.Label>
                           <Form.Control
                             type="text"
-                            placeholder="Apto, Bloco, Sala... (opcional)"
+                            placeholder="Apto, Bloco, Sala..."
                             value={formData.complement}
                             onChange={handleInputChange('complement')}
                             disabled={isLoading}
@@ -498,9 +486,9 @@ const Profile = () => {
                       </Col>
                     </Row>
 
-                    {/* Terceira linha de endereço - Bairro e Cidade */}
-                    <Row className="mb-3">
-                      <Col md={6}>
+                    {/* Segunda linha de endereço - 4 colunas */}
+                    <Row className="mb-4">
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>
                             Bairro <span className="text-danger">*</span>
@@ -515,7 +503,7 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={6}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>
                             Cidade <span className="text-danger">*</span>
@@ -530,11 +518,7 @@ const Profile = () => {
                           />
                         </Form.Group>
                       </Col>
-                    </Row>
-
-                    {/* Quarta linha de endereço - País e UF */}
-                    <Row className="mb-4">
-                      <Col md={6}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>
                             País <span className="text-danger">*</span>
@@ -583,7 +567,7 @@ const Profile = () => {
                           </Form.Select>
                         </Form.Group>
                       </Col>
-                      <Col md={6}>
+                      <Col xl={3} lg={6} md={6}>
                         <Form.Group>
                           <Form.Label>
                             UF <span className="text-danger">*</span>

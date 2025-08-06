@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Container, Form, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -6,10 +7,10 @@ import { getAllDestinations, type Destination } from "../../services/Destination
 import { getAllRoomTypes, type RoomType } from "../../services/RoomTypeService";
 import HotelForm from "../Admin/components/HotelForm";
 import ImageUpload from "../Admin/components/ImageUpload";
-import axios from "axios";
 
 const AdminHotelRegister = () => {
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
 
   // Estados para controlar o processo de envio
   const [loading, setLoading] = useState(false);
@@ -123,35 +124,22 @@ const AdminHotelRegister = () => {
 
         // TODO: Implementar upload de imagens quando API estiver pronta
         if (hotelImages.length > 0) {
-      for (const image of hotelImages) {
-        const formData = new FormData();
-        formData.append("file", image);
-        formData.append("altText", "Foto do hotel");
-        formData.append("accommodationId", createdAccommodation.id.toString());
+          for (const image of hotelImages) {
+            const formData = new FormData();
+            formData.append("file", image);
+            formData.append("altText", "Foto do hotel");
+            formData.append("accommodationId", createdAccommodation.id.toString());
 
-        try {
-          await axios.post("http://localhost:5079/api/image", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data"
+            try {
+              await axios.post(`${API_BASE_URL}/api/image`, formData, {
+                headers: {
+                  "Content-Type": "multipart/form-data"
+                }
+              });
+            } catch (err) {
+              console.error("Erro ao enviar imagem:", image.name, err);
             }
-          });
-        } catch (err) {
-          console.error("Erro ao enviar imagem:", image.name, err);
-        }
-      }
-
-
-
-
-
-
-
-
-
-
-
-
-
+          }
         }
 
         // Marca como sucesso e limpa os formulários

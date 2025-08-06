@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Button, Container, Alert } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { Alert, Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import PackageForm from "../Admin/components/PackageForm";
-import { createTravelPackageBackend, addFlightsToPackage } from "../../services/TravelPackageService";
-import { getAllFlights, type Flight } from "../../services/FlightService";
 import { getAllAccommodations, type Accommodation } from "../../services/AccommodationService";
+import { getAllFlights, type Flight } from "../../services/FlightService";
+import {
+  addFlightsToPackage,
+  createTravelPackageBackend,
+  uploadTravelPackageImage
+} from "../../services/TravelPackageService";
+import PackageForm from "../Admin/components/PackageForm";
+import SingleImageUpload from "../Admin/components/SingleImageUpload";
 
 const AdminPackageRegister = () => {
   const navigate = useNavigate();
@@ -19,11 +24,14 @@ const AdminPackageRegister = () => {
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [loadingFlights, setLoadingFlights] = useState(false);
   const [loadingAccommodations, setLoadingAccommodations] = useState(false);
-  
+
   // Estados para seleção específica: 2 voos (ida/volta) + 1 acomodação
   const [selectedOutboundFlightId, setSelectedOutboundFlightId] = useState<number | null>(null);
   const [selectedReturnFlightId, setSelectedReturnFlightId] = useState<number | null>(null);
   const [selectedAccommodationId, setSelectedAccommodationId] = useState<number | null>(null);
+
+  // Estado para a imagem do pacote
+  const [packageImage, setPackageImage] = useState<File | null>(null);
 
   // Pacote - campos mapeados para o backend
   const [form, setForm] = useState({
@@ -87,7 +95,7 @@ const AdminPackageRegister = () => {
       ...prev,
       [name]: value
     }));
-    
+
     // Limpar mensagens de erro/sucesso quando o usuário edita
     if (error) setError(null);
     if (success) setSuccess(false);
@@ -95,29 +103,29 @@ const AdminPackageRegister = () => {
 
   const handlePackageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (loading) return; // Previne submissões múltiplas
-    
+
     setLoading(true);
     setError(null);
     setSuccess(false);
-    
+
     try {
       console.log("🔄 Cadastrando pacote...", form);
-      
+
       // Validações básicas
       if (!form.nome.trim()) {
         throw new Error("Nome do pacote é obrigatório");
       }
-      
+
       if (!form.preco || parseFloat(form.preco) <= 0) {
         throw new Error("Preço deve ser um valor válido maior que zero");
       }
-      
+
       if (!form.dataInicio || !form.dataFim) {
         throw new Error("Datas de início e fim são obrigatórias");
       }
-      
+
       if (new Date(form.dataInicio) >= new Date(form.dataFim)) {
         throw new Error("Data de início deve ser anterior à data de fim");
       }
@@ -137,16 +145,75 @@ const AdminPackageRegister = () => {
 
       // Chamar o serviço para criar o pacote
       const createdPackage = await createTravelPackageBackend(packageData);
+      console.log("Resposta do backend:", createdPackage);
 
-      if (createdPackage && createdPackage.TravelPackageId) {
-        const packageId = createdPackage.TravelPackageId;
+      // Verificar formato da resposta com mais flexibilidade
+      let packageId;
+
+      console.log("🔍 Analisando resposta do backend:", createdPackage);
+
+      if (createdPackage && createdPackage.travelPackageId) {
+        // A resposta vem como {$id: '1', travelPackageId: {...}}
+        // Onde travelPackageId é o objeto completo do pacote
+        const packageObject = createdPackage.travelPackageId;
+        console.log("📦 Objeto do pacote encontrado:", packageObject);
+
+        if (packageObject && typeof packageObject === 'object' && packageObject.id) {
+          packageId = packageObject.id;
+          console.log("✅ ID extraído do objeto do pacote:", packageId);
+        }
+      } else if (createdPackage && createdPackage.TravelPackageId) {
+        // Caso alternativo com diferentes nomenclaturas
+        const packageObject = createdPackage.TravelPackageId;
+        if (packageObject && typeof packageObject === 'object' && packageObject.id) {
+          packageId = packageObject.id;
+        } else if (typeof packageObject === 'number') {
+          packageId = packageObject;
+        }
+      } else if (createdPackage && createdPackage.id) {
+        packageId = createdPackage.id;
+      } else if (typeof createdPackage === 'number') {
+        packageId = createdPackage;
+      } else if (createdPackage && typeof createdPackage === 'object') {
+        // Busca mais profunda no objeto
+        if (createdPackage.data && createdPackage.data.id) {
+          packageId = createdPackage.data.id;
+        } else {
+          // Tentar encontrar qualquer propriedade que pareça um ID numérico
+          const possibleIdProps = ['id', 'packageId', 'travelPackageId', 'TravelPackageId'];
+          for (const prop of possibleIdProps) {
+            const value = createdPackage[prop];
+            if (value) {
+              if (typeof value === 'number') {
+                packageId = value;
+                break;
+              } else if (typeof value === 'object' && value.id) {
+                packageId = value.id;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      // Garantir que o packageId é um número
+      if (packageId && typeof packageId !== 'number') {
+        const numericId = Number(packageId);
+        if (!isNaN(numericId)) {
+          packageId = numericId;
+        } else {
+          packageId = null;
+        }
+      }
+
+      if (packageId) {
         console.log("✅ Pacote cadastrado com sucesso. ID:", packageId);
 
         // Adicionar flights ao pacote (se houver selecionados)
         const flightIdsToAdd: number[] = [];
         if (selectedOutboundFlightId) flightIdsToAdd.push(selectedOutboundFlightId);
         if (selectedReturnFlightId) flightIdsToAdd.push(selectedReturnFlightId);
-        
+
         if (flightIdsToAdd.length > 0) {
           try {
             console.log("✈️ Adicionando voos ao pacote...", flightIdsToAdd);
@@ -169,8 +236,42 @@ const AdminPackageRegister = () => {
           }
         }
 
+        // Upload da imagem do pacote (se houver)
+        if (packageImage && packageId) {
+          try {
+            console.log("🖼️ Iniciando upload da imagem para o pacote...", {
+              packageId: packageId,
+              packageIdType: typeof packageId,
+              fileName: packageImage.name
+            });
+
+            // Garantir que o packageId é um número inteiro
+            const numericPackageId = Number(packageId);
+
+            if (!Number.isInteger(numericPackageId) || numericPackageId <= 0) {
+              console.error("❌ ID do pacote não é um número válido:", packageId);
+              throw new Error(`ID do pacote inválido para upload de imagem: ${packageId}`);
+            }
+
+            console.log(`📤 Enviando imagem ${packageImage.name} para o pacote ID ${numericPackageId}`);
+
+            await uploadTravelPackageImage({
+              file: packageImage,
+              altText: "Imagem do pacote: " + form.nome,
+              travelPackageId: numericPackageId
+            });
+
+            console.log("✅ Processo de upload da imagem concluído com sucesso");
+          } catch (imageError) {
+            console.error("❌ Erro durante o upload da imagem:", imageError);
+            // Apenas log do erro, não interrompe o fluxo principal
+          }
+        } else if (packageImage && !packageId) {
+          console.warn("⚠️ Imagem selecionada mas ID do pacote não está disponível");
+        }
+
         setSuccess(true);
-        
+
         // Reset do formulário
         setForm({
           nome: "",
@@ -180,11 +281,12 @@ const AdminPackageRegister = () => {
           dataInicio: "",
           dataFim: ""
         });
-        
+
         // Limpar seleções
         setSelectedOutboundFlightId(null);
         setSelectedReturnFlightId(null);
         setSelectedAccommodationId(null);
+        setPackageImage(null);
 
         // Mostrar mensagem de sucesso por alguns segundos antes de navegar
         setTimeout(() => {
@@ -193,12 +295,12 @@ const AdminPackageRegister = () => {
       } else {
         throw new Error("Erro ao criar pacote - resposta inválida do servidor");
       }
-      
+
     } catch (error: unknown) {
       console.error('❌ Erro ao cadastrar pacote:', error);
-      
+
       let errorMessage = "Erro desconhecido ao cadastrar pacote";
-      
+
       if (error instanceof Error) {
         errorMessage = error.message;
       } else if (typeof error === 'object' && error !== null) {
@@ -209,7 +311,7 @@ const AdminPackageRegister = () => {
           errorMessage = `Erro do servidor: ${err.response.status}`;
         }
       }
-      
+
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -254,7 +356,6 @@ const AdminPackageRegister = () => {
             setForm={setForm}
             handleSubmit={handlePackageSubmit}
             handleChange={handleChange}
-            goToFinalize={() => {}} // Não usado nesta página
           />
         </div>
 
@@ -274,7 +375,7 @@ const AdminPackageRegister = () => {
                   Carregando voos...
                 </div>
               ) : (
-                <select 
+                <select
                   className="form-select"
                   value={selectedOutboundFlightId || ''}
                   onChange={(e) => setSelectedOutboundFlightId(e.target.value ? parseInt(e.target.value) : null)}
@@ -301,7 +402,7 @@ const AdminPackageRegister = () => {
                   Carregando voos...
                 </div>
               ) : (
-                <select 
+                <select
                   className="form-select"
                   value={selectedReturnFlightId || ''}
                   onChange={(e) => setSelectedReturnFlightId(e.target.value ? parseInt(e.target.value) : null)}
@@ -329,7 +430,7 @@ const AdminPackageRegister = () => {
                 Carregando acomodações...
               </div>
             ) : (
-              <select 
+              <select
                 className="form-select"
                 value={selectedAccommodationId || ''}
                 onChange={(e) => setSelectedAccommodationId(e.target.value ? parseInt(e.target.value) : null)}
@@ -345,6 +446,21 @@ const AdminPackageRegister = () => {
           </div>
         </div>
 
+        {/* Upload de Imagem do Pacote */}
+        <div className="mb-4">
+          <h5>📸 Imagem do Pacote</h5>
+          <div className="col-md-8">
+            <SingleImageUpload
+              label="Imagem de capa do pacote"
+              image={packageImage}
+              setImage={setPackageImage}
+            />
+            <div className="text-muted">
+              Adicione uma imagem atrativa que represente este pacote de viagem.
+            </div>
+          </div>
+        </div>
+
         {/* Botões de Ação */}
         <div className="d-flex gap-2">
           <Button type="submit" variant="primary" disabled={loading}>
@@ -357,9 +473,9 @@ const AdminPackageRegister = () => {
               'Cadastrar Pacote'
             )}
           </Button>
-          <Button 
-            type="button" 
-            variant="outline-secondary" 
+          <Button
+            type="button"
+            variant="outline-secondary"
             onClick={() => navigate('/admin/dashboard')}
             disabled={loading}
           >
@@ -368,7 +484,7 @@ const AdminPackageRegister = () => {
         </div>
 
         {/* Resumo das Seleções */}
-        {(selectedOutboundFlightId || selectedReturnFlightId || selectedAccommodationId) && (
+        {(selectedOutboundFlightId || selectedReturnFlightId || selectedAccommodationId || packageImage) && (
           <div className="mt-3 p-3 bg-light rounded">
             <h6>📋 Resumo das Seleções:</h6>
             {selectedOutboundFlightId && (
@@ -384,6 +500,11 @@ const AdminPackageRegister = () => {
             {selectedAccommodationId && (
               <div className="text-success">
                 🏨 Acomodação selecionada: {getAccommodationDisplayName(accommodations.find(a => a.id === selectedAccommodationId)!)}
+              </div>
+            )}
+            {packageImage && (
+              <div className="text-info">
+                📸 Imagem selecionada: {packageImage.name} ({(packageImage.size / 1024).toFixed(1)} KB)
               </div>
             )}
             <small className="text-muted">

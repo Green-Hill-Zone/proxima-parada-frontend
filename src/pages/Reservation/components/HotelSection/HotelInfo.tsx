@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, Badge, Button } from "react-bootstrap";
 import { useReservation } from "../../context/ReservationContext";
-import { FaHotel, FaCoffee, FaExchangeAlt, FaEdit, FaCalendarAlt } from "react-icons/fa";
+import { FaHotel, FaExchangeAlt, FaEdit, FaCalendarAlt } from "react-icons/fa";
 import { calculateNights, formatDisplayDate, formatWeekday } from "../../../../utils/dateHelpers";
 
 interface HotelInfoProps {
@@ -60,7 +60,7 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
       )}
       
       <Card.Header
-        className="rounded-top-4 d-flex justify-content-between align-items-center border-0"
+        className="rounded-top-4 d-flex justify-content-between align-items-center "
         style={{ background: isActive ? "#1d4ed8" : "#3246aa" }}
       >
         <header aria-level={2} className="d-flex gap-2 align-items-center">
@@ -73,8 +73,7 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
           </a>
         </nav>
       </Card.Header>
-      <Card.Body className="p-2 bg-white rounded-4">
-        <div className="row w-100">
+      <Card.Body className="rounded-4">
           <div className="col-auto">
             <img
               src="https://placehold.co/600x400"
@@ -129,89 +128,7 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
                 <div className="text-muted small">Saída na {formatWeekday(checkOutDate)}</div>
               </div>
             </div>
-
           </div>
-        </div>
-        <Card
-          className="p-1 border rounded-3 mb-2 w-100"
-          style={{ boxShadow: 'none', transition: 'none', transform: 'none' }}
-          onMouseOver={e => {
-            e.currentTarget.style.setProperty('box-shadow', 'none', 'important');
-            e.currentTarget.style.setProperty('transform', 'none', 'important');
-            e.currentTarget.style.setProperty('transition', 'none', 'important');
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.setProperty('box-shadow', 'none', 'important');
-            e.currentTarget.style.setProperty('transform', 'none', 'important');
-            e.currentTarget.style.setProperty('transition', 'none', 'important');
-          }}
-        >
-          <div className="fw-bold mb-2">Escolha a suíte:</div>
-          <select
-            className="form-select w-100 mb-2"
-            value={selectedSuite}
-            onChange={(e) => setSelectedSuite(e.target.value)}
-          >
-            <option value="master">Master</option>
-            <option value="simples">Simples</option>
-            <option value="premium">Premium</option>
-          </select>
-          <div className="mb-2 d-flex flex-wrap align-items-center gap-2">
-            {selectedSuite === "master" && (
-              <Badge bg="light" text="dark">
-                Cama king size, banheira, vista para o mar, 40m²
-              </Badge>
-            )}
-            {selectedSuite === "simples" && (
-              <Badge bg="light" text="dark">
-                Cama de casal, banheiro privativo, 20m²
-              </Badge>
-            )}
-            {selectedSuite === "premium" && (
-              <Badge bg="light" text="dark">
-                Cama king size, hidromassagem, varanda, 60m²
-              </Badge>
-            )}
-          </div>
-          <div className="d-flex flex-wrap align-items-center gap-2">
-            <Badge bg="light" text="dark">
-              <FaCoffee className="me-1 text-danger" />
-              Café da Manhã
-            </Badge>
-          </div>
-
-          {/* Seção de preço por diária */}
-          <div className="mt-3 p-2 bg-light rounded-3">
-            <div className="d-flex justify-content-between align-items-center">
-              <small className="text-muted">Valor por diária:</small>
-              <span className="fw-bold text-primary">
-                R$ {(() => {
-                  // Definir preços baseados no tipo de suite
-                  const prices = {
-                    master: 450,
-                    simples: 280,
-                    premium: 680
-                  };
-                  return (prices[selectedSuite as keyof typeof prices] || 350).toLocaleString();
-                })()}
-              </span>
-            </div>
-            <div className="d-flex justify-content-between align-items-center">
-              <small className="text-muted">Total {numberOfNights} {numberOfNights === 1 ? 'diária' : 'diárias'}:</small>
-              <span className="fw-bold text-success">
-                R$ {(() => {
-                  const prices = {
-                    master: 450,
-                    simples: 280,
-                    premium: 680
-                  };
-                  const dailyPrice = prices[selectedSuite as keyof typeof prices] || 350;
-                  return (dailyPrice * numberOfNights).toLocaleString();
-                })()}
-              </span>
-            </div>
-          </div>
-        </Card>
         <div className="mt-2 d-flex justify-content-between align-items-center">
           <Badge bg="success" text="white">
             Reembolsável

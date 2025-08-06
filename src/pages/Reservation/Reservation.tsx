@@ -269,19 +269,19 @@ const Reservation = () => {
       {/* Cards principais ou seletores */}
       {!showFlightSelector && !showHotelSelector ? (
         <Row className="align-items-stretch">
-          <Col md={4} className="h-md-100 py-3">
+          <Col xs={12} sm={12} md={6} lg={4} className="h-100 py-3">
             <FlightInfo 
               onChangeFlight={handleChangeFlight} 
               isActive={false}
             />
           </Col>
-          <Col md={4} className="h-md-100 py-3">
+          <Col xs={12} sm={12} md={6} lg={4} className="h-100 py-3">
             <HotelInfo 
               onChangeHotel={handleChangeHotel} 
               isActive={false}
             />
           </Col>
-          <Col md={4} className="h-md-100 py-3">
+          <Col xs={12} sm={12} md={12} lg={4} className="h-100 py-3">
             <ReservationSummary priceComparison={priceComparison} />
           </Col>
         </Row>

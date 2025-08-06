@@ -7,7 +7,7 @@ import type {
 } from '../Entities/TravelPackage';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5079/api', // Backend .NET API
+  baseURL: import.meta.env.VITE_API_BASE_URL ||'http://localhost:5079/api', // Backend .NET API
 });
 
 // Adapter para mapear dados do backend para o frontend
@@ -164,6 +164,17 @@ export const getTravelPackageById = async (id: number): Promise<TravelPackageDet
   }
 };
 
+// Interface para criação direta via backend (TravelPackageDto)
+interface TravelPackageBackendRequest {
+  Title: string;
+  Description?: string | null;
+  Price: number;
+  DepartureDate?: string | null;
+  ReturnDate?: string | null;
+  DestinationId?: number | null;
+  CompanyId: number;
+}
+
 export const createTravelPackage = async (data: TravelPackageCreateRequest): Promise<TravelPackageDetailResponse | null> => {
   try {
     console.log('➕ Criando novo pacote de viagem...');
@@ -173,6 +184,145 @@ export const createTravelPackage = async (data: TravelPackageCreateRequest): Pro
     return response.data;
   } catch (error) {
     console.error('❌ Erro ao criar pacote:', error);
+    throw error;
+  }
+};
+
+// Nova função que aceita dados no formato do backend
+export const createTravelPackageBackend = async (packageData: TravelPackageBackendRequest) => {
+  try {
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
+    
+    console.log("📤 Enviando dados para API:", packageData);
+    console.log("🔗 Endpoint:", `${API_BASE_URL}/TravelPackage`);
+    
+    const response = await axios.post(`${API_BASE_URL}/TravelPackage`, packageData);
+    
+    console.log("✅ Resposta da API:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Erro no serviço createTravelPackageBackend:", error);
+    
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        console.error("Resposta do servidor:", error.response.data);
+        console.error("Status:", error.response.status);
+      }
+    }
+    
+    throw error;
+  }
+};
+
+// Função para adicionar voos ao pacote
+export const addFlightsToPackage = async (packageId: number, flightIds: number[]): Promise<any> => {
+  try {
+    console.log(`✈️ Adicionando voos ao pacote ${packageId}...`, flightIds);
+    
+    // Garantir que packageId é um número
+    const numericPackageId = Number(packageId);
+    if (isNaN(numericPackageId)) {
+      console.error("❌ ID do pacote inválido:", packageId);
+      throw new Error("ID do pacote deve ser um número válido");
+    }
+    
+    console.log(`📤 Enviando voos para o pacote ID ${numericPackageId}:`, flightIds);
+    
+    const response = await api.post(`/TravelPackage/${numericPackageId}/flights`, flightIds);
+    
+    console.log('✅ Voos adicionados com sucesso:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('❌ Erro ao adicionar voos:', error);
+    throw error;
+  }
+};
+
+// Interface para requisição de upload de imagem
+interface ImageUploadRequest {
+  file: File;
+  altText: string;
+  travelPackageId: number;
+}
+
+
+export const uploadTravelPackageImage = async (imageData: ImageUploadRequest): Promise<any> => {
+  try {
+    console.log("🖼️ Enviando imagem para o pacote...", imageData.travelPackageId);
+    
+    // Validações da imagem
+    if (!imageData.file.type.startsWith('image/')) {
+      throw new Error("O arquivo deve ser uma imagem válida");
+    }
+
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    if (imageData.file.size > MAX_SIZE) {
+      throw new Error("A imagem não deve exceder 5MB");
+    }
+
+    // Preparar FormData
+    const formData = new FormData();
+    formData.append("File", imageData.file);
+    formData.append("AltText", imageData.altText);
+    
+    // Garantir que o ID seja um número válido antes de converter para string
+    // Usamos o Number.isInteger para garantir que é um número inteiro válido
+    if (!Number.isInteger(imageData.travelPackageId)) {
+      console.error("ID do pacote inválido:", imageData.travelPackageId);
+      throw new Error("ID do pacote inválido. Deve ser um número inteiro.");
+    }
+
+    const packageIdString: string = imageData.travelPackageId.toString();
+    formData.append("TravelPackageId", packageIdString);
+
+    // Log dos dados sendo enviados
+    console.log("📤 Enviando dados da imagem:", {
+      fileName: imageData.file.name,
+      fileType: imageData.file.type,
+      fileSize: imageData.file.size,
+      altText: imageData.altText,
+      packageId: packageIdString
+    });
+
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
+    
+    // Certificar que a URL está corretamente formatada
+    let imageEndpoint = `${API_BASE_URL}/image`;
+
+    // Verificação adicional para evitar duplicação de /api
+    if (imageEndpoint.includes('/api/api')) {
+      imageEndpoint = imageEndpoint.replace('/api/api', '/api');
+    }
+
+    console.log("🔗 Endpoint de upload:", imageEndpoint);
+
+    // Adicionar um log para verificar o conteúdo exato do FormData
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+
+    const response = await axios.post(imageEndpoint, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+
+    console.log("✅ Imagem enviada com sucesso", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Erro ao enviar imagem do pacote:", error);
+    
+    if (error instanceof Error) {
+      console.error("Detalhes do erro:", error.message);
+    }
+    
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        console.error("Resposta do servidor:", error.response.data);
+        console.error("Status:", error.response.status);
+      }
+    }
+    
     throw error;
   }
 };

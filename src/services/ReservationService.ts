@@ -14,7 +14,7 @@ import axios from 'axios';
 import { getAllAccommodations, type Accommodation } from './AccommodationService';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5079/api', // Backend .NET API
+  baseURL: import.meta.env.VITE_API_BASE_URL ||'http://localhost:5079/api', // Backend .NET API
 });
 
 // URL base da API correta para reservas (baseada no UserService)

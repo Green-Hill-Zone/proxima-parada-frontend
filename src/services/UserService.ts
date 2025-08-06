@@ -1,21 +1,8 @@
-/* ===================================================================== */
-/* SERVIÇO DE USUÁRIOS - INTEGRAÇÃO COM BACKEND .NET                   */
-/* ===================================================================== */
-/*
- * Este arquivo implementa a integração entre frontend e backend para usuários.
- * Fornece:
- * - Criação de usuários (registro)
- * - Busca de usuário por ID
- * - Busca de usuário por email (para login)
- * - Mapeamento de dados entre frontend e backend
- * - Adaptador para tipos do contexto de autenticação
- */
-
 import axios from 'axios';
 import type { User as AuthUser } from '../contexts/types';
 
 // URL base da API - deve corresponder ao backend .NET
-const API_BASE_URL = 'https://localhost:7102/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||'http://localhost:5079/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -72,6 +59,7 @@ interface BackendUserDto {
   phone?: string;
   document?: string;
   companyId?: number;
+  isEmailConfirmed?: boolean;
 }
 
 // Interface da resposta de criação de usuário
@@ -93,7 +81,7 @@ const mapBackendToFrontend = (backendUser: BackendUserDto): User => {
     phone: backendUser.phone,
     document: backendUser.document,
     companyId: backendUser.companyId,
-    isEmailConfirmed: false, // Valor padrão, pode ser ajustado conforme backend
+    isEmailConfirmed: backendUser.isEmailConfirmed || false, // Mapeia do backend
   };
 };
 
@@ -104,6 +92,7 @@ export const adaptUserToAuthUser = (user: User, existingData?: AuthUser): AuthUs
     name: user.name,
     email: user.email,
     role: user.role,
+    isEmailConfirmed: user.isEmailConfirmed, // Mapeia o status de confirmação de email
     avatar: `https://via.placeholder.com/150/007bff/fff?text=${user.name.charAt(0).toUpperCase()}`,
     // Preserva informações existentes ou usa padrões
     birthDate: existingData?.birthDate || '01/01/1990',
@@ -138,20 +127,6 @@ const mapFrontendToBackend = (createRequest: CreateUserRequest): BackendUserDto 
   };
 };
 
-// Mapeia dados de atualização do frontend para o backend
-const mapUpdateToBackend = (id: number, updateRequest: UpdateUserRequest, currentPassword: string = ''): BackendUserDto => {
-  return {
-    id,
-    name: updateRequest.name || '',
-    email: updateRequest.email || '',
-    password: currentPassword, // Mantém a senha atual se não fornecida
-    role: updateRequest.role || 'customer',
-    phone: updateRequest.phone,
-    document: updateRequest.document,
-    companyId: updateRequest.companyId,
-  };
-};
-
 /* ===================================================================== */
 /* SERVIÇOS DE API                                                       */
 /* ===================================================================== */
@@ -161,44 +136,19 @@ const mapUpdateToBackend = (id: number, updateRequest: UpdateUserRequest, curren
  * @param userData - Dados do usuário para criar
  * @returns Promise com o usuário criado ou erro
  */
-export const createUser = async (userData: CreateUserRequest): Promise<User> => {
+
+export const createUser = async (formData: any) => {
   try {
-    console.log('🔄 Criando usuário...', { email: userData.email, name: userData.name });
-    
-    // Mapeia dados do frontend para formato do backend
-    const backendData = mapFrontendToBackend(userData);
-    
-    // Faz a requisição POST para criar usuário
-    const response = await axios.post<CreateUserResponse>(
-      `${API_BASE_URL}/AppUser/create`,
-      backendData,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    console.log('✅ Usuário criado com sucesso. ID:', response.data.userId);
-
-    // Busca os dados completos do usuário criado
-    const createdUser = await getUserById(response.data.userId);
-    return createdUser;
-    
+    const response = await axios.post('https://localhost:7102/api/AppUser/create', formData);
+    return response.data;
   } catch (error) {
-    console.error('❌ Erro ao criar usuário:', error);
-    
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 409) {
-        throw new Error('Email já cadastrado no sistema');
-      }
-      if (error.response?.status === 400) {
-        throw new Error('Dados inválidos fornecidos');
-      }
-      throw new Error(`Erro do servidor: ${error.response?.status}`);
+      // Deixa o tratamento na tela fazer o resto
+      throw error;
     }
-    
-    throw new Error('Erro de conexão com o servidor');
+
+    // Se for outro erro (não-Axios), lança um erro genérico
+    throw new Error('Erro inesperado ao registrar usuário');
   }
 };
 
@@ -430,5 +380,68 @@ export const updateUser = async (id: number, updateData: UpdateUserRequest): Pro
   }
 };
 
+/**
+ * Verifica se o email do usuário está confirmado
+ * @param userId O ID do usuário
+ * @returns true se o email estiver confirmado, false caso contrário
+ */
+export const checkEmailConfirmationStatus = async (userId: number): Promise<boolean> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/AppUser/${userId}/email-status`);
+    return response.data?.isEmailConfirmed || false;
+  } catch (error) {
+    console.error('Erro ao verificar status de confirmação de email:', error);
+    return false;
+  }
+};
+
+/**
+ * Reenvia o email de confirmação para o usuário
+ * @param userId O ID do usuário
+ * @returns true se o reenvio foi bem-sucedido, false caso contrário
+ */
+export const resendEmailConfirmation = async (userId: number): Promise<boolean> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/AppUser/send-confirmation-email/${userId}`);
+    return response.status === 200;
+  } catch (error) {
+    console.error('Erro ao reenviar email de confirmação:', error);
+    return false;
+  }
+};
+
+/**
+ * Confirma o email do usuário usando o token de confirmação
+ * @param token O token de confirmação de email
+ * @returns true se a confirmação foi bem-sucedida, false caso contrário
+ */
+export const confirmEmail = async (token: string): Promise<boolean> => {
+  try {
+    console.log('🔄 Enviando requisição GET para:', `${API_BASE_URL}/AppUser/confirm-email?token=${token}`);
+    console.log('📝 Token enviado:', token);
+    
+    const response = await axios.get(`${API_BASE_URL}/AppUser/confirm-email?token=${encodeURIComponent(token)}`);
+    
+    console.log('✅ Resposta recebida:', response.status, response.data);
+    return response.status === 200;
+  } catch (error: any) {
+    console.error('❌ Erro ao confirmar email:', error);
+    
+    if (error.response) {
+      console.error('📋 Detalhes do erro:');
+      console.error('  - Status:', error.response.status);
+      console.error('  - Data:', error.response.data);
+      console.error('  - Headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('📡 Sem resposta do servidor:', error.request);
+    } else {
+      console.error('⚙️ Erro na configuração da requisição:', error.message);
+    }
+    
+    return false;
+  }
+};
+
 // Exportações para compatibilidade
 export { createUser as default };
+

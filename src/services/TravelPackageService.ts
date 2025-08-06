@@ -164,6 +164,17 @@ export const getTravelPackageById = async (id: number): Promise<TravelPackageDet
   }
 };
 
+// Interface para criação direta via backend (TravelPackageDto)
+interface TravelPackageBackendRequest {
+  Title: string;
+  Description?: string | null;
+  Price: number;
+  DepartureDate?: string | null;
+  ReturnDate?: string | null;
+  DestinationId?: number | null;
+  CompanyId: number;
+}
+
 export const createTravelPackage = async (data: TravelPackageCreateRequest): Promise<TravelPackageDetailResponse | null> => {
   try {
     console.log('➕ Criando novo pacote de viagem...');
@@ -173,6 +184,37 @@ export const createTravelPackage = async (data: TravelPackageCreateRequest): Pro
     return response.data;
   } catch (error) {
     console.error('❌ Erro ao criar pacote:', error);
+    throw error;
+  }
+};
+
+// Nova função que aceita dados no formato do backend
+export const createTravelPackageBackend = async (data: TravelPackageBackendRequest): Promise<any> => {
+  try {
+    console.log('➕ Criando novo pacote de viagem (formato backend)...');
+    console.log('📤 Dados enviados:', data);
+    
+    const response = await api.post('/TravelPackage', data);
+    
+    console.log('✅ Pacote criado com sucesso:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('❌ Erro ao criar pacote:', error);
+    throw error;
+  }
+};
+
+// Função para adicionar voos ao pacote
+export const addFlightsToPackage = async (packageId: number, flightIds: number[]): Promise<any> => {
+  try {
+    console.log(`✈️ Adicionando voos ao pacote ${packageId}...`, flightIds);
+    
+    const response = await api.post(`/TravelPackage/${packageId}/flights`, flightIds);
+    
+    console.log('✅ Voos adicionados com sucesso:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('❌ Erro ao adicionar voos:', error);
     throw error;
   }
 };

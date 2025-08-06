@@ -11,8 +11,8 @@
 
 import axios from 'axios';
 
-// Base URL da API
-const API_BASE_URL = 'https://localhost:7102/api';
+// Base URL da API - obtida das variáveis de ambiente
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -49,6 +49,20 @@ export interface Flight {
   availableSeats: number;
   createdAt: string;
   updatedAt?: string;
+}
+
+// Interface para criação de voos
+export interface FlightCreateRequest {
+  airlineId: number;
+  originDestinationId: number;
+  finalDestinationId: number;
+  flightNumber?: string;
+  departureDateTime?: string;
+  arrivalDateTime?: string;
+  cabinClass?: string;
+  seatClass?: string;
+  price?: number;
+  availableSeats?: number;
 }
 
 // Interface do voo como vem do backend
@@ -286,6 +300,53 @@ export const getFlightsByAirline = async (airlineId: number): Promise<Flight[]> 
 };
 
 /**
+ * Cria um novo voo no sistema
+ * @param flightData - Dados do voo a ser criado
+ * @returns Promise com o voo criado
+ */
+export const createFlight = async (flightData: FlightCreateRequest): Promise<Flight> => {
+  try {
+    console.log('🔄 Criando novo voo:', flightData);
+    
+    // Ajusta o formato dos dados para o esperado pelo backend
+    const backendRequestData = {
+      airlineId: flightData.airlineId,
+      originDestinationId: flightData.originDestinationId,
+      finalDestinationId: flightData.finalDestinationId,
+      flightNumber: flightData.flightNumber,
+      departureDateTime: flightData.departureDateTime,
+      arrivalDateTime: flightData.arrivalDateTime,
+      cabinClass: flightData.cabinClass,
+      seatClass: flightData.seatClass,
+      price: flightData.price,
+      availableSeats: flightData.availableSeats,
+      createdAt: new Date().toISOString()
+    };
+    
+    console.log('📤 Enviando dados para API:', backendRequestData);
+    
+    const response = await axios.post(`${API_BASE_URL}/Flight`, backendRequestData);
+    
+    console.log('📥 Resposta do servidor:', response.data);
+    
+    // Converte o resultado do backend para o formato do frontend
+    const createdFlight = mapBackendFlightToFrontend(response.data);
+    
+    return createdFlight;
+    
+  } catch (error) {
+    console.error('❌ Erro ao criar voo:', error);
+    
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data || 'Erro desconhecido do servidor';
+      throw new Error(`Erro ao criar voo: ${errorMessage}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
  * Formata duração do voo para exibição
  * @param departure - Data/hora de partida
  * @param arrival - Data/hora de chegada
@@ -337,6 +398,57 @@ export const formatDateTime = (dateTime: string): string => {
   }
 };
 
+/**
+ * Atualiza um voo existente
+ * @param id - ID do voo a ser atualizado
+ * @param flightData - Novos dados do voo
+ * @returns Promise com o voo atualizado
+ */
+export const updateFlight = async (id: number, flightData: FlightCreateRequest): Promise<Flight> => {
+  try {
+    console.log(`🔄 Atualizando voo ID ${id}:`, flightData);
+    
+    // Ajusta o formato dos dados para o esperado pelo backend
+    const backendRequestData = {
+      airlineId: flightData.airlineId,
+      originDestinationId: flightData.originDestinationId,
+      finalDestinationId: flightData.finalDestinationId,
+      flightNumber: flightData.flightNumber,
+      departureDateTime: flightData.departureDateTime,
+      arrivalDateTime: flightData.arrivalDateTime,
+      cabinClass: flightData.cabinClass,
+      seatClass: flightData.seatClass,
+      price: flightData.price,
+      availableSeats: flightData.availableSeats,
+      updatedAt: new Date().toISOString()
+    };
+    
+    console.log('📤 Enviando dados para API:', backendRequestData);
+    
+    const response = await axios.put(`${API_BASE_URL}/Flight/${id}`, backendRequestData);
+    
+    console.log('📥 Resposta do servidor:', response.data);
+    
+    // Converte o resultado do backend para o formato do frontend
+    const updatedFlight = mapBackendFlightToFrontend(response.data);
+    
+    return updatedFlight;
+    
+  } catch (error) {
+    console.error(`❌ Erro ao atualizar voo ${id}:`, error);
+    
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        throw new Error('Voo não encontrado');
+      }
+      const errorMessage = error.response?.data || 'Erro desconhecido do servidor';
+      throw new Error(`Erro ao atualizar voo: ${errorMessage}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
 /* ===================================================================== */
 /* DADOS DE DEMONSTRAÇÃO                                               */
 /* ===================================================================== */
@@ -345,6 +457,35 @@ export const formatDateTime = (dateTime: string): string => {
  * Retorna dados de demonstração para voos
  * @returns Lista de voos fictícios para demonstração
  */
+/**
+ * Remove um voo do sistema
+ * @param id - ID do voo a ser removido
+ * @returns Promise com booleano indicando sucesso
+ */
+export const deleteFlight = async (id: number): Promise<boolean> => {
+  try {
+    console.log(`🗑️ Removendo voo ID ${id}`);
+    
+    await axios.delete(`${API_BASE_URL}/Flight/${id}`);
+    
+    console.log(`✅ Voo ${id} removido com sucesso`);
+    
+    return true;
+    
+  } catch (error) {
+    console.error(`❌ Erro ao remover voo ${id}:`, error);
+    
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        throw new Error('Voo não encontrado');
+      }
+      throw new Error(`Erro do servidor: ${error.response?.status}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
 const getMockFlights = (): Flight[] => {
   const today = new Date();
   const tomorrow = new Date(today);

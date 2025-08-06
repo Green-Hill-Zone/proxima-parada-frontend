@@ -18,14 +18,33 @@ const MyTravels = () => {
   const [filteredTravels, setFilteredTravels] = useState<TravelPackage[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('date');
+  const [isLoadingTravels, setIsLoadingTravels] = useState<boolean>(false);
 
-  // Carrega viagens do usuário quando componente monta
+  // Carrega viagens do usuário quando componente monta ou usuário muda
   useEffect(() => {
-    if (user) {
-      const userTravels = getUserTravels(user.id);
-      setTravels(userTravels);
-      setFilteredTravels(userTravels);
-    }
+    const loadUserTravels = async () => {
+      if (user) {
+        try {
+          setIsLoadingTravels(true);
+          console.log('🔄 Carregando viagens do usuário:', user.email);
+          
+          const userTravels = await getUserTravels(user.id);
+          setTravels(userTravels);
+          setFilteredTravels(userTravels);
+          
+          console.log(`✅ ${userTravels.length} viagens carregadas`);
+        } catch (error) {
+          console.error('❌ Erro ao carregar viagens:', error);
+          // Em caso de erro, manter arrays vazios
+          setTravels([]);
+          setFilteredTravels([]);
+        } finally {
+          setIsLoadingTravels(false);
+        }
+      }
+    };
+
+    loadUserTravels();
   }, [user, getUserTravels]);
 
   // Aplica filtros e ordenação
@@ -230,7 +249,14 @@ const MyTravels = () => {
               </Row>
 
               {/* Lista de Viagens */}
-              {filteredTravels.length === 0 ? (
+              {isLoadingTravels ? (
+                <div className="text-center py-5">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Carregando viagens...</span>
+                  </div>
+                  <p className="mt-3">Carregando suas viagens...</p>
+                </div>
+              ) : filteredTravels.length === 0 ? (
                 <Alert variant="info" className="text-center">
                   <h5>Nenhuma viagem encontrada</h5>
                   <p>

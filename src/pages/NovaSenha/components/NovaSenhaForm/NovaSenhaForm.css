@@ -120,14 +120,43 @@
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
-  border: none;
+  background: none !important;
+  border: none !important;
   cursor: pointer;
-  color: var(--bs-gray-600);
+  color: #6c757d;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+}
+
+.password-toggle-btn svg {
+  flex-shrink: 0;
 }
 
 .password-toggle-btn:hover {
-  color: var(--bs-primary);
+  color: #495057;
+  background-color: #f8f9fa !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.password-toggle-btn:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.password-toggle-btn:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  background-color: #e9ecef !important;
 }
 
 .password-field-container {

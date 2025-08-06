@@ -129,7 +129,7 @@ const NovaSenha = () => {
   return (
     <main className="nova-senha-main">
       {/* Formulário para definir nova senha */}
-      <NovaSenhaForm onSubmit={handleNovaSenha} />
+      <NovaSenhaForm onSubmit={handleNovaSenha} message={message} />
       
       {/* Exibir mensagem de sucesso ou erro */}
       {message && (

@@ -41,7 +41,7 @@ const ReservationSummary = ({ priceComparison }: ReservationSummaryProps) => {
   // Função para lidar com o clique no botão "Reservar Agora"
   const handleReservarAgora = () => {
     if (isAuthenticated) {
-      // Se o usuário estiver logado, vai para a página de pagamento
+      // Se o usuário estiver logado, vai para a página de dados dos viajantes
       const departureDate = reservationData.travelPackage.availableDates[0]?.departureDate || '';
       const returnDate = reservationData.travelPackage.availableDates[0]?.returnDate || '';
       
@@ -50,7 +50,7 @@ const ReservationSummary = ({ priceComparison }: ReservationSummaryProps) => {
         return new Date(dateString).toLocaleDateString('pt-BR');
       };
 
-      navigate('/payment', {
+      navigate('/traveler-data', {
         state: {
           travelData: {
             name: reservationData.travelPackage.title,

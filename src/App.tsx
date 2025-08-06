@@ -20,10 +20,13 @@ import Login from './pages/Login';
 import MyPayments from './pages/MyPayments';
 import MyTravels from './pages/MyTravels';
 import Packages from './pages/Packages';
-import Payment from './pages/Payment';
+import Payment from './pages/Payment/Payment';
+import PaymentConfirmation from './pages/Payment/PaymentConfirmation';
 import Profile from './pages/Profile';
 import { ReservationProvider } from './pages/Reservation/context/ReservationContext.tsx';
 import Reservation from './pages/Reservation/Reservation.tsx';
+// Update the import path and extension if the file exists as TravelerData.tsx
+import TravelerData from './pages/TravelerData';
 import UserRegister from './pages/UserRegister/UserRegister';
 
 function App() {
@@ -36,7 +39,9 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<UserRegister />} />
+            <Route path="/traveler-data" element={<ProtectedRoute><TravelerData /></ProtectedRoute>} />
             <Route path="/payment" element={<Payment />} />
+            <Route path="/payment/confirmation" element={<PaymentConfirmation />} />
             <Route path="/admin/packages" element={<AdminRoute><AdminPackages /></AdminRoute>} />
             <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/admin/hotels" element={<AdminRoute><AdminHotels /></AdminRoute>} />

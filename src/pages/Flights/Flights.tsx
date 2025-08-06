@@ -13,12 +13,15 @@ import { useEffect, useState, useMemo } from 'react';
 import { Container, Row, Col, Spinner, Alert, Form, Button, Card, Pagination, InputGroup } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { getAllFlights, getFlightsByRoute, isFlightInternational, matchesFlightClass, type Flight } from '../../services/FlightService';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import { normalizeText } from '../../utils/textUtils';
 import FlightCard from './components/FlightCard';
 import './Flights.css';
 
 // Componente principal da página de voos
 const Flights = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.FLIGHTS);
   // Estados do componente
   const [flights, setFlights] = useState<Flight[]>([]);
   const [allFlights, setAllFlights] = useState<Flight[]>([]);

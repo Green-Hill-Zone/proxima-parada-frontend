@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { useReservation } from './context/ReservationContext';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import FlightInfo from './components/FlightSection/FlightInfo';
 import HotelInfo from './components/HotelSection/HotelInfo';
 import ReservationSummary from './components/Reservations/ReservationSummary';
@@ -9,6 +10,9 @@ import HotelSelector from './components/HotelSection/HotelSelector';
 import { calculateNewPrice } from '../../services/ReservationService';
 
 const Reservation = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.RESERVATION);
+  
   const { reservationData, setReservationData, isLoading, error } = useReservation();
   const [showFlightSelector, setShowFlightSelector] = useState(false);
   const [showHotelSelector, setShowHotelSelector] = useState(false);

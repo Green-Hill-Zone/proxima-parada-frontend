@@ -2,6 +2,9 @@
 import { useState } from 'react';
 import { Button, Card, Col, Container, Form, Row, Alert } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { createPayment } from '../../services/PaymentService';
+import { useAuth } from '../../hooks/useAuth';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import './Payment.css';
 
 // Interface para dados do pagamento (simplificada para Stripe)
@@ -11,25 +14,33 @@ interface PaymentData {
   cpf: string;
 }
 
-// Interface para dados da viagem (recebidos via props/state)
+// Interface para dados da viagem recebidos via state
 interface TravelData {
   name: string;
   date: string;
   price: number;
   people: number;
+  travelId?: number;
+  reservationId?: number;
 }
 
 // Componente Payment - Tela de Pagamento
 const Payment = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.PAYMENT);
+  
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // Dados da viagem (normalmente viriams via props ou state)
+  const { user } = useAuth();
+
+  // Dados da viagem recebidos via state
   const travelData: TravelData = location.state?.travelData || {
     name: "Paris - França",
     date: "15/08/2025 - 22/08/2025",
     price: 3500.00,
-    people: 2
+    people: 2,
+    travelId: undefined,
+    reservationId: undefined
   };
 
   // Estados do formulário (simplificado para Stripe)
@@ -94,7 +105,7 @@ const Payment = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Função para processar o pagamento via Stripe
+  // Função para processar o pagamento real
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -102,46 +113,49 @@ const Payment = () => {
       return;
     }
 
+    if (!user) {
+      alert('Usuário não autenticado. Faça login para prosseguir.');
+      navigate('/login');
+      return;
+    }
+
+    if (!travelData.travelId) {
+      alert('ID do pacote de viagem não encontrado.');
+      return;
+    }
+
     setIsLoading(true);
+    setErrors({});
+    setShowSuccess(false);
 
     try {
-      // Simular criação de sessão no Stripe
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Dados para enviar ao backend/Stripe
-      const paymentSession = {
-        travelData,
-        paymentData,
-        amount: totalAmount
+      const paymentRequest = {
+        userId: Number(user.id),
+        travelId: travelData.travelId,
+        reservationId: travelData.reservationId,
+        amount: totalAmount,
+        fullName: paymentData.fullName,
+        email: paymentData.email,
+        cpf: paymentData.cpf,
+        paymentMethod: 'stripe' as const,
+        status: 'pending' as const
       };
 
-      // Em produção: redirecionar para Stripe Checkout
-      // window.location.href = `https://checkout.stripe.com/pay?session_id=${sessionId}`;
-      
-      // Salvar dados da compra no localStorage para recuperar depois
-      localStorage.setItem('pendingPayment', JSON.stringify({
-        ...paymentSession,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        paymentId: `pay_${Date.now()}`
-      }));
+      const response = await createPayment(paymentRequest);
 
-      // Redirecionar para o Stripe (em produção seria window.location.href = stripeUrl)
-      // Para demonstração, vamos simular o retorno do Stripe
       setShowSuccess(true);
-      
+
       setTimeout(() => {
-        navigate('/my-payments', { 
-          state: { 
-            message: 'Redirecionando para processamento do pagamento...',
-            paymentId: `pay_${Date.now()}`
+        navigate('/my-payments', {
+          state: {
+            message: 'Pagamento realizado com sucesso!',
+            paymentId: response.id
           }
         });
       }, 2000);
-      
-    } catch (error) {
-      console.error('Erro ao criar sessão de pagamento:', error);
-      alert('Erro ao processar pagamento. Tente novamente.');
+    } catch (error: any) {
+      setShowSuccess(false);
+      alert(error?.message || 'Erro ao processar pagamento. Tente novamente.');
     } finally {
       setIsLoading(false);
     }

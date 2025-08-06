@@ -14,8 +14,11 @@ import axios from 'axios';
 import { getAllAccommodations, type Accommodation } from './AccommodationService';
 
 const api = axios.create({
-  baseURL: 'https://localhost:7102/api', // Backend .NET API
+  baseURL: import.meta.env.VITE_API_BASE_URL ||'http://localhost:5079/api', // Backend .NET API
 });
+
+// URL base da API correta para reservas (baseada no UserService)
+const API_BASE_URL = 'https://localhost:7102/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -474,5 +477,406 @@ export const calculateNewPrice = async (customization: {
       console.error('❌ Erro no fallback:', fallbackError);
       throw new Error('Falha ao calcular novo preço');
     }
+  }
+};
+
+/* ===================================================================== */
+/* FUNÇÕES PARA BUSCAR RESERVAS DO USUÁRIO - MINHAS VIAGENS           */
+/* ===================================================================== */
+
+// Importar tipos necessários
+import type { TravelPackage } from '../contexts/types';
+
+// Interface da reserva conforme retornada pelo backend
+interface BackendReservation {
+  id: number;
+  customer: {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+    phone?: string;
+    document?: string;
+    companyId?: number;
+  };
+  travelPackage: {
+    id: number;
+    title: string;
+    description: string;
+    price: number;
+    departureDate?: string;
+    returnDate?: string;
+    destination: {
+      id: number;
+      name?: string;
+      country?: string;
+      state?: string;
+      city?: string;
+      coordinates?: string;
+    };
+    company: any;
+    images: { $values: any[] };
+    availableDates: { $values: any[] };
+    flights: { $values: any[] };
+    paymentOptions: { $values: any[] };
+    accommodations: { $values: any[] };
+    createdAt: string;
+    updatedAt?: string;
+  };
+  availableDate: {
+    id: number;
+    travelPackageId: number;
+    travelPackageTitle?: string;
+    departureDate: string;
+    returnDate: string;
+    maxCapacity?: number;
+    reservationsCount: number;
+    availableSpots: number;
+    createdAt: string;
+    updatedAt?: string;
+  };
+  outboundFlight?: {
+    id: number;
+    flightNumber: string;
+    departureDateTime: string;
+    arrivalDateTime: string;
+    airline: any;
+    originDestination: any;
+    finalDestination: any;
+    cabinClass?: string;
+    seatClass?: string;
+    price?: number;
+    availableSeats?: number;
+  };
+  returnFlight?: {
+    id: number;
+    flightNumber: string;
+    departureDateTime: string;
+    arrivalDateTime: string;
+    airline: any;
+    originDestination: any;
+    finalDestination: any;
+    cabinClass?: string;
+    seatClass?: string;
+    price?: number;
+    availableSeats?: number;
+  };
+  accommodation?: {
+    id: number;
+    name: string;
+    description?: string;
+    streetName?: string;
+    phone?: string;
+    email?: string;
+    checkInTime?: string;
+    checkOutTime?: string;
+    starRating?: number;
+    pricePerNight?: number;
+    district?: string;
+    addressNumber?: string;
+    geoCoordinates?: string;
+  };
+  reservationNumber: string;
+  status: string;
+  includesInsurance: boolean;
+  insurancePrice?: number;
+  termsAcceptedAt?: string;
+  payment?: {
+    id: number;
+    amount: number;
+    status?: string;
+    provider?: string;
+    externalTransactionId?: string;
+    installments?: number;
+    createdAt?: string;
+    paidAt?: string;
+  };
+  travelers: {
+    $values: Array<{
+      id: number;
+      name: string;
+      document: string;
+      birthDate?: string;
+      age?: number;
+      isMainBuyer: boolean;
+      documentType?: string;
+      issuingCountryName?: string;
+      issuingStateName?: string;
+      documentIssuedAt?: string;
+    }>;
+  };
+}
+
+/**
+ * Mapeia uma reserva do backend para o formato TravelPackage do frontend
+ */
+const mapReservationToTravelPackage = (reservation: BackendReservation): TravelPackage => {
+  // Calcula a duração em dias
+  const startDate = new Date(reservation.availableDate.departureDate);
+  const endDate = new Date(reservation.availableDate.returnDate);
+  const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+
+  // Formata as datas para DD/MM/AAAA
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR');
+  };
+
+  // Determina o status baseado na data e status da reserva
+  const getStatus = (): 'completed' | 'upcoming' | 'cancelled' => {
+    if (reservation.status === 'cancelled') return 'cancelled';
+    
+    const today = new Date();
+    const endDate = new Date(reservation.availableDate.returnDate);
+    
+    if (endDate < today) return 'completed';
+    return 'upcoming';
+  };
+
+  // Determina a categoria baseada no destino (simplificado)
+  const getCategory = (title: string): string => {
+    const titleLower = title.toLowerCase();
+    if (titleLower.includes('praia') || titleLower.includes('rio')) return 'Praia';
+    if (titleLower.includes('montanha') || titleLower.includes('serra')) return 'Montanha';
+    if (titleLower.includes('cidade') || titleLower.includes('urbano')) return 'Cidade';
+    if (titleLower.includes('cultural') || titleLower.includes('histórico')) return 'Cultural';
+    if (titleLower.includes('natureza') || titleLower.includes('eco')) return 'Natureza';
+    return 'Turismo';
+  };
+
+  // Monta a lista do que está incluso
+  const includes: string[] = [];
+  if (reservation.outboundFlight) includes.push('Voo de ida');
+  if (reservation.returnFlight) includes.push('Voo de volta');
+  if (reservation.accommodation) includes.push('Hospedagem');
+  if (reservation.includesInsurance) includes.push('Seguro viagem');
+  
+  // Adiciona itens padrão baseados no tipo de pacote
+  includes.push('Traslados');
+  includes.push('Café da manhã');
+
+  // URL da imagem (placeholder baseado na categoria)
+  const getCategoryImage = (category: string): string => {
+    const imageMap: { [key: string]: string } = {
+      'Praia': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=250&fit=crop',
+      'Montanha': 'https://images.unsplash.com/photo-1464822759844-d150ad6c1a75?w=400&h=250&fit=crop',
+      'Cidade': 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=250&fit=crop',
+      'Cultural': 'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=400&h=250&fit=crop',
+      'Natureza': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=250&fit=crop',
+      'Turismo': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=250&fit=crop'
+    };
+    return imageMap[category] || imageMap['Turismo'];
+  };
+
+  const category = getCategory(reservation.travelPackage.title);
+  const status = getStatus();
+
+  // Função para formatar o destino a partir do objeto Destination
+  const getDestination = (): string => {
+    const dest = reservation.travelPackage.destination;
+    
+    console.log('🌍 Dados do destino recebidos:', dest);
+    console.log('🌍 TravelPackage completo:', reservation.travelPackage);
+    
+    if (!dest) {
+      console.log('⚠️ Objeto destination é null/undefined');
+      return 'Destino não informado';
+    }
+    
+    // Constrói o destino no formato: "Nome, Cidade, Estado" ou "Nome, País"
+    const parts: string[] = [];
+    
+    if (dest.name) {
+      parts.push(dest.name);
+      console.log('✅ Nome encontrado:', dest.name);
+    }
+    
+    if (dest.city) {
+      parts.push(dest.city);
+      console.log('✅ Cidade encontrada:', dest.city);
+    }
+    
+    if (dest.state) {
+      parts.push(dest.state);
+      console.log('✅ Estado encontrado:', dest.state);
+    } else if (dest.country) {
+      parts.push(dest.country);
+      console.log('✅ País encontrado:', dest.country);
+    }
+    
+    const finalDestination = parts.length > 0 ? parts.join(', ') : 'Destino não informado';
+    console.log('🏁 Destino final formatado:', finalDestination);
+    
+    return finalDestination;
+  };
+
+  // Calcula o preço usando múltiplas fontes (prioridade: payment amount > travel package price)
+  const getPrice = (): number => {
+    // 1ª prioridade: valor pago na reserva (mais preciso)
+    if (reservation.payment?.amount && reservation.payment.amount > 0) {
+      return reservation.payment.amount;
+    }
+    
+    // 2ª prioridade: preço base do pacote
+    if (reservation.travelPackage?.price && reservation.travelPackage.price > 0) {
+      return reservation.travelPackage.price;
+    }
+    
+    // 3ª prioridade: calcular baseado em componentes individuais
+    let estimatedPrice = 0;
+    
+    // Adiciona preço da acomodação (estimativa: 5 noites)
+    if (reservation.accommodation?.pricePerNight) {
+      estimatedPrice += reservation.accommodation.pricePerNight * 5;
+    }
+    
+    // Adiciona preço dos voos
+    if (reservation.outboundFlight?.price) {
+      estimatedPrice += reservation.outboundFlight.price;
+    }
+    if (reservation.returnFlight?.price) {
+      estimatedPrice += reservation.returnFlight.price;
+    }
+    
+    // Adiciona preço do seguro
+    if (reservation.includesInsurance && reservation.insurancePrice) {
+      estimatedPrice += reservation.insurancePrice;
+    }
+    
+    return estimatedPrice > 0 ? estimatedPrice : 0;
+  };
+
+  return {
+    id: reservation.id.toString(),
+    title: reservation.travelPackage.title,
+    destination: getDestination(),
+    startDate: formatDate(reservation.availableDate.departureDate),
+    endDate: formatDate(reservation.availableDate.returnDate),
+    duration,
+    price: getPrice(),
+    status,
+    imageUrl: getCategoryImage(category),
+    description: reservation.travelPackage.description || 'Viagem incrível te espera!',
+    includes,
+    category,
+    // Adiciona avaliação se a viagem foi concluída (simulado)
+    rating: status === 'completed' ? Math.floor(Math.random() * 2) + 4 : undefined, // 4 ou 5 estrelas
+    review: status === 'completed' ? 'Viagem incrível! Recomendo muito.' : undefined
+  };
+};
+
+/**
+ * Busca todas as reservas do sistema
+ * @returns Promise com lista de todas as reservas
+ */
+export const getAllReservations = async (): Promise<BackendReservation[]> => {
+  try {
+    console.log('🔄 Buscando todas as reservas...');
+    
+    const response = await axios.get(`${API_BASE_URL}/Reservation`);
+
+    console.log('📋 Resposta bruta do backend (reservas):', response.data);
+
+    // O backend .NET retorna no formato ReferenceHandler.Preserve: {"$id":"1","$values":[...]}
+    let reservationsList: BackendReservation[];
+    
+    if (response.data && typeof response.data === 'object' && '$values' in response.data) {
+      // Formato ReferenceHandler.Preserve
+      reservationsList = response.data.$values;
+      console.log(`✅ Lista de reservas (ReferenceHandler): Total: ${reservationsList.length}`);
+    } else if (Array.isArray(response.data)) {
+      // Formato array direto
+      reservationsList = response.data;
+      console.log(`✅ Lista de reservas (Array): Total: ${reservationsList.length}`);
+    } else {
+      console.error('❌ Formato de resposta inesperado:', response.data);
+      throw new Error('Formato de resposta do servidor inválido');
+    }
+    
+    return reservationsList;
+    
+  } catch (error) {
+    console.error('❌ Erro ao buscar reservas:', error);
+    
+    if (axios.isAxiosError(error)) {
+      throw new Error(`Erro do servidor: ${error.response?.status}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
+ * Busca reservas de um usuário específico por email
+ * @param userEmail - Email do usuário
+ * @returns Promise com lista de viagens do usuário
+ */
+export const getUserReservations = async (userEmail: string): Promise<TravelPackage[]> => {
+  try {
+    console.log(`🔄 Buscando reservas do usuário: ${userEmail}`);
+    
+    // Busca todas as reservas
+    const allReservations = await getAllReservations();
+    
+    // Filtra reservas do usuário específico
+    const userReservations = allReservations.filter(
+      reservation => reservation.customer.email === userEmail
+    );
+    
+    console.log(`✅ Encontradas ${userReservations.length} reservas para o usuário ${userEmail}`);
+    
+    // Mapeia reservas para formato TravelPackage
+    const travelPackages = userReservations.map(mapReservationToTravelPackage);
+    
+    // Ordena por data mais recente primeiro
+    travelPackages.sort((a, b) => {
+      const dateA = new Date(a.startDate.split('/').reverse().join('-'));
+      const dateB = new Date(b.startDate.split('/').reverse().join('-'));
+      return dateB.getTime() - dateA.getTime();
+    });
+    
+    return travelPackages;
+    
+  } catch (error) {
+    console.error('❌ Erro ao buscar reservas do usuário:', error);
+    throw error;
+  }
+};
+
+/**
+ * Busca reservas de um usuário específico por ID
+ * @param userId - ID do usuário (número)
+ * @returns Promise com lista de viagens do usuário
+ */
+export const getUserReservationsById = async (userId: number): Promise<TravelPackage[]> => {
+  try {
+    console.log(`🔄 Buscando reservas do usuário ID: ${userId}`);
+    
+    // Busca todas as reservas
+    const allReservations = await getAllReservations();
+    
+    // Filtra reservas do usuário específico
+    const userReservations = allReservations.filter(
+      reservation => reservation.customer.id === userId
+    );
+    
+    console.log(`✅ Encontradas ${userReservations.length} reservas para o usuário ID ${userId}`);
+    
+    // Mapeia reservas para formato TravelPackage
+    const travelPackages = userReservations.map(mapReservationToTravelPackage);
+    
+    // Ordena por data mais recente primeiro
+    travelPackages.sort((a, b) => {
+      const dateA = new Date(a.startDate.split('/').reverse().join('-'));
+      const dateB = new Date(b.startDate.split('/').reverse().join('-'));
+      return dateB.getTime() - dateA.getTime();
+    });
+    
+    return travelPackages;
+    
+  } catch (error) {
+    console.error('❌ Erro ao buscar reservas do usuário por ID:', error);
+    throw error;
   }
 };

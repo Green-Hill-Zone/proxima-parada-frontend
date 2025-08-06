@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { updateUser } from '../../services/UserService';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
+import { updateUser, resendEmailConfirmation } from '../../services/UserService';
 import './Profile.css';
 
 // Interface para os dados do formulário
@@ -28,12 +29,17 @@ interface ProfileFormData {
 
 // Componente Profile - Página de edição de perfil do usuário
 const Profile = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.PROFILE);
+  
   const { user, updateUser: updateUserInContext } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState('');
+  const [isEmailConfirmed, setIsEmailConfirmed] = useState<boolean | null>(null);
+  const [isResendingEmail, setIsResendingEmail] = useState(false);
 
   // Estado do formulário inicializado com dados do usuário
   const [formData, setFormData] = useState<ProfileFormData>({
@@ -76,8 +82,34 @@ const Profile = () => {
         state: user.state || '',
         country: user.country || 'Brasil'
       });
+
+      // Define status de confirmação de email baseado nos dados do usuário
+      setIsEmailConfirmed(user.isEmailConfirmed ?? false);
     }
   }, [user]);
+
+  // Função para reenviar email de confirmação
+  const handleResendEmailConfirmation = async () => {
+    if (!user?.id) return;
+
+    setIsResendingEmail(true);
+    try {
+      const success = await resendEmailConfirmation(Number(user.id));
+      if (success) {
+        setShowSuccess(true);
+        setError('');
+        setTimeout(() => setShowSuccess(false), 5000);
+      } else {
+        setError('Erro ao reenviar email de confirmação. Tente novamente.');
+        setShowError(true);
+      }
+    } catch (error) {
+      setError('Erro ao reenviar email de confirmação. Tente novamente.');
+      setShowError(true);
+    } finally {
+      setIsResendingEmail(false);
+    }
+  };
 
   // Função para atualizar campos do formulário
   const handleInputChange = (field: keyof ProfileFormData) => (
@@ -278,6 +310,43 @@ const Profile = () => {
                 <p className="lead">Atualize suas informações pessoais</p>
               </div>
 
+              {/* Aviso de confirmação de email */}
+              {isEmailConfirmed === false && (
+                <Alert variant="warning" className="mb-4">
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6 className="alert-heading mb-2">⚠️ Email não confirmado</h6>
+                      <p className="mb-2">
+                        Seu email ainda não foi confirmado. Para ter acesso completo a todas as funcionalidades, 
+                        confirme seu email clicando no link enviado para <strong>{user?.email}</strong>.
+                      </p>
+                      <p className="mb-0 small text-muted">
+                        Não recebeu o email? Verifique sua caixa de spam ou clique no botão abaixo para reenviar.
+                      </p>
+                    </div>
+                    <Button 
+                      variant="outline-warning" 
+                      size="sm"
+                      onClick={handleResendEmailConfirmation}
+                      disabled={isResendingEmail}
+                    >
+                      {isResendingEmail ? 'Enviando...' : 'Reenviar Email'}
+                    </Button>
+                  </div>
+                </Alert>
+              )}
+
+              {isEmailConfirmed === true && (
+                <Alert variant="success" className="mb-4">
+                  <div className="d-flex align-items-center">
+                    <span className="me-2">✅</span>
+                    <div>
+                      <strong>Email confirmado!</strong> Sua conta está totalmente ativada.
+                    </div>
+                  </div>
+                </Alert>
+              )}
+
               {/* Card do formulário */}
               <Card className="profile-card">
                 <Card.Header>
@@ -288,7 +357,7 @@ const Profile = () => {
                   {/* Alertas de feedback */}
                   {showSuccess && (
                     <Alert variant="success" className="mb-3">
-                      ✅ Perfil atualizado com sucesso!
+                      ✅ {isResendingEmail ? 'Email de confirmação reenviado com sucesso! Verifique sua caixa de entrada.' : 'Perfil atualizado com sucesso!'}
                     </Alert>
                   )}
 

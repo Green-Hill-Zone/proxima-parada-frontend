@@ -5,10 +5,14 @@ import { Container, Row, Col, Spinner, Form, InputGroup, Button } from 'react-bo
 import PackageCard from './components/PackageCard';
 import { getTravelPackages, searchTravelPackages } from '../../services/TravelPackageService';
 import { type TravelPackageListItem } from '../../Entities/TravelPackage';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import { normalizeText } from '../../utils/textUtils';
 import './Packages.css';
 
 const Packages = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.PACKAGES);
+  
   const [travelPackages, setTravelPackages] = useState<TravelPackageListItem[]>([]);
   const [allPackages, setAllPackages] = useState<TravelPackageListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);

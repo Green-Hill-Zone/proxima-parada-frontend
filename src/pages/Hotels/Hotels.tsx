@@ -18,11 +18,15 @@ import {
   type Accommodation,
   type AccommodationFilters 
 } from '../../services/AccommodationService';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import HotelCard from './components/HotelCard';
 import './Hotels.css';
 
 // Componente principal da página de hotéis
 const Hotels = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.HOTELS);
+  
   // Estados do componente
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [isLoading, setIsLoading] = useState(true);

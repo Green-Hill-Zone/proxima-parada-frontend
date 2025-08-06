@@ -27,6 +27,7 @@ export interface User {
   email: string;        // Email (usado como login)
   avatar?: string;      // URL do avatar (opcional)
   role?: string;        // Role do usuário (admin, user)
+  isEmailConfirmed?: boolean; // Status de confirmação do email
   // Novas informações pessoais
   birthDate: string;    // Data de nascimento (formato: DD/MM/AAAA)
   cpf: string;          // CPF formatado (formato: XXX.XXX.XXX-XX)
@@ -53,5 +54,5 @@ export interface AuthContextType {
   logout: () => void;                   // Função de logout
   register: (name: string, email: string, password: string) => Promise<boolean>; // Função de cadastro
   updateUser: (updatedUser: User) => void; // Função para atualizar dados do usuário no contexto
-  getUserTravels: (userId: string) => TravelPackage[]; // Função para buscar viagens do usuário
+  getUserTravels: (userId: string) => Promise<TravelPackage[]>; // Função assíncrona para buscar viagens do usuário
 }

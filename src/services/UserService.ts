@@ -432,3 +432,4 @@ export const updateUser = async (id: number, updateData: UpdateUserRequest): Pro
 
 // Exportações para compatibilidade
 export { createUser as default };
+

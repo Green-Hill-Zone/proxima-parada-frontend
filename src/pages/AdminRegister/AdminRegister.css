@@ -182,3 +182,94 @@
     flex-direction: column;
   }
 }
+
+/* iPhone 14 e dispositivos similares (max-width: 430px) */
+@media (max-width: 430px) {
+  .admin-container {
+    padding: 0.5rem;
+    padding-bottom: 7rem;
+  }
+  
+  .admin-form-wrapper {
+    padding: 1rem;
+    border-radius: 6px;
+  }
+  
+  .admin-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .admin-header p {
+    font-size: 0.8rem;
+  }
+  
+  .admin-logo {
+    width: 80px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 0.65rem;
+    font-size: 0.9rem;
+  }
+  
+  .btn-primary {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+  
+  .admin-form h3 {
+    font-size: 1rem;
+    margin: 1.5rem 0 1rem 0;
+  }
+}
+
+/* Dispositivos muito pequenos (max-width: 374px) */
+@media (max-width: 374px) {
+  .admin-container {
+    padding: 0.25rem;
+    padding-bottom: 7.5rem;
+  }
+  
+  .admin-form-wrapper {
+    padding: 0.75rem;
+  }
+  
+  .admin-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .admin-header p {
+    font-size: 0.75rem;
+  }
+  
+  .admin-logo {
+    width: 70px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .btn-primary {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+}

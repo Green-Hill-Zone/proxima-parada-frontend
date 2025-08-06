@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Card, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { type TravelPackageListItem } from '../../../../Entities/TravelPackage';
+import './TravelCard.css';
 
 interface TravelCardProps {
   travelPackage: TravelPackageListItem;
@@ -46,29 +47,29 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
 
   return (
     <>
-      <Card className="h-100 shadow-sm" style={{ cursor: 'pointer' }} onClick={handleShowDetails}>
+      <Card className="travel-card h-100 shadow-sm" style={{ cursor: 'pointer' }} onClick={handleShowDetails}>
         <Card.Img
           variant="top"
           src={imageUrl}
           alt={imageAlt}
-          style={{ height: '200px', objectFit: 'cover' }}
+          className="card-img-top"
         />
         <Card.Body className="d-flex flex-column">
-          <Card.Title>{title}</Card.Title>
+          <Card.Title className="card-title">{title}</Card.Title>
 
           {destination && (
-            <Card.Subtitle className="mb-2 text-muted">
+            <Card.Subtitle className="destination-text mb-2">
               {destination.name || destination.Name}, {destination.country || destination.Country}
             </Card.Subtitle>
           )}
 
-          <Card.Text className="flex-grow-1 my-2">
+          <Card.Text className="card-text flex-grow-1 my-2">
             {truncatedDescription}
           </Card.Text>
 
           <div className="d-flex justify-content-between align-items-center mt-auto">
             <div>
-              <h5 className="text-primary mb-0">
+              <h5 className="price-text mb-0">
                 {new Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL'

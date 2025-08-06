@@ -1,0 +1,302 @@
+/* ===================================================================== */
+/* ESTILOS DO FORMULÁRIO AVANÇADO DE PACOTES                           */
+/* ===================================================================== */
+
+:root {
+  --primary-blue: #3246AA;
+  --secondary-orange: #FFAD33;
+  --success-green: #28a745;
+  --warning-yellow: #ffc107;
+  --info-blue: #17a2b8;
+  --light-gray: #f8f9fa;
+  --border-color: #dee2e6;
+}
+
+/* ===================================================================== */
+/* CONTAINER PRINCIPAL DO FORMULÁRIO                                    */
+/* ===================================================================== */
+
+.package-form-advanced {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border: 2px solid var(--border-color);
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(50, 70, 170, 0.1);
+  transition: all 0.3s ease;
+}
+
+.package-form-advanced:hover {
+  box-shadow: 0 12px 35px rgba(50, 70, 170, 0.15);
+  transform: translateY(-2px);
+}
+
+/* ===================================================================== */
+/* SEÇÕES DO FORMULÁRIO                                                 */
+/* ===================================================================== */
+
+.package-form-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--light-gray);
+  position: relative;
+}
+
+.package-form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.package-form-section h6 {
+  color: var(--primary-blue);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--secondary-orange);
+  display: inline-block;
+  min-width: 200px;
+}
+
+/* ===================================================================== */
+/* CAMPOS DO FORMULÁRIO                                                 */
+/* ===================================================================== */
+
+.package-form-advanced .form-label {
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.package-form-advanced .form-control,
+.package-form-advanced .form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.package-form-advanced .form-control:focus,
+.package-form-advanced .form-select:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 0.2rem rgba(50, 70, 170, 0.25);
+  transform: translateY(-1px);
+}
+
+.package-form-advanced .form-control:hover,
+.package-form-advanced .form-select:hover {
+  border-color: var(--secondary-orange);
+}
+
+/* ===================================================================== */
+/* SELECTS ESPECIAIS                                                    */
+/* ===================================================================== */
+
+.package-form-advanced .form-select[name="hotelId"] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"), linear-gradient(45deg, #ffeaa7 0%, #fab1a0 100%);
+  background-size: 16px 12px, 100%;
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center, 0 0;
+}
+
+.package-form-advanced .form-select[name="vooDaId"],
+.package-form-advanced .form-select[name="vooVoltaId"] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"), linear-gradient(45deg, #a8e6cf 0%, #7fcdcd 100%);
+  background-size: 16px 12px, 100%;
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center, 0 0;
+}
+
+/* ===================================================================== */
+/* RESUMO DO PACOTE                                                     */
+/* ===================================================================== */
+
+.package-summary {
+  background: linear-gradient(135deg, #ffffff 0%, #f1f3f4 100%);
+  border: 2px solid var(--success-green);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.package-summary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--success-green) 0%, var(--secondary-orange) 100%);
+}
+
+.package-summary h6 {
+  color: var(--success-green);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.package-summary ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.package-summary li {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+}
+
+.package-summary li:last-child {
+  border-bottom: none;
+}
+
+.package-summary li::before {
+  content: '✓';
+  color: var(--success-green);
+  font-weight: bold;
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* ===================================================================== */
+/* BOTÕES                                                               */
+/* ===================================================================== */
+
+.package-form-advanced .btn {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.package-form-advanced .btn-primary {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #2c3e9f 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(50, 70, 170, 0.3);
+}
+
+.package-form-advanced .btn-primary:hover {
+  background: linear-gradient(135deg, #2c3e9f 0%, var(--primary-blue) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(50, 70, 170, 0.4);
+}
+
+.package-form-advanced .btn-success {
+  background: linear-gradient(135deg, var(--success-green) 0%, #1e7e34 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.package-form-advanced .btn-success:hover {
+  background: linear-gradient(135deg, #1e7e34 0%, var(--success-green) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+/* ===================================================================== */
+/* ALERTAS E MENSAGENS                                                  */
+/* ===================================================================== */
+
+.package-form-advanced .alert {
+  border-radius: 10px;
+  border: none;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.package-form-advanced .alert-danger {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+.package-form-advanced .alert-warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  color: #856404;
+  border-left: 4px solid #ffc107;
+}
+
+/* ===================================================================== */
+/* INDICADOR DE CARREGAMENTO                                           */
+/* ===================================================================== */
+
+.package-form-loading {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border: 2px solid var(--border-color);
+  border-radius: 15px;
+  padding: 3rem;
+  text-align: center;
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+.package-form-loading .spinner-border {
+  color: var(--primary-blue);
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* ===================================================================== */
+/* TEXTOS AUXILIARES                                                   */
+/* ===================================================================== */
+
+.package-form-advanced .form-text {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.package-form-advanced .text-warning {
+  color: #e67e22 !important;
+  font-weight: 500;
+}
+
+/* ===================================================================== */
+/* RESPONSIVIDADE                                                       */
+/* ===================================================================== */
+
+@media (max-width: 768px) {
+  .package-form-section h6 {
+    font-size: 1rem;
+    min-width: auto;
+  }
+  
+  .package-form-advanced .form-control,
+  .package-form-advanced .form-select {
+    padding: 0.65rem;
+    font-size: 0.9rem;
+  }
+  
+  .package-summary {
+    padding: 1rem;
+  }
+  
+  .package-form-advanced .btn {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 430px) {
+  .package-form-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
+  
+  .package-form-section h6 {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .package-form-advanced .form-control,
+  .package-form-advanced .form-select {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+}

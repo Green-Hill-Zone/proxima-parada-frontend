@@ -146,31 +146,27 @@ const Dashboard = () => {
                       <h5 className="mb-0">Informações da Conta - {user?.name}</h5>
                     </Card.Header>
                     <Card.Body>
-                      {/* Primeira linha - Nome e Email */}
+                      {/* Primeira linha - 4 colunas de informações principais */}
                       <Row className="mb-3">
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
-                            <Col sm={4}><strong>Nome:</strong></Col>
-                            <Col sm={8}>{user?.name}</Col>
+                            <Col sm={5}><strong>Nome:</strong></Col>
+                            <Col sm={7}>{user?.name}</Col>
                           </Row>
                         </Col>
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
                             <Col sm={4}><strong>Email:</strong></Col>
                             <Col sm={8}>{user?.email}</Col>
                           </Row>
                         </Col>
-                      </Row>
-
-                      {/* Segunda linha - Data de Nascimento e CPF */}
-                      <Row className="mb-3">
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
-                            <Col sm={4}><strong>Data de Nascimento:</strong></Col>
-                            <Col sm={8}>{user?.birthDate}</Col>
+                            <Col sm={5}><strong>Data Nasc.:</strong></Col>
+                            <Col sm={7}>{user?.birthDate}</Col>
                           </Row>
                         </Col>
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
                             <Col sm={4}><strong>CPF:</strong></Col>
                             <Col sm={8}>{user?.cpf}</Col>
@@ -178,34 +174,30 @@ const Dashboard = () => {
                         </Col>
                       </Row>
 
-                      {/* Terceira linha - Gênero e Telefone */}
+                      {/* Segunda linha - 4 colunas de contato */}
                       <Row className="mb-3">
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
-                            <Col sm={4}><strong>Gênero:</strong></Col>
-                            <Col sm={8}>{user?.gender}</Col>
+                            <Col sm={5}><strong>Gênero:</strong></Col>
+                            <Col sm={7}>{user?.gender}</Col>
                           </Row>
                         </Col>
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
-                            <Col sm={4}><strong>Telefone:</strong></Col>
-                            <Col sm={8}>{user?.phone}</Col>
+                            <Col sm={5}><strong>Telefone:</strong></Col>
+                            <Col sm={7}>{user?.phone}</Col>
                           </Row>
                         </Col>
-                      </Row>
-
-                      {/* Quarta linha - Membro desde e Telefone 2 */}
-                      <Row className="mb-3">
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
-                            <Col sm={4}><strong>Membro desde:</strong></Col>
-                            <Col sm={8}>{user?.memberSince}</Col>
+                            <Col sm={5}><strong>Telefone 2:</strong></Col>
+                            <Col sm={7}>{user?.phone2 || '-'}</Col>
                           </Row>
                         </Col>
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
-                            <Col sm={4}><strong>Telefone 2:</strong></Col>
-                            <Col sm={8}>{user?.phone2 || '(21) 98888-5679'}</Col>
+                            <Col sm={5}><strong>Membro desde:</strong></Col>
+                            <Col sm={7}>{user?.memberSince}</Col>
                           </Row>
                         </Col>
                       </Row>
@@ -215,66 +207,58 @@ const Dashboard = () => {
                         <h6 className="text-primary mb-3">Endereço</h6>
                       </div>
 
-                      {/* Quinta linha - CEP e Logradouro */}
+                      {/* Terceira linha - 4 colunas de endereço */}
                       <Row className="mb-3">
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
                             <Col sm={4}><strong>CEP:</strong></Col>
-                            <Col sm={3}>{user?.cep}</Col>
+                            <Col sm={8}>{user?.cep}</Col>
                           </Row>
                         </Col>
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
-                            <Col sm={4}><strong>Logradouro:</strong></Col>
-                            <Col sm={3}>{user?.street}</Col>
+                            <Col sm={5}><strong>Bairro:</strong></Col>
+                            <Col sm={7}>{user?.neighborhood}</Col>
                           </Row>
                         </Col>
-                      </Row>
-
-                      {/* Sexta linha - Número e Complemento */}
-                      <Row className="mb-3">
-                        <Col md={6}>
-                          <Row>
-                            <Col sm={4}><strong>Número:</strong></Col>
-                            <Col sm={8}>{user?.streetNumber}</Col>
-                          </Row>
-                        </Col>
-                        <Col md={6}>
-                          <Row>
-                            <Col sm={4}><strong>Complemento:</strong></Col>
-                            <Col sm={3}>{user?.complement || '-'}</Col>
-                          </Row>
-                        </Col>
-                      </Row>
-
-                      {/* Sétima linha - Bairro e Cidade */}
-                      <Row className="mb-3">
-                        <Col md={6}>
-                          <Row>
-                            <Col sm={4}><strong>Bairro:</strong></Col>
-                            <Col sm={3}>{user?.neighborhood}</Col>
-                          </Row>
-                        </Col>
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
                             <Col sm={4}><strong>Cidade:</strong></Col>
-                            <Col sm={3}>{user?.city}</Col>
+                            <Col sm={8}>{user?.city}</Col>
                           </Row>
                         </Col>
-                      </Row>
-
-                      {/* Oitava linha - País e UF */}
-                      <Row>
-                        <Col md={6}>
-                          <Row>
-                            <Col sm={4}><strong>País:</strong></Col>
-                            <Col sm={8}>{user?.country || 'Brasil'}</Col>
-                          </Row>
-                        </Col>
-                        <Col md={6}>
+                        <Col xl={3} lg={6} md={6}>
                           <Row>
                             <Col sm={4}><strong>UF:</strong></Col>
                             <Col sm={8}>{user?.state}</Col>
+                          </Row>
+                        </Col>
+                      </Row>
+
+                      {/* Quarta linha - Logradouro, Número, Complemento, País */}
+                      <Row>
+                        <Col xl={4} lg={6} md={6}>
+                          <Row>
+                            <Col sm={4}><strong>Logradouro:</strong></Col>
+                            <Col sm={8}>{user?.street}</Col>
+                          </Row>
+                        </Col>
+                        <Col xl={2} lg={3} md={3}>
+                          <Row>
+                            <Col sm={5}><strong>Nº:</strong></Col>
+                            <Col sm={7}>{user?.streetNumber}</Col>
+                          </Row>
+                        </Col>
+                        <Col xl={3} lg={3} md={3}>
+                          <Row>
+                            <Col sm={6}><strong>Compl.:</strong></Col>
+                            <Col sm={6}>{user?.complement || '-'}</Col>
+                          </Row>
+                        </Col>
+                        <Col xl={3} lg={6} md={6}>
+                          <Row>
+                            <Col sm={4}><strong>País:</strong></Col>
+                            <Col sm={8}>{user?.country || 'Brasil'}</Col>
                           </Row>
                         </Col>
                       </Row>

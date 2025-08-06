@@ -1,0 +1,263 @@
+/* ===================================================================== */
+/* ESTILOS DA PÁGINA DE REGISTRO DE USUÁRIO                            */
+/* ===================================================================== */
+
+/* Configuração de cores personalizadas */
+:root {
+  --primary-blue: #3246AA;
+  --secondary-orange: #FFAD33;
+  --white: #ffffff;
+  --black: #000000;
+}
+
+/* ===================================================================== */
+/* LAYOUT PRINCIPAL DO REGISTRO                                         */
+/* ===================================================================== */
+
+.user-register-container {
+  min-height: calc(100vh - 120px); /* Considera altura do header/footer */
+  padding: 2rem 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===================================================================== */
+/* CARD DO FORMULÁRIO                                                   */
+/* ===================================================================== */
+
+.user-register-card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.user-register-card .card-body {
+  padding: 2rem;
+}
+
+/* ===================================================================== */
+/* CABEÇALHO DO FORMULÁRIO                                              */
+/* ===================================================================== */
+
+.user-register-header h3 {
+  color: var(--primary-blue);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.user-register-header p {
+  color: #6c757d;
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+/* ===================================================================== */
+/* BOTÃO DE SUBMIT                                                      */
+/* ===================================================================== */
+
+.user-register-btn {
+  background-color: var(--primary-blue);
+  border-color: var(--primary-blue);
+  padding: 0.75rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.user-register-btn:hover:not(:disabled) {
+  background-color: var(--secondary-orange);
+  border-color: var(--secondary-orange);
+  transform: translateY(-1px);
+}
+
+.user-register-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===================================================================== */
+/* LINK PARA LOGIN                                                      */
+/* ===================================================================== */
+
+.user-register-footer a {
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.user-register-footer a:hover {
+  color: var(--secondary-orange);
+}
+
+/* ===================================================================== */
+/* MODAL DE SUCESSO                                                     */
+/* ===================================================================== */
+
+.user-register-success-modal .modal-header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.user-register-success-modal .modal-title {
+  color: #28a745;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-register-success-modal .modal-body {
+  padding: 1.5rem 2rem;
+}
+
+.user-register-success-modal .success-icon {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.user-register-success-modal .modal-footer {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* ===================================================================== */
+/* RESPONSIVIDADE PARA DISPOSITIVOS MÓVEIS                             */
+/* ===================================================================== */
+
+@media (max-width: 768px) {
+  .user-register-container {
+    min-height: calc(100vh - 100px);
+    padding: 1.5rem 0;
+  }
+  
+  .user-register-card .card-body {
+    padding: 1.5rem;
+  }
+  
+  .user-register-header h3 {
+    font-size: 1.5rem;
+  }
+  
+  .user-register-header p {
+    font-size: 0.9rem;
+  }
+}
+
+/* iPhone 14 e dispositivos similares (max-width: 430px) */
+@media (max-width: 430px) {
+  .user-register-container {
+    min-height: calc(100vh - 80px);
+    padding: 1rem 0.5rem;
+  }
+  
+  .user-register-card {
+    margin: 0;
+    border-radius: 12px;
+  }
+  
+  .user-register-card .card-body {
+    padding: 1.25rem;
+  }
+  
+  .user-register-header h3 {
+    font-size: 1.4rem;
+  }
+  
+  .user-register-header p {
+    font-size: 0.85rem;
+  }
+  
+  .user-register-btn {
+    padding: 0.7rem;
+    font-size: 0.95rem;
+  }
+  
+  /* Modal responsivo */
+  .user-register-success-modal .modal-body {
+    padding: 1rem 1.5rem;
+  }
+  
+  .user-register-success-modal .success-icon {
+    font-size: 3rem;
+  }
+  
+  .user-register-success-modal .modal-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Dispositivos muito pequenos (max-width: 374px) */
+@media (max-width: 374px) {
+  .user-register-container {
+    min-height: calc(100vh - 70px);
+    padding: 0.75rem 0.25rem;
+  }
+  
+  .user-register-card .card-body {
+    padding: 1rem;
+  }
+  
+  .user-register-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .user-register-btn {
+    padding: 0.65rem;
+    font-size: 0.9rem;
+  }
+  
+  .user-register-success-modal .modal-body {
+    padding: 0.75rem 1rem;
+  }
+  
+  .user-register-success-modal .success-icon {
+    font-size: 2.5rem;
+  }
+}
+
+/* Orientação paisagem em mobile */
+@media (max-width: 844px) and (orientation: landscape) {
+  .user-register-container {
+    min-height: calc(100vh - 60px);
+    padding: 0.5rem 0;
+  }
+  
+  .user-register-card .card-body {
+    padding: 1rem;
+  }
+}
+
+/* ===================================================================== */
+/* ANIMAÇÕES E TRANSIÇÕES                                               */
+/* ===================================================================== */
+
+.user-register-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

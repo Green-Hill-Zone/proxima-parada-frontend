@@ -9,7 +9,7 @@ interface TravelCardProps {
 }
 
 
-const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails }) => {
+const TravelCard: React.FC<TravelCardProps> = ({ travelPackage }) => {
   // Ajustando para a nova estrutura do backend
   const packageData = travelPackage as any; // Cast para acessar as propriedades do backend
   const id = packageData.id || packageData.Id;
@@ -17,14 +17,32 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
   const description = packageData.description || packageData.Description;
   const price = packageData.price || packageData.BasePrice;
   const destination = packageData.destination || packageData.MainDestination;
-  
-  // Extrair imagens da nova estrutura do backend
+
+  // Função auxiliar para garantir que a imagem use o caminho local
+  const getLocalImagePath = (relativePath: string | null | undefined): string => {
+    if (!relativePath) {
+      return 'https://picsum.photos/300/200?text=Sem+Imagem';
+    }
+
+    const localBasePath = 'file:///C:/Users/v.gomes.germano/OneDrive%20-%20Avanade/Documents/Projeto/proxima-parada-backend/Presentation.API/wwwroot';
+    const formattedPath = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
+    return `${localBasePath}${formattedPath}`;
+  };
+
+  // Extrair informações da imagem
   const imagesData = packageData.images;
   const imageArray = imagesData?.$values || imagesData || [];
   const mainImage = Array.isArray(imageArray) ? imageArray[0] : null;
-  const imageUrl = mainImage?.url || mainImage?.ImageUrl || 'https://picsum.photos/300/200?text=Sem+Imagem';
-  const imageAlt = mainImage?.altText || mainImage?.AltText || title;
-  
+  const imageRelativePath = mainImage?.url || mainImage?.ImageUrl;
+
+  // Usar função auxiliar local para garantir o caminho correto
+  const imageUrl = getLocalImagePath(imageRelativePath);
+  const imageAlt = mainImage?.altText || mainImage?.AltText || title || "Imagem do pacote";
+
+  // Debug: Log da URL da imagem sendo gerada
+  console.log(`🖼️ [TravelCard] URL da imagem gerada:`, imageUrl);
+  console.log(`🖼️ [TravelCard] Caminho relativo original:`, imageRelativePath);
+
   const truncatedDescription = description?.length > 120
     ? `${description.substring(0, 120)}...`
     : description;
@@ -37,10 +55,10 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
   const handleClose = () => setShowModal(false);
   const handleReserve = () => {
     // Navegar para reserva passando o ID do pacote
-    navigate('/reservation', { 
-      state: { 
-        packageId: id 
-      } 
+    navigate('/reservation', {
+      state: {
+        packageId: id
+      }
     });
   };
 

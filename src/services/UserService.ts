@@ -1,21 +1,8 @@
-/* ===================================================================== */
-/* SERVIÇO DE USUÁRIOS - INTEGRAÇÃO COM BACKEND .NET                   */
-/* ===================================================================== */
-/*
- * Este arquivo implementa a integração entre frontend e backend para usuários.
- * Fornece:
- * - Criação de usuários (registro)
- * - Busca de usuário por ID
- * - Busca de usuário por email (para login)
- * - Mapeamento de dados entre frontend e backend
- * - Adaptador para tipos do contexto de autenticação
- */
-
 import axios from 'axios';
 import type { User as AuthUser } from '../contexts/types';
 
-// URL base da API - usando proxy do Vite para evitar problemas de CORS
-const API_BASE_URL = '/api';
+// URL base da API - deve corresponder ao backend .NET
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||'http://localhost:5079/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -149,44 +136,19 @@ const mapFrontendToBackend = (createRequest: CreateUserRequest): BackendUserDto 
  * @param userData - Dados do usuário para criar
  * @returns Promise com o usuário criado ou erro
  */
-export const createUser = async (userData: CreateUserRequest): Promise<User> => {
+
+export const createUser = async (formData: any) => {
   try {
-    console.log('🔄 Criando usuário...', { email: userData.email, name: userData.name });
-    
-    // Mapeia dados do frontend para formato do backend
-    const backendData = mapFrontendToBackend(userData);
-    
-    // Faz a requisição POST para criar usuário
-    const response = await axios.post<CreateUserResponse>(
-      `${API_BASE_URL}/AppUser/create`,
-      backendData,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    console.log('✅ Usuário criado com sucesso. ID:', response.data.userId);
-
-    // Busca os dados completos do usuário criado
-    const createdUser = await getUserById(response.data.userId);
-    return createdUser;
-    
+    const response = await axios.post('https://localhost:7102/api/AppUser/create', formData);
+    return response.data;
   } catch (error) {
-    console.error('❌ Erro ao criar usuário:', error);
-    
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 409) {
-        throw new Error('Email já cadastrado no sistema');
-      }
-      if (error.response?.status === 400) {
-        throw new Error('Dados inválidos fornecidos');
-      }
-      throw new Error(`Erro do servidor: ${error.response?.status}`);
+      // Deixa o tratamento na tela fazer o resto
+      throw error;
     }
-    
-    throw new Error('Erro de conexão com o servidor');
+
+    // Se for outro erro (não-Axios), lança um erro genérico
+    throw new Error('Erro inesperado ao registrar usuário');
   }
 };
 
@@ -482,3 +444,4 @@ export const confirmEmail = async (token: string): Promise<boolean> => {
 
 // Exportações para compatibilidade
 export { createUser as default };
+

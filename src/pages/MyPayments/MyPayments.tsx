@@ -2,9 +2,12 @@
 import { useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Row, Badge, Alert } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { getUserPayments } from '../../services/PaymentService';
+import type { PaymentResponse } from '../../services/PaymentService';
+import { useAuth } from '../../hooks/useAuth';
 import './MyPayments.css';
 
-// Interface para dados do pagamento
+// Interface para dados do pagamento (adaptada da API)
 interface Payment {
   paymentId: string;
   travelData: {
@@ -16,7 +19,7 @@ interface Payment {
   paymentData: {
     fullName: string;
     email: string;
-    installments: string;
+    installments?: string;
   };
   amount: number;
   status: 'pending' | 'approved' | 'rejected' | 'processing';
@@ -29,130 +32,59 @@ interface Payment {
 const MyPayments = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+  const { user } = useAuth();
+
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    // Simular dados de pagamentos (em produção viria da API)
-    const mockPayments: Payment[] = [
-      {
-        paymentId: 'pay_1234567890',
-        travelData: {
-          name: 'Paris - França',
-          date: '15/08/2025 - 22/08/2025',
-          price: 3500.00,
-          people: 2
-        },
-        paymentData: {
-          fullName: 'Maria Santos',
-          email: 'maria@email.com',
-          installments: '3'
-        },
-        amount: 7000.00,
-        status: 'approved',
-        createdAt: '2025-01-20T10:30:00Z',
-        updatedAt: '2025-01-20T10:35:00Z'
-      },
-      {
-        paymentId: 'pay_0987654321',
-        travelData: {
-          name: 'Londres - Inglaterra',
-          date: '10/09/2025 - 17/09/2025',
-          price: 4200.00,
-          people: 1
-        },
-        paymentData: {
-          fullName: 'Maria Santos',
-          email: 'maria@email.com',
-          installments: '1'
-        },
-        amount: 4200.00,
-        status: 'rejected',
-        createdAt: '2025-01-15T14:20:00Z',
-        updatedAt: '2025-01-15T14:25:00Z'
-      },
-      {
-        paymentId: 'pay_1122334455',
-        travelData: {
-          name: 'Relax em Búzios',
-          date: '20/02/2024 - 25/02/2024',
-          price: 2400.00,
-          people: 2
-        },
-        paymentData: {
-          fullName: 'Maria Santos',
-          email: 'maria@email.com',
-          installments: '2'
-        },
-        amount: 4800.00,
-        status: 'approved',
-        createdAt: '2024-01-15T09:20:00Z',
-        updatedAt: '2024-01-15T09:25:00Z'
-      },
-      {
-        paymentId: 'pay_5566778899',
-        travelData: {
-          name: 'Cultural Salvador',
-          date: '15/06/2024 - 19/06/2024',
-          price: 1800.00,
-          people: 1
-        },
-        paymentData: {
-          fullName: 'Maria Santos',
-          email: 'maria@email.com',
-          installments: '1'
-        },
-        amount: 1800.00,
-        status: 'approved',
-        createdAt: '2024-05-10T16:45:00Z',
-        updatedAt: '2024-05-10T16:50:00Z'
-      }
-    ];
-
-    // Simular carregamento de dados
     const loadPayments = async () => {
       setLoading(true);
-      
       try {
-        // Verificar se há pagamento pendente no localStorage
-        const pendingPaymentStr = localStorage.getItem('pendingPayment');
-        const allPayments = [...mockPayments];
-        
-        if (pendingPaymentStr) {
-          const pendingPayment = JSON.parse(pendingPaymentStr);
-          
-          // Simular atualização do status do pagamento
-          // Em produção, isso seria feito via webhook do Stripe
-          const randomStatus = Math.random() > 0.3 ? 'approved' : 'rejected';
-          pendingPayment.status = randomStatus;
-          pendingPayment.updatedAt = new Date().toISOString();
-          
-          allPayments.unshift(pendingPayment);
-          localStorage.removeItem('pendingPayment');
+        if (!user) {
+          setPayments([]);
+          setLoading(false);
+          return;
         }
-        
-        // Simular delay da API
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        setPayments(allPayments);
-        
-        // Mostrar mensagem se veio da tela de pagamento
+        // Buscar pagamentos reais da API
+        const apiPayments: PaymentResponse[] = await getUserPayments(Number(user.id));
+
+        // Adaptar dados da API para o formato esperado pelo componente
+        const mappedPayments: Payment[] = apiPayments.map((p) => ({
+          paymentId: String(p.id),
+          travelData: {
+            name: p.travelId ? `Pacote #${p.travelId}` : 'Viagem',
+            date: p.createdAt ? new Date(p.createdAt).toLocaleDateString('pt-BR') : '',
+            price: p.amount,
+            people: 1 // Ajuste conforme sua API
+          },
+          paymentData: {
+            fullName: user.name,
+            email: user.email,
+            installments: '1' // Ajuste conforme sua API
+          },
+          amount: p.amount,
+          status: p.status === 'completed' ? 'approved' : (p.status === 'failed' ? 'rejected' : (p.status as any)),
+          createdAt: p.createdAt,
+          updatedAt: p.updatedAt,
+          stripeSessionId: p.stripeSessionId
+        }));
+
+        setPayments(mappedPayments);
+
         if (location.state?.message) {
           setMessage(location.state.message);
           setTimeout(() => setMessage(''), 5000);
         }
-        
       } catch (error) {
         console.error('Erro ao carregar pagamentos:', error);
       } finally {
         setLoading(false);
       }
     };
-
     loadPayments();
-  }, [location.state]);
+  }, [location.state, user]);
 
   // Função para obter cor do badge baseado no status
   const getStatusBadge = (status: Payment['status']) => {
@@ -282,7 +214,7 @@ const MyPayments = () => {
                                           {payment.paymentData.installments}x 
                                           {payment.paymentData.installments === '1' 
                                             ? ' à vista' 
-                                            : ` de R$ ${(payment.amount / parseInt(payment.paymentData.installments)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+                                          : ` de R$ ${(payment.amount / parseInt(payment.paymentData.installments || '1')).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
                                           }
                                         </span>
                                       </div>

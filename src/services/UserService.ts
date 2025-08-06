@@ -15,7 +15,7 @@ import axios from 'axios';
 import type { User as AuthUser } from '../contexts/types';
 
 // URL base da API - deve corresponder ao backend .NET
-const API_BASE_URL = 'https://localhost:7102/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||'http://localhost:5079/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -432,3 +432,4 @@ export const updateUser = async (id: number, updateData: UpdateUserRequest): Pro
 
 // Exportações para compatibilidade
 export { createUser as default };
+

@@ -1,5 +1,6 @@
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import FormField from '../../../components/FormField';
 import type { UserRegisterFormData } from '../../../hooks/useUserRegistration';
 import { useUserRegistration } from '../../../hooks/useUserRegistration';
@@ -9,6 +10,7 @@ interface UserRegisterFormProps {
   onSubmit?: (data: UserRegisterFormData) => void;
 }
 
+
 const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
   const {
     formData,
@@ -16,6 +18,9 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
     handleInputChange,
     validateAllFields,
   } = useUserRegistration();
+  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,25 +30,39 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
     }
 
     try {
-      // Use a função register do serviço atualizado
+      setErrorMessage('');
       const user = await createUser(formData);
-
       if (onSubmit) {
         onSubmit(formData);
       }
-
+      setSuccessMessage('Cadastro concluído com sucesso!');
       console.log('User registered successfully:', user);
+      setTimeout(() => {
+        navigate('/login');
+      }, 1200);
+    } catch (error: any) {
+  console.error('Registration error:', error);
 
-      // Opcional: adicionar notificação de sucesso ou redirecionamento
-      // Ex: toast.success('Cadastro realizado com sucesso!');
-      // Ex: navigate('/login');
+  const backendMsg = error?.response?.data?.message || error?.message || '';
+  const status = error?.response?.status;
 
-    } catch (error) {
-      console.error('Registration error:', error);
+  console.log('Status:', status);
+  console.log('Backend message:', backendMsg);
 
-      // Opcional: adicionar notificação de erro
-      // Ex: toast.error('Erro ao realizar cadastro. Tente novamente.');
-    }
+  if (
+    status === 409 ||
+    status === 400 ||
+    backendMsg.toLowerCase().includes('cpf') && backendMsg.toLowerCase().includes('exist') ||
+    backendMsg.toLowerCase().includes('email') && backendMsg.toLowerCase().includes('exist') ||
+    backendMsg.toLowerCase().includes('usuário já cadastrado') ||
+    backendMsg.toLowerCase().includes('already exists')
+  ) {
+    setErrorMessage('Usuário já cadastrado.');
+  } else {
+    setErrorMessage('Erro inesperado.');
+  }
+}
+
   };
 
   return (
@@ -58,6 +77,15 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
               </div>
 
               <Form onSubmit={handleSubmit}>
+                <FormField
+                  label="Nome"
+                  type="text"
+                  placeholder="Digite seu nome completo"
+                  value={formData.name}
+                  onChange={handleInputChange('name')}
+                  error={errors.name}
+                  maxLength={60}
+                />
                 <FormField
                   label="Email"
                   type="email"
@@ -108,6 +136,16 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
                 <Button variant="primary" type="submit" className="w-100 mb-2">
                   Cadastrar
                 </Button>
+                {errorMessage && (
+                  <div className="alert alert-danger text-center py-2 mb-2">
+                    {errorMessage}
+                  </div>
+                )}
+                {successMessage && (
+                  <div className="alert alert-success text-center py-2 mb-2">
+                    {successMessage}
+                  </div>
+                )}
               </Form>
 
               <div className="text-center">

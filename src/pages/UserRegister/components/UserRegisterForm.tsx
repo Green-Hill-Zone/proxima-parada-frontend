@@ -78,6 +78,14 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
 
               <Form onSubmit={handleSubmit}>
                 <FormField
+                  label="Nome Completo"
+                  type="text"
+                  placeholder="Digite seu nome completo"
+                  value={formData.name}
+                  onChange={handleInputChange('name')}
+                  error={errors.name}
+                />
+                <FormField
                   label="Email"
                   type="email"
                   placeholder="Digite seu email"

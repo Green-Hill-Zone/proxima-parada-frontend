@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
+import { updateUser, resendEmailConfirmation } from '../../services/UserService';
 import './Profile.css';
 
 // Interface para os dados do formulário
@@ -27,12 +29,17 @@ interface ProfileFormData {
 
 // Componente Profile - Página de edição de perfil do usuário
 const Profile = () => {
-  const { user } = useAuth();
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.PROFILE);
+  
+  const { user, updateUser: updateUserInContext } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState('');
+  const [isEmailConfirmed, setIsEmailConfirmed] = useState<boolean | null>(null);
+  const [isResendingEmail, setIsResendingEmail] = useState(false);
 
   // Estado do formulário inicializado com dados do usuário
   const [formData, setFormData] = useState<ProfileFormData>({
@@ -75,8 +82,34 @@ const Profile = () => {
         state: user.state || '',
         country: user.country || 'Brasil'
       });
+
+      // Define status de confirmação de email baseado nos dados do usuário
+      setIsEmailConfirmed(user.isEmailConfirmed ?? false);
     }
   }, [user]);
+
+  // Função para reenviar email de confirmação
+  const handleResendEmailConfirmation = async () => {
+    if (!user?.id) return;
+
+    setIsResendingEmail(true);
+    try {
+      const success = await resendEmailConfirmation(Number(user.id));
+      if (success) {
+        setShowSuccess(true);
+        setError('');
+        setTimeout(() => setShowSuccess(false), 5000);
+      } else {
+        setError('Erro ao reenviar email de confirmação. Tente novamente.');
+        setShowError(true);
+      }
+    } catch (error) {
+      setError('Erro ao reenviar email de confirmação. Tente novamente.');
+      setShowError(true);
+    } finally {
+      setIsResendingEmail(false);
+    }
+  };
 
   // Função para atualizar campos do formulário
   const handleInputChange = (field: keyof ProfileFormData) => (
@@ -172,6 +205,13 @@ const Profile = () => {
     setShowError(false);
     setShowSuccess(false);
 
+    // Verifica se usuário está logado
+    if (!user || !user.id) {
+      setError('Usuário não identificado. Faça login novamente.');
+      setShowError(true);
+      return;
+    }
+
     // Valida formulário antes de prosseguir
     if (!validateForm()) {
       return;
@@ -180,24 +220,71 @@ const Profile = () => {
     setIsLoading(true);
 
     try {
-      // Simula delay de API
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Prepara dados para atualização (apenas campos que podem ser editados)
+      const updateData = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        // Nota: O backend atual suporta name, email, phone, role, document, companyId
+        // Outros campos do formulário (endereço, CPF, etc.) precisariam ser adicionados ao backend
+      };
 
-      // Aqui seria feita a chamada para API real
-      // const response = await updateUserProfile(formData);
+      console.log('🔄 Enviando dados para atualização:', updateData);
 
-      // Por enquanto, simula sucesso
+      // Chama a API real para atualizar usuário
+      const updatedUser = await updateUser(parseInt(user.id), updateData);
+
+      console.log('✅ Usuário atualizado com sucesso:', updatedUser);
+
+      // Cria dados completos do usuário mesclando dados do backend com dados do formulário
+      const completeUserData = {
+        id: updatedUser.id.toString(),
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        avatar: `https://via.placeholder.com/150/007bff/fff?text=${updatedUser.name.charAt(0).toUpperCase()}`,
+        // Informações do formulário
+        birthDate: formData.birthDate,
+        cpf: formData.cpf,
+        gender: formData.gender,
+        phone: updatedUser.phone || formData.phone,
+        phone2: formData.phone2,
+        memberSince: user?.memberSince || new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
+        // Informações de endereço do formulário
+        cep: formData.cep,
+        street: formData.street,
+        streetNumber: formData.streetNumber,
+        complement: formData.complement,
+        neighborhood: formData.neighborhood,
+        city: formData.city,
+        state: formData.state,
+        country: formData.country
+      };
+
+      // Atualiza o contexto com dados completos
+      updateUserInContext(completeUserData);
+
+      // Mostra mensagem de sucesso
       setShowSuccess(true);
 
       // Auto-hide da mensagem de sucesso após 3 segundos
       setTimeout(() => setShowSuccess(false), 3000);
 
-      console.log('✅ Perfil atualizado com sucesso:', formData);
-
-    } catch (error) {
-      setError('Erro ao atualizar perfil. Tente novamente.');
-      setShowError(true);
+    } catch (error: any) {
       console.error('❌ Erro ao atualizar perfil:', error);
+      
+      // Trata diferentes tipos de erro
+      if (error.message.includes('não encontrado')) {
+        setError('Usuário não encontrado. Faça login novamente.');
+      } else if (error.message.includes('Dados inválidos')) {
+        setError('Dados fornecidos são inválidos. Verifique as informações.');
+      } else if (error.message.includes('Email já está em uso')) {
+        setError('Este email já está sendo usado por outro usuário.');
+      } else {
+        setError(error.message || 'Erro ao atualizar perfil. Tente novamente.');
+      }
+      
+      setShowError(true);
     } finally {
       setIsLoading(false);
     }
@@ -223,6 +310,43 @@ const Profile = () => {
                 <p className="lead">Atualize suas informações pessoais</p>
               </div>
 
+              {/* Aviso de confirmação de email */}
+              {isEmailConfirmed === false && (
+                <Alert variant="warning" className="mb-4">
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6 className="alert-heading mb-2">⚠️ Email não confirmado</h6>
+                      <p className="mb-2">
+                        Seu email ainda não foi confirmado. Para ter acesso completo a todas as funcionalidades, 
+                        confirme seu email clicando no link enviado para <strong>{user?.email}</strong>.
+                      </p>
+                      <p className="mb-0 small text-muted">
+                        Não recebeu o email? Verifique sua caixa de spam ou clique no botão abaixo para reenviar.
+                      </p>
+                    </div>
+                    <Button 
+                      variant="outline-warning" 
+                      size="sm"
+                      onClick={handleResendEmailConfirmation}
+                      disabled={isResendingEmail}
+                    >
+                      {isResendingEmail ? 'Enviando...' : 'Reenviar Email'}
+                    </Button>
+                  </div>
+                </Alert>
+              )}
+
+              {isEmailConfirmed === true && (
+                <Alert variant="success" className="mb-4">
+                  <div className="d-flex align-items-center">
+                    <span className="me-2">✅</span>
+                    <div>
+                      <strong>Email confirmado!</strong> Sua conta está totalmente ativada.
+                    </div>
+                  </div>
+                </Alert>
+              )}
+
               {/* Card do formulário */}
               <Card className="profile-card">
                 <Card.Header>
@@ -233,7 +357,7 @@ const Profile = () => {
                   {/* Alertas de feedback */}
                   {showSuccess && (
                     <Alert variant="success" className="mb-3">
-                      ✅ Perfil atualizado com sucesso!
+                      ✅ {isResendingEmail ? 'Email de confirmação reenviado com sucesso! Verifique sua caixa de entrada.' : 'Perfil atualizado com sucesso!'}
                     </Alert>
                   )}
 

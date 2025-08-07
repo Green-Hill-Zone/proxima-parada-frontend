@@ -2,16 +2,20 @@
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import './Dashboard.css';
 
 // Componente Dashboard - Página para usuários autenticados
 const Dashboard = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.DASHBOARD);
+  
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Função para navegar para a página de explorar destinos
+  // Função para navegar para a página de pacotes
   const handleExplorarDestinos = () => {
-    navigate('/'); // Redireciona para a página principal
+    navigate('/packages'); // Redireciona para a página de pacotes
   };
 
   // Função para navegar para a página de perfil
@@ -40,7 +44,7 @@ const Dashboard = () => {
             <Col lg={10}>
               {/* Título de boas-vindas */}
               <div className="dashboard-welcome">
-                <h1>Bem-vindo, {user?.name}!</h1>
+                <h1>Olá, {user?.name}!</h1>
                 <p className="lead">Gerencie suas viagens e explore novos destinos.</p>
               </div>
 
@@ -143,7 +147,7 @@ const Dashboard = () => {
                 <Col>
                   <Card className="dashboard-user-info">
                     <Card.Header>
-                      <h5 className="mb-0">Informações da Conta</h5>
+                      <h5 className="mb-0">Informações da Conta - {user?.name}</h5>
                     </Card.Header>
                     <Card.Body>
                       {/* Primeira linha - Nome e Email */}

@@ -1,64 +1,451 @@
 import axios from 'axios';
-import type { User, UserCreateRequest, UserResponse } from '../Entities/User';
+import type { User as AuthUser } from '../contexts/types';
 
-const api = axios.create({
-  baseURL: 'http://localhost:3001', // ou o endereço onde está rodando o json-server
-});
+// URL base da API - deve corresponder ao backend .NET
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api';
 
-// API do backend real
-const backendApi = axios.create({
-  baseURL: 'https://localhost:7102', // endereço do backend ASP.NET Core
-});
+/* ===================================================================== */
+/* INTERFACES E TIPOS                                                   */
+/* ===================================================================== */
 
-export const createUser = async (user: Omit<UserCreateRequest, 'createdAt' | 'updatedAt' | 'id'>): Promise<User> => {
-  const response = await api.post('/Users', user);
-  return response.data;
-};
-
-export const getUserByEmail = async (email: string): Promise<UserResponse | null> => {
-  try {
-    const response = await api.get<UserResponse[]>(`/Users?email=${encodeURIComponent(email)}`);
-    return response.data.length > 0 ? response.data[0] : null;
-  } catch (error) {
-    console.error('Error fetching user by email:', error);
-    return null;
-  }
-};
-
-export const getAllUsers = async (): Promise<UserResponse[]> => {
-  try {
-    const response = await api.get<UserResponse[]>('/Users');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching all users:', error);
-    return [];
-  }
+// Interface do usuário simplificada (backend)
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  phone?: string;
+  document?: string;
+  companyId?: number;
+  isEmailConfirmed?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export const getUserById = async (id: number): Promise<UserResponse | null> => {
-  try {
-    const response = await api.get<UserResponse>(`/Users/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching user by ID:', error);
-    return null;
-  }
+// Interface para criação de usuário (com senha)
+export interface CreateUserRequest {
+  name: string;
+  email: string;
+  password: string;
+  role?: string;
+  phone?: string;
+  document?: string;
+  companyId?: number;
 }
 
-export const updateUser = async (id: number, user: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>): Promise<User | null> => {
+// Interface para atualização de usuário (sem senha)
+export interface UpdateUserRequest {
+  name?: string;
+  email?: string;
+  role?: string;
+  phone?: string;
+  document?: string;
+  companyId?: number;
+}
+
+// Interface para login
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+// Interface da resposta do backend (AppUserDto)
+interface BackendUserDto {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+  phone?: string;
+  document?: string;
+  companyId?: number;
+  isEmailConfirmed?: boolean;
+}
+
+// Interface da resposta de criação de usuário
+interface CreateUserResponse {
+  userId: number;
+}
+
+/* ===================================================================== */
+/* FUNÇÕES DE MAPEAMENTO E ADAPTAÇÃO                                     */
+/* ===================================================================== */
+
+// Mapeia dados do backend (AppUserDto) para o frontend (User)
+const mapBackendToFrontend = (backendUser: BackendUserDto): User => {
+  return {
+    id: backendUser.id,
+    name: backendUser.name,
+    email: backendUser.email,
+    role: backendUser.role || 'customer',
+    phone: backendUser.phone,
+    document: backendUser.document,
+    companyId: backendUser.companyId,
+    isEmailConfirmed: backendUser.isEmailConfirmed || false, // Mapeia do backend
+  };
+};
+
+// Adapta User (backend) para AuthUser (contexto de autenticação)
+export const adaptUserToAuthUser = (user: User, existingData?: AuthUser): AuthUser => {
+  return {
+    id: user.id.toString(), // AuthUser usa string, User usa number
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    isEmailConfirmed: user.isEmailConfirmed, // Mapeia o status de confirmação de email
+    avatar: `https://via.placeholder.com/150/007bff/fff?text=${user.name.charAt(0).toUpperCase()}`,
+    // Preserva informações existentes ou usa padrões
+    birthDate: existingData?.birthDate || '01/01/1990',
+    cpf: existingData?.cpf || user.document || '000.000.000-00',
+    gender: existingData?.gender || 'Não informado',
+    phone: user.phone || existingData?.phone || '(00) 00000-0000',
+    phone2: existingData?.phone2 || '(00) 00000-0000',
+    memberSince: existingData?.memberSince || new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
+    // Informações de endereço preservadas ou padrão
+    cep: existingData?.cep || '00000-000',
+    street: existingData?.street || 'A definir',
+    streetNumber: existingData?.streetNumber || '0',
+    complement: existingData?.complement || '',
+    neighborhood: existingData?.neighborhood || 'A definir',
+    city: existingData?.city || 'A definir',
+    state: existingData?.state || 'SP',
+    country: existingData?.country || 'Brasil'
+  };
+};
+
+// Mapeia dados do frontend para envio ao backend
+const mapFrontendToBackend = (createRequest: CreateUserRequest): BackendUserDto => {
+  return {
+    id: 0, // Será definido pelo backend
+    name: createRequest.name,
+    email: createRequest.email,
+    password: createRequest.password,
+    role: createRequest.role || 'customer',
+    phone: createRequest.phone,
+    document: createRequest.document,
+    companyId: createRequest.companyId,
+  };
+};
+
+/* ===================================================================== */
+/* SERVIÇOS DE API                                                       */
+/* ===================================================================== */
+
+/**
+ * Registra um novo usuário no sistema
+ * @param userData - Dados do usuário para criar
+ * @returns Promise com o usuário criado ou erro
+ */
+
+export const createUser = async (formData: any) => {
   try {
-    const response = await api.put<User>(`/Users/${id}`, user);
+    const response = await axios.post('https://localhost:7102/api/AppUser/create', formData);
     return response.data;
   } catch (error) {
-    console.error('Error updating user:', error);
-    return null;
+    if (axios.isAxiosError(error)) {
+      // Deixa o tratamento na tela fazer o resto
+      throw error;
+    }
+
+    // Se for outro erro (não-Axios), lança um erro genérico
+    throw new Error('Erro inesperado ao registrar usuário');
   }
 };
 
-export const deleteUser = async (id: number): Promise<void> => {
+/**
+ * Busca usuário por ID
+ * @param id - ID do usuário
+ * @returns Promise com dados do usuário
+ */
+export const getUserById = async (id: number): Promise<User> => {
   try {
-    await api.delete(`/Users/${id}`);
+    console.log(`🔄 Buscando usuário por ID: ${id}`);
+    
+    const response = await axios.get(
+      `${API_BASE_URL}/AppUser/${id}`
+    );
+
+    console.log('📋 Resposta do getUserById:', response.data);
+    console.log('✅ Usuário encontrado:', response.data.email);
+    
+    // Mapeia dados do backend para frontend
+    return mapBackendToFrontend(response.data);
+    
   } catch (error) {
+    console.error('❌ Erro ao buscar usuário por ID:', error);
+    
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        throw new Error('Usuário não encontrado');
+      }
+      throw new Error(`Erro do servidor: ${error.response?.status}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
+ * Busca usuário por email (para login)
+ * @param email - Email do usuário
+ * @returns Promise com dados do usuário ou null se não encontrado
+ */
+export const getUserByEmail = async (email: string): Promise<User | null> => {
+  try {
+    console.log(`🔄 Buscando usuário por email: ${email}`);
+    
+    // Busca todos os usuários e filtra por email
+    // Nota: Idealmente o backend deveria ter um endpoint específico para busca por email
+    const response = await axios.get(
+      `${API_BASE_URL}/AppUser`
+    );
+
+    console.log('📋 Resposta bruta do backend:', response.data);
+
+    // O backend .NET retorna no formato ReferenceHandler.Preserve: {"$id":"1","$values":[...]}
+    let usersList: BackendUserDto[];
+    
+    if (response.data && typeof response.data === 'object' && '$values' in response.data) {
+      // Formato ReferenceHandler.Preserve
+      usersList = response.data.$values;
+      console.log(`✅ Lista de usuários (ReferenceHandler): Total: ${usersList.length}`);
+    } else if (Array.isArray(response.data)) {
+      // Formato array direto
+      usersList = response.data;
+      console.log(`✅ Lista de usuários (Array): Total: ${usersList.length}`);
+    } else {
+      console.error('❌ Formato de resposta inesperado:', response.data);
+      throw new Error('Formato de resposta do servidor inválido');
+    }
+    
+    // Procura o usuário com o email especificado
+    const foundUser = usersList.find(user => user.email === email);
+    
+    if (foundUser) {
+      console.log('✅ Usuário encontrado por email:', foundUser.email);
+      return mapBackendToFrontend(foundUser);
+    } else {
+      console.log('❌ Usuário não encontrado por email');
+      return null;
+    }
+    
+  } catch (error) {
+    console.error('❌ Erro ao buscar usuário por email:', error);
+    
+    if (axios.isAxiosError(error)) {
+      throw new Error(`Erro do servidor: ${error.response?.status}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
+ * Simula login verificando email e senha
+ * Nota: Em produção, isso seria feito pelo backend com hash de senha
+ * @param loginData - Dados de login (email e senha)
+ * @returns Promise com dados do usuário ou null se credenciais inválidas
+ */
+export const loginUser = async (loginData: LoginRequest): Promise<User | null> => {
+  try {
+    console.log(`🔄 Tentativa de login: ${loginData.email}`);
+    
+    // Busca o usuário por email
+    const user = await getUserByEmail(loginData.email);
+    
+    if (!user) {
+      console.log('❌ Usuário não encontrado para login');
+      return null;
+    }
+
+    // Nota: Em produção, a validação da senha seria feita pelo backend
+    // Aqui estamos simulando que o login sempre é bem-sucedido se o usuário existe
+    // Para implementar validação real, seria necessário um endpoint /login no backend
+    
+    console.log('✅ Login simulado bem-sucedido:', user.email);
+    return user;
+    
+  } catch (error) {
+    console.error('❌ Erro durante login:', error);
+    throw error;
+  }
+};
+
+/**
+ * Busca todos os usuários (para uso administrativo)
+ * @returns Promise com lista de usuários
+ */
+export const getAllUsers = async (): Promise<User[]> => {
+  try {
+    console.log('🔄 Buscando todos os usuários...');
+    
+    const response = await axios.get(
+      `${API_BASE_URL}/AppUser`
+    );
+
+    console.log('📋 Resposta bruta do backend:', response.data);
+
+    // O backend .NET retorna no formato ReferenceHandler.Preserve: {"$id":"1","$values":[...]}
+    let usersList: BackendUserDto[];
+    
+    if (response.data && typeof response.data === 'object' && '$values' in response.data) {
+      // Formato ReferenceHandler.Preserve
+      usersList = response.data.$values;
+      console.log(`✅ Lista de usuários (ReferenceHandler): Total: ${usersList.length}`);
+    } else if (Array.isArray(response.data)) {
+      // Formato array direto
+      usersList = response.data;
+      console.log(`✅ Lista de usuários (Array): Total: ${usersList.length}`);
+    } else {
+      console.error('❌ Formato de resposta inesperado:', response.data);
+      throw new Error('Formato de resposta do servidor inválido');
+    }
+    
+    // Mapeia todos os usuários do backend para frontend
+    return usersList.map(mapBackendToFrontend);
+    
+  } catch (error) {
+    console.error('❌ Erro ao buscar usuários:', error);
+    
+    if (axios.isAxiosError(error)) {
+      throw new Error(`Erro do servidor: ${error.response?.status}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
+ * Atualiza dados de um usuário existente
+ * @param id - ID do usuário a ser atualizado
+ * @param updateData - Dados a serem atualizados
+ * @returns Promise com os dados atualizados do usuário
+ */
+export const updateUser = async (id: number, updateData: UpdateUserRequest): Promise<User> => {
+  try {
+    console.log(`🔄 Atualizando usuário ID: ${id}`, updateData);
+    
+    // Primeiro, busca os dados atuais do usuário para manter campos não editados
+    const currentUser = await getUserById(id);
+    
+    // Prepara dados para envio, mesclando dados atuais com atualizações
+    const updatedData = {
+      id,
+      name: updateData.name ?? currentUser.name,
+      email: updateData.email ?? currentUser.email,
+      password: '', // O backend deve manter a senha atual se vazio
+      role: updateData.role ?? currentUser.role,
+      phone: updateData.phone ?? currentUser.phone,
+      document: updateData.document ?? currentUser.document,
+      companyId: updateData.companyId ?? currentUser.companyId,
+    };
+
+    console.log('📤 Dados sendo enviados para atualização:', updatedData);
+    
+    // Faz a requisição PUT para atualizar usuário
+    const response = await axios.put(
+      `${API_BASE_URL}/AppUser/${id}`,
+      updatedData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('📋 Resposta da atualização:', response.data);
+    console.log('✅ Usuário atualizado com sucesso');
+
+    // Busca os dados atualizados do usuário
+    const updatedUser = await getUserById(id);
+    return updatedUser;
+    
+  } catch (error) {
+    console.error('❌ Erro ao atualizar usuário:', error);
+    
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        throw new Error('Usuário não encontrado');
+      }
+      if (error.response?.status === 400) {
+        throw new Error('Dados inválidos fornecidos');
+      }
+      if (error.response?.status === 409) {
+        throw new Error('Email já está em uso por outro usuário');
+      }
+      throw new Error(`Erro do servidor: ${error.response?.status}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
+ * Verifica se o email do usuário está confirmado
+ * @param userId O ID do usuário
+ * @returns true se o email estiver confirmado, false caso contrário
+ */
+export const checkEmailConfirmationStatus = async (userId: number): Promise<boolean> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/AppUser/${userId}/email-status`);
+    return response.data?.isEmailConfirmed || false;
+  } catch (error) {
+    console.error('Erro ao verificar status de confirmação de email:', error);
+    return false;
+  }
+};
+
+/**
+ * Reenvia o email de confirmação para o usuário
+ * @param userId O ID do usuário
+ * @returns true se o reenvio foi bem-sucedido, false caso contrário
+ */
+export const resendEmailConfirmation = async (userId: number): Promise<boolean> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/AppUser/send-confirmation-email/${userId}`);
+    return response.status === 200;
+  } catch (error) {
+    console.error('Erro ao reenviar email de confirmação:', error);
+    return false;
+  }
+};
+
+/**
+ * Confirma o email do usuário usando o token de confirmação
+ * @param token O token de confirmação de email
+ * @returns true se a confirmação foi bem-sucedida, false caso contrário
+ */
+export const confirmEmail = async (token: string): Promise<boolean> => {
+  try {
+    console.log('🔄 Enviando requisição GET para:', `${API_BASE_URL}/AppUser/confirm-email?token=${token}`);
+    console.log('📝 Token enviado:', token);
+    
+    const response = await axios.get(`${API_BASE_URL}/AppUser/confirm-email?token=${encodeURIComponent(token)}`);
+    
+    console.log('✅ Resposta recebida:', response.status, response.data);
+    return response.status === 200;
+  } catch (error: any) {
+    console.error('❌ Erro ao confirmar email:', error);
+    
+    if (error.response) {
+      console.error('📋 Detalhes do erro:');
+      console.error('  - Status:', error.response.status);
+      console.error('  - Data:', error.response.data);
+      console.error('  - Headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('📡 Sem resposta do servidor:', error.request);
+    } else {
+      console.error('⚙️ Erro na configuração da requisição:', error.message);
+    }
+    
+    return false;
+  }
+};
+
+// Exportações para compatibilidade
+export { createUser as default };
+
+
     console.error('Error deleting user:', error);
   }
 };

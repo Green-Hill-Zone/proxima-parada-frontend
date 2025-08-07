@@ -3,6 +3,7 @@ import { formatCPF, formatPhone, removeNonDigits } from "../utils/formatters";
 import { ERROR_MESSAGES, VALIDATION_RULES } from "../utils/validationConstants";
 
 export interface UserRegisterFormData {
+  name: string;
   email: string;
   phone: string;
   document: string;
@@ -16,6 +17,7 @@ export const useUserRegistration = (
   initialData?: Partial<UserRegisterFormData>
 ) => {
   const [formData, setFormData] = useState<UserRegisterFormData>({
+    name: "",
     email: "",
     phone: "",
     document: "",

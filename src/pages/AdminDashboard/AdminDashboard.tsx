@@ -3,11 +3,15 @@ import { Alert, Badge, Button, Card, Col, Container, Row } from 'react-bootstrap
 import { FaBox, FaCalendarAlt, FaChartLine, FaHotel, FaPlane, FaUsers } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useIsAdmin } from '../../hooks/useAuth';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import PerformanceChart from './components/PerformanceChart';
 import './AdminDashboard.css';
 
 // Componente AdminDashboard - Painel administrativo
 const AdminDashboard = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_DASHBOARD);
+  
   const { user } = useAuth();
   const isAdmin = useIsAdmin();
   const navigate = useNavigate();

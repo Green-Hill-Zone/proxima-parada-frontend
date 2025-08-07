@@ -62,8 +62,15 @@ export const ReservationProvider = ({ children }: Props) => {
     const packageId = packageIdFromState || 1;
     
     console.log('🎫 ID do pacote detectado:', packageId);
+    
+    // Se já temos dados carregados, não recarregar
+    if (reservationData) {
+      console.log('✅ Já existem dados de reserva carregados, mantendo estado atual');
+      return;
+    }
+    
     loadReservation(packageId);
-  }, [location.state]);
+  }, [location.state, reservationData]);
 
   return (
     <ReservationContext.Provider value={{ 

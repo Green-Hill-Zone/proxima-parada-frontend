@@ -12,7 +12,7 @@
 import axios from 'axios';
 
 // Base URL da API
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -51,7 +51,7 @@ export const getAllRoomTypes = async (): Promise<RoomType[]> => {
   try {
     console.log('🔄 Buscando todos os tipos de quartos...');
     
-    const response = await axios.get(`${API_BASE_URL}/RoomType`);
+    const response = await axios.get(`${API_BASE_URL}/api/RoomType`);
     
     console.log('📋 Resposta do backend:', response.data);
     
@@ -88,7 +88,7 @@ export const getRoomTypeById = async (id: number): Promise<RoomType | null> => {
   try {
     console.log(`🔄 Buscando tipo de quarto ID: ${id}`);
     
-    const response = await axios.get(`${API_BASE_URL}/RoomType/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/api/RoomType/${id}`);
     
     console.log('📋 Tipo de quarto encontrado:', response.data);
     
@@ -113,7 +113,7 @@ export const createRoomType = async (roomTypeData: RoomTypeCreateRequest): Promi
   try {
     console.log('🔄 Criando novo tipo de quarto:', roomTypeData);
     
-    const response = await axios.post(`${API_BASE_URL}/RoomType`, roomTypeData);
+    const response = await axios.post(`${API_BASE_URL}/api/RoomType`, roomTypeData);
     
     console.log('📋 Tipo de quarto criado:', response.data);
     
@@ -145,7 +145,7 @@ export const updateRoomType = async (id: number, roomTypeData: RoomTypeCreateReq
   try {
     console.log(`🔄 Atualizando tipo de quarto ${id}:`, roomTypeData);
     
-    const response = await axios.put(`${API_BASE_URL}/RoomType/${id}`, roomTypeData);
+    const response = await axios.put(`${API_BASE_URL}/api/RoomType/${id}`, roomTypeData);
     
     console.log('📋 Tipo de quarto atualizado:', response.data);
     
@@ -176,7 +176,7 @@ export const deleteRoomType = async (id: number): Promise<boolean> => {
   try {
     console.log(`🔄 Removendo tipo de quarto ${id}`);
     
-    await axios.delete(`${API_BASE_URL}/RoomType/${id}`);
+    await axios.delete(`${API_BASE_URL}/api/RoomType/${id}`);
     
     console.log(`✅ Tipo de quarto ${id} removido com sucesso`);
     return true;

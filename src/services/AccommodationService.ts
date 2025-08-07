@@ -14,7 +14,7 @@
 import axios from 'axios';
 
 // Base URL da API
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||'http://localhost:5079/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -94,7 +94,7 @@ export interface AccommodationCreateRequest {
 export const getAllAccommodations = async (): Promise<Accommodation[]> => {
   try {
     console.log('🏨 Buscando todas as acomodações do backend...');
-    const response = await axios.get(`${API_BASE_URL}/Accommodation`);
+    const response = await axios.get(`${API_BASE_URL}/api/Accommodation`);
     
     // Mapear os dados do backend para o formato do frontend
     const backendData = response.data;
@@ -125,7 +125,7 @@ export const getAllAccommodations = async (): Promise<Accommodation[]> => {
 export const getAccommodationById = async (id: number): Promise<Accommodation | null> => {
   try {
     console.log(`🏨 Buscando acomodação ${id} no backend...`);
-    const response = await axios.get(`${API_BASE_URL}/Accommodation/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/api/Accommodation/${id}`);
     
     if (response.data) {
       const accommodation = mapBackendToFrontend(response.data);
@@ -319,7 +319,7 @@ export const createAccommodation = async (accommodationData: AccommodationCreate
     
     console.log('📤 Enviando dados para API:', requestData);
     
-    const response = await axios.post(`${API_BASE_URL}/Accommodation`, requestData);
+    const response = await axios.post(`${API_BASE_URL}/api/Accommodation`, requestData);
     
     console.log('📥 Resposta do servidor:', response.data);
     
@@ -353,7 +353,7 @@ export const getAccommodationsByDestination = async (destinationId: number): Pro
   try {
     console.log(`🔄 Buscando acomodações para destino ${destinationId}`);
     
-    const response = await axios.get(`${API_BASE_URL}/accommodation/destination/${destinationId}`);
+    const response = await axios.get(`${API_BASE_URL}/api/accommodation/destination/${destinationId}`);
     
     console.log('📋 Acomodações do destino:', response.data);
     console.log('📋 Acomodações do destino IMAGEMMMMMM', response.data.images);
@@ -396,6 +396,7 @@ export const getAccommodationsByDestination = async (destinationId: number): Pro
 export const addImagesToAccommodation = async (accommodationId: number, imageIds: number[]): Promise<boolean> => {
   try {
     console.log(`🖼️ Associando imagens à acomodação ${accommodationId}:`, imageIds);
+
     console.log("imageIds JSON:", JSON.stringify(imageIds));
     
     await axios.post(`${API_BASE_URL}/Accommodation/${accommodationId}/images`, imageIds,
@@ -406,6 +407,7 @@ export const addImagesToAccommodation = async (accommodationId: number, imageIds
       }
 
     );
+
     
     console.log(`✅ Imagens associadas com sucesso à acomodação ${accommodationId}`);
     return true;
@@ -431,7 +433,7 @@ export const deleteAccommodation = async (id: number): Promise<boolean> => {
   try {
     console.log(`🗑️ Excluindo acomodação ${id}...`);
     
-    await axios.delete(`${API_BASE_URL}/Accommodation/${id}`);
+    await axios.delete(`${API_BASE_URL}/api/Accommodation/${id}`);
     
     console.log(`✅ Acomodação ${id} excluída com sucesso`);
     return true;

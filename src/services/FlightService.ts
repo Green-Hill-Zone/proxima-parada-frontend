@@ -10,9 +10,10 @@
  */
 
 import axios from 'axios';
+import { normalizeText } from '../utils/textUtils';
 
 // Base URL da API - obtida das variáveis de ambiente
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -105,11 +106,74 @@ export interface FlightSearchParams {
   airlineId?: number;
   departureDate?: string;
   returnDate?: string;
+  cabinClass?: string;
+  seatClass?: string;
+  isInternational?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 /* ===================================================================== */
 /* FUNÇÕES DO SERVIÇO                                                   */
 /* ===================================================================== */
+
+/**
+ * Determina se um voo é internacional
+ * @param flight - Dados do voo
+ * @returns true se o voo for internacional
+ */
+export const isFlightInternational = (flight: Flight): boolean => {
+  const originCountry = normalizeText(flight.originDestination.country || '');
+  const destinationCountry = normalizeText(flight.finalDestination.country || '');
+  
+  return originCountry !== destinationCountry;
+};
+
+/**
+ * Normaliza nomes de classes de voo para busca
+ * @param className - Nome da classe
+ * @returns Array de possíveis nomes normalizados
+ */
+export const normalizeFlightClass = (className: string): string[] => {
+  const normalized = normalizeText(className);
+  const variations: string[] = [normalized];
+  
+  // Mapeamento de variações comuns
+  const classMap: Record<string, string[]> = {
+    'economy': ['economy', 'economica', 'economico', 'eco', 'tourist', 'turistica'],
+    'business': ['business', 'executiva', 'executivo', 'biz'],
+    'first': ['first', 'primeira', 'first class', 'primeira classe'],
+    'premium': ['premium', 'premium economy', 'premium eco'],
+    'standard': ['standard', 'padrao', 'basico', 'normal']
+  };
+  
+  // Encontra variações para a classe
+  for (const [, values] of Object.entries(classMap)) {
+    if (values.some(v => normalized.includes(v))) {
+      variations.push(...values);
+      break;
+    }
+  }
+  
+  return [...new Set(variations)]; // Remove duplicatas
+};
+
+/**
+ * Verifica se uma classe de voo corresponde ao filtro
+ * @param flightClass - Classe do voo
+ * @param searchClass - Classe procurada
+ * @returns true se corresponder
+ */
+export const matchesFlightClass = (flightClass: string, searchClass: string): boolean => {
+  if (!flightClass || !searchClass) return false;
+  
+  const flightClassVariations = normalizeFlightClass(flightClass);
+  const searchClassVariations = normalizeFlightClass(searchClass);
+  
+  return flightClassVariations.some(fv => 
+    searchClassVariations.some(sv => fv.includes(sv) || sv.includes(fv))
+  );
+};
 
 /**
  * Mapeia os dados do backend para o formato esperado pelo frontend
@@ -343,6 +407,170 @@ export const createFlight = async (flightData: FlightCreateRequest): Promise<Fli
     }
     
     throw new Error('Erro de conexão com o servidor');
+  }
+};
+
+/**
+ * Busca voos com filtros avançados
+ * @param params - Parâmetros de busca
+ * @returns Promise com lista de voos filtrados
+ */
+export const searchFlights = async (params: FlightSearchParams): Promise<Flight[]> => {
+  try {
+    console.log('🔍 Buscando voos com filtros:', params);
+    
+    // Por enquanto, busca todos os voos e filtra no frontend (KISS)
+    const allFlights = await getAllFlights();
+    
+    let filteredFlights = allFlights;
+    
+    // Filtro por origem
+    if (params.originId) {
+      filteredFlights = filteredFlights.filter(flight => 
+        flight.originDestination.id === params.originId
+      );
+    }
+    
+    // Filtro por destino
+    if (params.destinationId) {
+      filteredFlights = filteredFlights.filter(flight => 
+        flight.finalDestination.id === params.destinationId
+      );
+    }
+    
+    // Filtro por companhia aérea
+    if (params.airlineId) {
+      filteredFlights = filteredFlights.filter(flight => 
+        flight.airline.id === params.airlineId
+      );
+    }
+    
+    // Filtro por data de partida
+    if (params.departureDate) {
+      const searchDate = new Date(params.departureDate);
+      filteredFlights = filteredFlights.filter(flight => {
+        const flightDate = new Date(flight.departureDateTime);
+        return flightDate.toDateString() === searchDate.toDateString();
+      });
+    }
+    
+    // Filtro por classe da cabine
+    if (params.cabinClass) {
+      filteredFlights = filteredFlights.filter(flight => 
+        matchesFlightClass(flight.cabinClass, params.cabinClass!)
+      );
+    }
+    
+    // Filtro por classe do assento
+    if (params.seatClass) {
+      filteredFlights = filteredFlights.filter(flight => 
+        matchesFlightClass(flight.seatClass || '', params.seatClass!)
+      );
+    }
+    
+    // Filtro por tipo de voo (nacional/internacional)
+    if (params.isInternational !== undefined) {
+      filteredFlights = filteredFlights.filter(flight => 
+        isFlightInternational(flight) === params.isInternational
+      );
+    }
+    
+    // Filtro por preço mínimo
+    if (params.minPrice !== undefined) {
+      filteredFlights = filteredFlights.filter(flight => 
+        (flight.price || 0) >= params.minPrice!
+      );
+    }
+    
+    // Filtro por preço máximo
+    if (params.maxPrice !== undefined) {
+      filteredFlights = filteredFlights.filter(flight => 
+        (flight.price || 0) <= params.maxPrice!
+      );
+    }
+    
+    console.log(`✅ ${filteredFlights.length} voos encontrados após filtros`);
+    return filteredFlights;
+    
+  } catch (error) {
+    console.error('❌ Erro na busca de voos:', error);
+    throw error;
+  }
+};
+
+/**
+ * Busca voos por texto livre (nome da cidade, companhia, etc.)
+ * @param searchTerm - Termo de busca
+ * @returns Promise com lista de voos que correspondem ao termo
+ */
+export const searchFlightsByText = async (searchTerm: string): Promise<Flight[]> => {
+  try {
+    console.log(`🔍 Buscando voos por texto: "${searchTerm}"`);
+    
+    if (!searchTerm.trim()) {
+      return await getAllFlights();
+    }
+    
+    const allFlights = await getAllFlights();
+    const searchNormalized = normalizeText(searchTerm);
+    
+    const filteredFlights = allFlights.filter(flight => {
+      // Busca no número do voo
+      const flightNumber = normalizeText(flight.flightNumber);
+      
+      // Busca na companhia aérea
+      const airlineName = normalizeText(flight.airline.name);
+      const airlineCode = normalizeText(flight.airline.iataCode);
+      
+      // Busca na origem
+      const originName = normalizeText(flight.originDestination.name);
+      const originCountry = normalizeText(flight.originDestination.country);
+      const originCity = normalizeText(flight.originDestination.city || '');
+      
+      // Busca no destino
+      const destinationName = normalizeText(flight.finalDestination.name);
+      const destinationCountry = normalizeText(flight.finalDestination.country);
+      const destinationCity = normalizeText(flight.finalDestination.city || '');
+      
+      // Busca por classe com variações
+      const classMatches = matchesFlightClass(flight.cabinClass, searchTerm) ||
+                          matchesFlightClass(flight.seatClass || '', searchTerm);
+      
+      // Busca por tipo de voo (nacional/internacional)
+      const typeMatches = (() => {
+        const isInternational = isFlightInternational(flight);
+        const searchLower = searchNormalized;
+        
+        if (isInternational) {
+          return searchLower.includes('internacional') || 
+                 searchLower.includes('international') ||
+                 searchLower.includes('inter');
+        } else {
+          return searchLower.includes('nacional') || 
+                 searchLower.includes('domestic') ||
+                 searchLower.includes('domestico');
+        }
+      })();
+      
+      return flightNumber.includes(searchNormalized) ||
+             airlineName.includes(searchNormalized) ||
+             airlineCode.includes(searchNormalized) ||
+             originName.includes(searchNormalized) ||
+             originCountry.includes(searchNormalized) ||
+             originCity.includes(searchNormalized) ||
+             destinationName.includes(searchNormalized) ||
+             destinationCountry.includes(searchNormalized) ||
+             destinationCity.includes(searchNormalized) ||
+             classMatches ||
+             typeMatches;
+    });
+    
+    console.log(`✅ ${filteredFlights.length} voos encontrados para "${searchTerm}"`);
+    return filteredFlights;
+    
+  } catch (error) {
+    console.error('❌ Erro na busca por texto:', error);
+    throw error;
   }
 };
 

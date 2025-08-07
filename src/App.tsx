@@ -13,17 +13,23 @@ import AdminHotelRegister from './pages/AdminHotelRegister';
 import AdminFlightRegister from './pages/AdminFlightRegister';
 import AdminPackageRegister from './pages/AdminPackageRegister';
 import Dashboard from './pages/Dashboard';
+import EmailConfirmation from './pages/EmailConfirmation';
 import Flights from './pages/Flights';
 import Hotels from './pages/Hotels';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import MyPayments from './pages/MyPayments';
 import MyTravels from './pages/MyTravels';
+import NovaSenha from './pages/NovaSenha';
 import Packages from './pages/Packages';
-import Payment from './pages/Payment';
+import Payment from './pages/Payment/Payment';
+import PaymentConfirmation from './pages/Payment/PaymentConfirmation';
 import Profile from './pages/Profile';
+import RecuperarSenha from './pages/RecuperarSenha';
 import { ReservationProvider } from './pages/Reservation/context/ReservationContext.tsx';
 import Reservation from './pages/Reservation/Reservation.tsx';
+// Update the import path and extension if the file exists as TravelerData.tsx
+import TravelerData from './pages/TravelerData';
 import UserRegister from './pages/UserRegister/UserRegister';
 
 function App() {
@@ -35,8 +41,13 @@ function App() {
             <Route path="/admin-register" element={<AdminRegister />} />
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+            <Route path="/nova-senha" element={<NovaSenha />} />
             <Route path="/register" element={<UserRegister />} />
+            <Route path="/confirm-email" element={<EmailConfirmation />} />
+            <Route path="/traveler-data" element={<ProtectedRoute><TravelerData /></ProtectedRoute>} />
             <Route path="/payment" element={<Payment />} />
+            <Route path="/payment/confirmation" element={<PaymentConfirmation />} />
             <Route path="/admin/packages" element={<AdminRoute><AdminPackages /></AdminRoute>} />
             <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/admin/hotels" element={<AdminRoute><AdminHotels /></AdminRoute>} />

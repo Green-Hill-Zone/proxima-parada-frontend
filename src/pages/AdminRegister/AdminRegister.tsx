@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import logotipo from '../../assets/logotipo.png';
 import './AdminRegister.css';
 
 const AdminRegister = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_REGISTER);
   const [formData, setFormData] = useState({
     // Dados da empresa
     razaoSocial: '',

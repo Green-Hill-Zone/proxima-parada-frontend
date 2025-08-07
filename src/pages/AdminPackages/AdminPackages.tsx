@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Card, Col, Container, Row, Table, Badge } from 'react-bootstrap';
 import { FaEdit, FaPlus, FaTrash, FaBox } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 
 interface Package {
   id: string;
@@ -16,6 +17,9 @@ interface Package {
 }
 
 const AdminPackages = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_PACKAGES);
+  
   const navigate = useNavigate();
   const [packages] = useState<Package[]>([
     {

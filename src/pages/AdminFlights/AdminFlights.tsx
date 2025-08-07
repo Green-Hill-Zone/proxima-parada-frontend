@@ -5,9 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import FixedColumnsTable from '../../components/FixedColumnsTable/FixedColumnsTable';
 import type { Flight } from '../../services/FlightService';
 import { deleteFlight, getAllFlights } from '../../services/FlightService';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import CombinedFlightForm from '../Admin/components/CombinedFlightForm';
 
 const AdminFlights = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_FLIGHTS);
+  
   const navigate = useNavigate();
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);

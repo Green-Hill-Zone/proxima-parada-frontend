@@ -8,9 +8,13 @@ import {
   getAllAccommodations,
   type Accommodation
 } from '../../services/AccommodationService';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import HotelForm from '../Admin/components/HotelForm';
 
 const AdminHotels = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_HOTELS);
+  
   const navigate = useNavigate();
   const [hotels, setHotels] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(true);

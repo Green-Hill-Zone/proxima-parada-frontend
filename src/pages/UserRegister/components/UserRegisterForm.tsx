@@ -1,21 +1,21 @@
-import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import FormField from '../../../components/FormField';
-import type { UserRegisterFormData } from '../../../hooks/useUserRegistration';
-import { useUserRegistration } from '../../../hooks/useUserRegistration';
-import { createUser } from '../../../services/UserService';
-import { FIELD_LIMITS } from '../../../utils/validationConstants';
+import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import FormField from "../../../components/FormField";
+import type { UserRegisterFormData } from "../../../hooks/useUserRegistration";
+import { useUserRegistration } from "../../../hooks/useUserRegistration";
+import { createUser, sendEmailConfirmation } from "../../../services/UserService";
+import { FIELD_LIMITS } from "../../../utils/validationConstants";
 interface UserRegisterFormProps {
   onSubmit?: (data: UserRegisterFormData) => void;
 }
 
 const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
-  const {
-    formData,
-    errors,
-    handleInputChange,
-    validateAllFields,
-  } = useUserRegistration();
+  const { formData, errors, handleInputChange, validateAllFields } =
+    useUserRegistration();
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,45 +25,91 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
     }
 
     try {
-      // Use a função register do serviço atualizado
-      const user = await createUser(formData);
-
+      setErrorMessage("");
+      console.log("Tentando criar usuário com dados:", formData);
+      console.log("URL da API:", `${import.meta.env.VITE_API_BASE_URL}/api/AppUser/create`);
+      
+      // Cria o usuário no backend
+      const response = await createUser(formData);
+      console.log("Resposta do backend após criação do usuário:", response);
+      
+      const userId = response.userId; // Pegando o ID do usuário retornado
+      
+      // Se onSubmit foi fornecido, chama-o com os dados do formulário
       if (onSubmit) {
         onSubmit(formData);
       }
+      
+      // Envia o email de confirmação automaticamente
+      if (userId) {
+        console.log(`Enviando email de confirmação para o usuário ID: ${userId}`);
+        await sendEmailConfirmation(userId);
+      }
+      
+      setSuccessMessage("Cadastro concluído com sucesso! Verifique seu email para confirmar sua conta.");
+      console.log("User registered successfully:", response);
+      
+      // Redireciona para o login após 1.2 segundos
+      setTimeout(() => {
+        navigate("/login");
+      }, 1200);
+    } catch (error: any) {
+      console.error("Registration error:", error);
 
-      console.log('User registered successfully:', user);
+      const backendMsg = error?.response?.data?.message || error?.message || "";
+      const status = error?.response?.status;
 
-      // Opcional: adicionar notificação de sucesso ou redirecionamento
-      // Ex: toast.success('Cadastro realizado com sucesso!');
-      // Ex: navigate('/login');
+      console.log("Status:", status);
+      console.log("Backend message:", backendMsg);
 
-    } catch (error) {
-      console.error('Registration error:', error);
-
-      // Opcional: adicionar notificação de erro
-      // Ex: toast.error('Erro ao realizar cadastro. Tente novamente.');
+      if (
+        status === 409 ||
+        status === 400 ||
+        (backendMsg.toLowerCase().includes("cpf") &&
+          backendMsg.toLowerCase().includes("exist")) ||
+        (backendMsg.toLowerCase().includes("email") &&
+          backendMsg.toLowerCase().includes("exist")) ||
+        backendMsg.toLowerCase().includes("usuário já cadastrado") ||
+        backendMsg.toLowerCase().includes("already exists")
+      ) {
+        setErrorMessage("Usuário já cadastrado.");
+      } else {
+        setErrorMessage("Erro inesperado.");
+      }
     }
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
+    <Container
+      className="d-flex align-items-center justify-content-center"
+      style={{ minHeight: "80vh" }}
+    >
       <Row className="w-100">
         <Col md={6} lg={5} className="mx-auto">
           <Card className="shadow-lg">
             <Card.Body className="p-3">
               <div className="text-center mb-2">
                 <h3 className="text-primary">Criar Conta</h3>
-                <p className="text-muted">Preencha os dados para se cadastrar</p>
+                <p className="text-muted">
+                  Preencha os dados para se cadastrar
+                </p>
               </div>
 
               <Form onSubmit={handleSubmit}>
+                <FormField
+                  label="Nome Completo"
+                  type="text"
+                  placeholder="Digite seu nome completo"
+                  value={formData.name}
+                  onChange={handleInputChange("name")}
+                  error={errors.name}
+                />
                 <FormField
                   label="Email"
                   type="email"
                   placeholder="Digite seu email"
                   value={formData.email}
-                  onChange={handleInputChange('email')}
+                  onChange={handleInputChange("email")}
                   error={errors.email}
                 />
 
@@ -72,7 +118,7 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
                   type="tel"
                   placeholder="(11) 12345-6789"
                   value={formData.phone}
-                  onChange={handleInputChange('phone')}
+                  onChange={handleInputChange("phone")}
                   error={errors.phone}
                   maxLength={FIELD_LIMITS.PHONE_MAX_LENGTH}
                 />
@@ -82,7 +128,7 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
                   type="text"
                   placeholder="123.456.789-01"
                   value={formData.document}
-                  onChange={handleInputChange('document')}
+                  onChange={handleInputChange("document")}
                   error={errors.document}
                   maxLength={FIELD_LIMITS.CPF_MAX_LENGTH}
                 />
@@ -92,7 +138,7 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
                   type="password"
                   placeholder="Digite sua senha"
                   value={formData.password}
-                  onChange={handleInputChange('password')}
+                  onChange={handleInputChange("password")}
                   error={errors.password}
                 />
 
@@ -101,13 +147,23 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
                   type="password"
                   placeholder="Confirme sua senha"
                   value={formData.confirmPassword}
-                  onChange={handleInputChange('confirmPassword')}
+                  onChange={handleInputChange("confirmPassword")}
                   error={errors.confirmPassword}
                 />
 
                 <Button variant="primary" type="submit" className="w-100 mb-2">
                   Cadastrar
                 </Button>
+                {errorMessage && (
+                  <div className="alert alert-danger text-center py-2 mb-2">
+                    {errorMessage}
+                  </div>
+                )}
+                {successMessage && (
+                  <div className="alert alert-success text-center py-2 mb-2">
+                    {successMessage}
+                  </div>
+                )}
               </Form>
 
               <div className="text-center">
@@ -127,4 +183,3 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
 };
 
 export default UserRegisterForm;
-

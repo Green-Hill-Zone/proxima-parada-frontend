@@ -12,7 +12,7 @@
 import axios from 'axios';
 
 // Base URL da API - obtida das variáveis de ambiente
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -54,7 +54,7 @@ export const getAllDestinations = async (): Promise<Destination[]> => {
   try {
     console.log('🔄 Buscando todos os destinos...');
     
-    const response = await axios.get(`${API_BASE_URL}/Destination`);
+    const response = await axios.get(`${API_BASE_URL}/api/Destination`);
     
     console.log('📋 Resposta do backend:', response.data);
     
@@ -98,7 +98,7 @@ export const getPopularDestinations = async (limit: number = 10): Promise<Destin
   try {
     console.log(`🔄 Buscando destinos populares (limite: ${limit})...`);
     
-    const response = await axios.get(`${API_BASE_URL}/Destination/popular?limit=${limit}`);
+    const response = await axios.get(`${API_BASE_URL}/api/Destination/popular?limit=${limit}`);
     
     console.log('📋 Resposta do backend:', response.data);
     
@@ -133,7 +133,7 @@ export const getDestinationById = async (id: number): Promise<Destination> => {
   try {
     console.log(`🔄 Buscando destino ID: ${id}`);
     
-    const response = await axios.get(`${API_BASE_URL}/Destination/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/api/Destination/${id}`);
     
     console.log('📋 Destino encontrado:', response.data);
     
@@ -162,7 +162,7 @@ export const createDestination = async (destinationData: DestinationCreateReques
   try {
     console.log('🔄 Criando novo destino:', destinationData);
     
-    const response = await axios.post(`${API_BASE_URL}/Destination`, destinationData);
+    const response = await axios.post(`${API_BASE_URL}/api/Destination`, destinationData);
     
     console.log('📥 Resposta do servidor:', response.data);
     
@@ -190,7 +190,7 @@ export const updateDestination = async (id: number, destinationData: Destination
   try {
     console.log(`🔄 Atualizando destino ID ${id}:`, destinationData);
     
-    const response = await axios.put(`${API_BASE_URL}/Destination/${id}`, destinationData);
+    const response = await axios.put(`${API_BASE_URL}/api/Destination/${id}`, destinationData);
     
     console.log('📥 Resposta do servidor:', response.data);
     
@@ -220,7 +220,7 @@ export const deleteDestination = async (id: number): Promise<boolean> => {
   try {
     console.log(`🗑️ Removendo destino ID ${id}`);
     
-    await axios.delete(`${API_BASE_URL}/Destination/${id}`);
+    await axios.delete(`${API_BASE_URL}/api/Destination/${id}`);
     
     console.log(`✅ Destino ${id} removido com sucesso`);
     

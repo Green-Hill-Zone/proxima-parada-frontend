@@ -7,9 +7,12 @@ import type { Destination } from "../../services/DestinationService";
 import { getAllDestinations } from "../../services/DestinationService";
 import type { FlightCreateRequest } from "../../services/FlightService";
 import { createFlight } from "../../services/FlightService";
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import CombinedFlightForm from "../Admin/components/CombinedFlightForm";
 
 const AdminFlightRegister = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_FLIGHT_REGISTER);
   const navigate = useNavigate();
 
   // Estado para mensagens de erro/sucesso

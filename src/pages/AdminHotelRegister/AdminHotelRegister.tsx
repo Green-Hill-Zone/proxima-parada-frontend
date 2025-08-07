@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Container, Form, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { createAccommodation, type AccommodationCreateRequest } from "../../services/AccommodationService";
+import { addImagesToAccommodation, createAccommodation, type AccommodationCreateRequest } from "../../services/AccommodationService";
 import { getAllDestinations, type Destination } from "../../services/DestinationService";
 import { getAllRoomTypes, type RoomType } from "../../services/RoomTypeService";
 import { usePageTitle, PAGE_TITLES } from '../../hooks';
@@ -127,22 +127,27 @@ const AdminHotelRegister = () => {
 
         // TODO: Implementar upload de imagens quando API estiver pronta
         if (hotelImages.length > 0) {
-          for (const image of hotelImages) {
-            const formData = new FormData();
-            formData.append("file", image);
-            formData.append("altText", "Foto do hotel");
-            formData.append("accommodationId", createdAccommodation.id.toString());
 
-            try {
-              await axios.post(`${API_BASE_URL}/api/image`, formData, {
-                headers: {
-                  "Content-Type": "multipart/form-data"
-                }
-              });
-            } catch (err) {
-              console.error("Erro ao enviar imagem:", image.name, err);
+      for (const image of hotelImages) {
+        const formData = new FormData();
+        formData.append("file", image);
+        formData.append("altText", "Foto do hotel");
+        formData.append("accommodationId", createdAccommodation.id.toString());
+
+        try {
+         const response = await axios.post("http://localhost:5079/api/image", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data"
             }
-          }
+          });
+          addImagesToAccommodation(createdAccommodation.id, [response.data.id]);
+        } catch (err) {
+          console.error("Erro ao enviar imagem:", image.name, err);
+        }
+      }
+
+
+
         }
 
         // Marca como sucesso e limpa os formulários
@@ -281,6 +286,7 @@ const AdminHotelRegister = () => {
         </div>
 
         {/* Upload de Imagens */}
+        
         <div className="mb-4">
           <h5>Imagens do Acomodação</h5>
           <ImageUpload

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Container, Form, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { createAccommodation, type AccommodationCreateRequest } from "../../services/AccommodationService";
+import { addImagesToAccommodation, createAccommodation, type AccommodationCreateRequest } from "../../services/AccommodationService";
 import { getAllDestinations, type Destination } from "../../services/DestinationService";
 import { getAllRoomTypes, type RoomType } from "../../services/RoomTypeService";
 import HotelForm from "../Admin/components/HotelForm";
@@ -130,11 +130,12 @@ const AdminHotelRegister = () => {
         formData.append("accommodationId", createdAccommodation.id.toString());
 
         try {
-          await axios.post("http://localhost:5079/api/image", formData, {
+         const response = await axios.post("http://localhost:5079/api/image", formData, {
             headers: {
               "Content-Type": "multipart/form-data"
             }
           });
+          addImagesToAccommodation(createdAccommodation.id, [response.data.id]);
         } catch (err) {
           console.error("Erro ao enviar imagem:", image.name, err);
         }
@@ -290,6 +291,7 @@ const AdminHotelRegister = () => {
         </div>
 
         {/* Upload de Imagens */}
+        
         <div className="mb-4">
           <h5>Imagens do Acomodação</h5>
           <ImageUpload

@@ -54,7 +54,9 @@ const HotelSelector: React.FC<HotelSelectorProps> = ({
       
       try {
         const backendAccommodations = await getAccommodationsByDestination(destinationId);
+        
         const mappedHotels = mapBackendHotelToComponent(backendAccommodations);
+        
         setHotels(mappedHotels);
       } catch (err) {
         console.error('Erro ao buscar hotéis:', err);
@@ -69,12 +71,19 @@ const HotelSelector: React.FC<HotelSelectorProps> = ({
 
   // Função para mapear dados do backend para o formato do componente
   const mapBackendHotelToComponent = (backendAccommodations: any[]): HotelOption[] => {
-    return backendAccommodations.map(accommodation => ({
+  return backendAccommodations.map(accommodation => {
+    const firstImage = accommodation.images[0]?.url;
+    console.log("estrelas na requisição:", accommodation.starRating);
+    
+   
+    return {
       id: accommodation.id,
       name: accommodation.name,
-      rating: accommodation.rating || 4, // Rating padrão se não estiver no backend
+      rating: accommodation.starRating || 4,
       location: accommodation.location || `Centro de ${destination}`,
-      image: accommodation.image || 'https://picsum.photos/300/200?text=Hotel',
+      image: firstImage
+        ? `http://localhost:5079${firstImage}`
+        : "https://via.placeholder.com/300x200.png?text=Sem+Imagem", // fallback se não houver imagem
       pricePerNight: accommodation.pricePerNight || 200,
       amenities: accommodation.amenities || ['WiFi Grátis'],
       roomTypes: accommodation.roomTypes || [{
@@ -85,9 +94,12 @@ const HotelSelector: React.FC<HotelSelectorProps> = ({
         pricePerNight: accommodation.pricePerNight || 200,
         amenities: ['WiFi Grátis']
       }]
-    }));
-  };
+    };
+  });
+};
 
+
+  
   const filteredHotels = hotels.filter(hotel => {
     if (priceFilter === 'low' && hotel.pricePerNight > 200) return false;
     if (priceFilter === 'medium' && (hotel.pricePerNight <= 200 || hotel.pricePerNight > 400)) return false;

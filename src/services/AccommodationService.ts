@@ -1,3 +1,4 @@
+
 /* ===================================================================== */
 /* SERVIÇO DE ACOMODAÇÕES - INTEGRAÇÃO COM BACKEND                     */
 /* ===================================================================== */
@@ -235,7 +236,9 @@ const mapBackendToFrontend = (backendData: any): Accommodation => {
     updatedAt: backendData.updatedAt,
     travelPackagesCount: backendData.travelPackagesCount || 0,
     images: backendData.images?.$values || []
+    
   };
+  
 };
 
 /* ===================================================================== */
@@ -323,6 +326,7 @@ export const createAccommodation = async (accommodationData: AccommodationCreate
     // Mapeia a resposta para o formato do frontend
     if (response.data) {
       const createdAccommodation = mapBackendToFrontend(response.data);
+      
       return createdAccommodation;
     }
     
@@ -352,6 +356,7 @@ export const getAccommodationsByDestination = async (destinationId: number): Pro
     const response = await axios.get(`${API_BASE_URL}/accommodation/destination/${destinationId}`);
     
     console.log('📋 Acomodações do destino:', response.data);
+    console.log('📋 Acomodações do destino IMAGEMMMMMM', response.data.images);
     
     // DRY: Reutilizar mesma lógica de getAllAccommodations
     const backendData = response.data;
@@ -369,6 +374,7 @@ export const getAccommodationsByDestination = async (destinationId: number): Pro
     }
     
     return accommodations;
+
     
   } catch (error) {
     console.error('❌ Erro ao buscar acomodações por destino:', error);
@@ -390,8 +396,16 @@ export const getAccommodationsByDestination = async (destinationId: number): Pro
 export const addImagesToAccommodation = async (accommodationId: number, imageIds: number[]): Promise<boolean> => {
   try {
     console.log(`🖼️ Associando imagens à acomodação ${accommodationId}:`, imageIds);
+    console.log("imageIds JSON:", JSON.stringify(imageIds));
     
-    await axios.post(`${API_BASE_URL}/Accommodation/${accommodationId}/images`, imageIds);
+    await axios.post(`${API_BASE_URL}/Accommodation/${accommodationId}/images`, imageIds,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+
+    );
     
     console.log(`✅ Imagens associadas com sucesso à acomodação ${accommodationId}`);
     return true;

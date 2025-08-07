@@ -14,11 +14,11 @@ import axios from 'axios';
 import { getAllAccommodations, type Accommodation } from './AccommodationService';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ||'http://localhost:5079/api', // Backend .NET API
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api', // Backend .NET API
 });
 
 // URL base da API correta para reservas (baseada no UserService)
-const API_BASE_URL = 'https://localhost:7102/api';
+const API_BASE_URL = 'https://localhost:7102';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -161,7 +161,7 @@ export const initializeReservation = async (travelPackageId: number): Promise<Re
     console.log(`🎫 Iniciando reserva para pacote ${travelPackageId}...`);
     
     // Buscar dados completos do pacote diretamente do backend
-    const response = await api.get(`/TravelPackage/${travelPackageId}`);
+    const response = await api.get(`/api/TravelPackage/${travelPackageId}`);
     
     if (!response.data) {
       console.error(`❌ Pacote ${travelPackageId} não encontrado`);

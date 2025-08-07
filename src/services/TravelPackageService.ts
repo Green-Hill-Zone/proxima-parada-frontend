@@ -7,7 +7,7 @@ import type {
 } from '../Entities/TravelPackage';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ||'http://localhost:5079/api', // Backend .NET API
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api', // Backend .NET API
 });
 
 // Adapter para mapear dados do backend para o frontend
@@ -60,7 +60,7 @@ const mapBackendToFrontend = (backendData: any): TravelPackageListItem => {
 export const getTravelPackages = async (): Promise<TravelPackageListItem[]> => {
   try {
     console.log('🏝️ Buscando pacotes de viagem...');
-    const response = await api.get('/TravelPackage');
+    const response = await api.get('/api/TravelPackage');
     
     let travelPackagesData = response.data;
     
@@ -147,7 +147,7 @@ export const getFeaturedPackages = async (): Promise<TravelPackageListItem[]> =>
 export const getTravelPackageById = async (id: number): Promise<TravelPackageDetailResponse | null> => {
   try {
     console.log(`🏝️ Buscando pacote ${id}...`);
-    const response = await api.get(`/TravelPackage/${id}`);
+    const response = await api.get(`/api/TravelPackage/${id}`);
     
     if (response.data) {
       // Mapear dados detalhados (pode expandir depois conforme necessário)
@@ -191,12 +191,12 @@ export const createTravelPackage = async (data: TravelPackageCreateRequest): Pro
 // Nova função que aceita dados no formato do backend
 export const createTravelPackageBackend = async (packageData: TravelPackageBackendRequest) => {
   try {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102';
     
     console.log("📤 Enviando dados para API:", packageData);
-    console.log("🔗 Endpoint:", `${API_BASE_URL}/TravelPackage`);
+    console.log("🔗 Endpoint:", `${API_BASE_URL}/api/TravelPackage`);
     
-    const response = await axios.post(`${API_BASE_URL}/TravelPackage`, packageData);
+    const response = await axios.post(`${API_BASE_URL}/api/TravelPackage`, packageData);
     
     console.log("✅ Resposta da API:", response.data);
     return response.data;
@@ -284,10 +284,10 @@ export const uploadTravelPackageImage = async (imageData: ImageUploadRequest): P
       packageId: packageIdString
     });
 
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102';
     
     // Certificar que a URL está corretamente formatada
-    let imageEndpoint = `${API_BASE_URL}/image`;
+    let imageEndpoint = `${API_BASE_URL}/api/image`;
 
     // Verificação adicional para evitar duplicação de /api
     if (imageEndpoint.includes('/api/api')) {

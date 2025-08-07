@@ -12,7 +12,7 @@
 import axios from 'axios';
 
 // Base URL da API - obtida das variáveis de ambiente
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -45,7 +45,7 @@ export const getAllAirlines = async (): Promise<Airline[]> => {
   try {
     console.log('🔄 Buscando todas as companhias aéreas...');
     
-    const response = await axios.get(`${API_BASE_URL}/Airline`);
+    const response = await axios.get(`${API_BASE_URL}/api/Airline`);
     
     console.log('📋 Resposta do backend:', response.data);
     
@@ -89,7 +89,7 @@ export const getAirlineById = async (id: number): Promise<Airline> => {
   try {
     console.log(`🔄 Buscando companhia aérea ID: ${id}`);
     
-    const response = await axios.get(`${API_BASE_URL}/Airline/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/api/Airline/${id}`);
     
     console.log('📋 Companhia aérea encontrada:', response.data);
     
@@ -118,7 +118,7 @@ export const createAirline = async (airlineData: AirlineCreateRequest): Promise<
   try {
     console.log('🔄 Criando nova companhia aérea:', airlineData);
     
-    const response = await axios.post(`${API_BASE_URL}/Airline`, airlineData);
+    const response = await axios.post(`${API_BASE_URL}/api/Airline`, airlineData);
     
     console.log('📥 Resposta do servidor:', response.data);
     
@@ -146,7 +146,7 @@ export const updateAirline = async (id: number, airlineData: AirlineCreateReques
   try {
     console.log(`🔄 Atualizando companhia aérea ID ${id}:`, airlineData);
     
-    const response = await axios.put(`${API_BASE_URL}/Airline/${id}`, airlineData);
+    const response = await axios.put(`${API_BASE_URL}/api/Airline/${id}`, airlineData);
     
     console.log('📥 Resposta do servidor:', response.data);
     
@@ -176,7 +176,7 @@ export const deleteAirline = async (id: number): Promise<boolean> => {
   try {
     console.log(`🗑️ Removendo companhia aérea ID ${id}`);
     
-    await axios.delete(`${API_BASE_URL}/Airline/${id}`);
+    await axios.delete(`${API_BASE_URL}/api/Airline/${id}`);
     
     console.log(`✅ Companhia aérea ${id} removida com sucesso`);
     

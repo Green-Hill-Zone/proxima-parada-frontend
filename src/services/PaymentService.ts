@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // URL base da API - mesma do UserService
-const API_BASE_URL = 'https://localhost:7102/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api';
 
 // Interfaces para os dados de pagamento
 export interface PaymentRequest {

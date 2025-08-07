@@ -3,16 +3,15 @@
 /* ===================================================================== */
 
 .flights-page {
-  padding-top: 2rem;
-  padding-bottom: 5rem;
-  /* min-height: 100vh; */
+  padding-bottom: 3rem;
   background-color: #f8f9fa;
 }
 
 /* Cabeçalho da Página */
 .flights-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  padding-top: 1.5rem;
 }
 
 .flights-header h1 {
@@ -26,60 +25,214 @@
   font-size: 1.1rem;
 }
 
-/* Barra de Pesquisa Rápida */
-.quick-search {
+/* Estilos para os filtros de busca */
+.search-filters {
   border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  background: #ffffff;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
 }
 
-.quick-search .card-body {
+.search-filters:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+.search-filters .card-header {
+  background-color: rgba(13, 110, 253, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 0.75rem 1.25rem;
+}
+
+.search-filters .card-body {
   padding: 1.5rem;
 }
 
-.quick-search .search-input {
-  border: 2px solid #e9ecef;
-  border-radius: 12px 0 0 12px;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.search-filters .form-control,
+.search-filters .form-select {
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.quick-search .search-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
-  outline: none;
+.search-filters .form-control:focus,
+.search-filters .form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
 }
 
-.quick-search .search-input::placeholder {
-  color: #6c757d;
-  font-style: italic;
+/* Estilos para botões de ação */
+.search-filters .btn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
-.quick-search .search-icon {
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  border: 2px solid #007bff;
-  border-left: none;
-  border-radius: 0 12px 12px 0;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 50px;
-  transition: all 0.3s ease;
-}
-
-.quick-search .search-icon svg {
-  width: 18px;
-  height: 18px;
-  color: white;
-}
-
-.quick-search .search-icon:hover {
-  background: linear-gradient(135deg, #0056b3, #004085);
+.search-filters .btn:hover {
   transform: translateY(-1px);
+}
+
+/* Estilos para contadores e filtros ativos */
+.flights-count {
+  margin-bottom: 1rem;
+}
+
+.active-filters {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.active-filters .badge {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  font-weight: normal;
+  font-size: 0.85rem;
+}
+
+/* Estilos para a paginação */
+.pagination-container {
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.responsive-pagination {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pagination {
+  margin-top: 1.5rem;
+}
+
+.pagination .page-item .page-link {
+  border-radius: 4px;
+  margin: 0 2px;
+  transition: all 0.2s ease;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 767.98px) {
+  .flights-header {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .flights-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .flights-header .lead {
+    font-size: 1rem;
+  }
+  
+  .search-filters .card-body {
+    padding: 1rem;
+  }
+  
+  .search-filters .card-header h5 {
+    font-size: 1.1rem;
+  }
+  
+  .active-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .active-filters .badge {
+    display: inline-block;
+    margin-bottom: 0.3rem;
+  }
+  
+  .pagination .page-link {
+    padding: 0.375rem 0.5rem;
+  }
+}
+
+/* Melhorias para telas muito pequenas */
+@media (max-width: 575.98px) {
+  .flights-count {
+    text-align: center;
+  }
+
+  .search-filters .form-control,
+  .search-filters .form-select {
+    font-size: 0.9rem;
+  }
+
+  .pagination {
+    font-size: 0.9rem;
+  }
+
+  .pagination .page-link {
+    padding: 0.25rem 0.4rem;
+  }
+
+  /* Ajuste para botões em telas pequenas */
+  .d-flex.gap-2.mb-3,
+  .d-flex.gap-2.mb-2 {
+    width: 100%;
+  }
+
+  .d-flex.gap-2.mb-3 .btn,
+  .d-flex.gap-2.mb-2 .btn {
+    flex: 1;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Melhorias para telas grandes */
+@media (min-width: 992px) {
+  .flights-header {
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+  }
+
+  .search-filters .form-control,
+  .search-filters .form-select {
+    height: calc(2.5rem + 2px);
+  }
+  
+  .flights-count {
+    margin-top: 1rem;
+  }
+}
+
+/* Estilos específicos para botões de ação */
+.search-filters .btn {
+  padding: 0.6rem 1.25rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.search-filters .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.search-filters .btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-filters .btn-outline-secondary:hover {
+  background-color: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
 }
 
 .quick-search .clear-button {

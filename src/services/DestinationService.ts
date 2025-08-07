@@ -12,7 +12,7 @@
 import axios from 'axios';
 
 // Base URL da API - obtida das variáveis de ambiente
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -54,7 +54,7 @@ export const getAllDestinations = async (): Promise<Destination[]> => {
   try {
     console.log('🔄 Buscando todos os destinos...');
     
-    const response = await axios.get(`${API_BASE_URL}/Destination`);
+    const response = await axios.get(`${API_BASE_URL}/api/Destination`);
     
     console.log('📋 Resposta do backend:', response.data);
     
@@ -98,7 +98,7 @@ export const getPopularDestinations = async (limit: number = 10): Promise<Destin
   try {
     console.log(`🔄 Buscando destinos populares (limite: ${limit})...`);
     
-    const response = await axios.get(`${API_BASE_URL}/Destination/popular?limit=${limit}`);
+    const response = await axios.get(`${API_BASE_URL}/api/Destination/popular?limit=${limit}`);
     
     console.log('📋 Resposta do backend:', response.data);
     

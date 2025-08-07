@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useState, useMemo } from 'react';
-import { Container, Row, Col, Spinner, Alert, Form, Button, Card, Pagination, InputGroup } from 'react-bootstrap';
+import { Container, Row, Col, Spinner, Alert, Form, Button, Card, Pagination, Stack } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { getAllFlights, getFlightsByRoute, isFlightInternational, matchesFlightClass, type Flight } from '../../services/FlightService';
 import { usePageTitle, PAGE_TITLES } from '../../hooks';
@@ -28,7 +28,6 @@ const Flights = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
 
   // Estados para paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,64 +98,9 @@ const Flights = () => {
   /* MANIPULADORES DE EVENTOS                                        */
   /* ================================================================= */
 
-  // Filtrar voos com base no termo de pesquisa e filtros
+  // Filtrar voos com base nos filtros
   const filteredFlights = useMemo(() => {
     let result = allFlights;
-
-    // Filtro por texto de busca
-    if (searchTerm.trim()) {
-      const searchNormalized = normalizeText(searchTerm);
-      result = result.filter(flight => {
-        // Busca no número do voo
-        const flightNumber = normalizeText(flight.flightNumber);
-        
-        // Busca na companhia aérea
-        const airlineName = normalizeText(flight.airline.name);
-        const airlineCode = normalizeText(flight.airline.iataCode);
-        
-        // Busca na origem
-        const originName = normalizeText(flight.originDestination.name);
-        const originCountry = normalizeText(flight.originDestination.country);
-        const originCity = normalizeText(flight.originDestination.city || '');
-        
-        // Busca no destino
-        const destinationName = normalizeText(flight.finalDestination.name);
-        const destinationCountry = normalizeText(flight.finalDestination.country);
-        const destinationCity = normalizeText(flight.finalDestination.city || '');
-        
-        // Busca por classe com variações
-        const classMatches = matchesFlightClass(flight.cabinClass, searchTerm) ||
-                            matchesFlightClass(flight.seatClass || '', searchTerm);
-        
-        // Busca por tipo de voo (nacional/internacional)
-        const typeMatches = (() => {
-          const isInternational = isFlightInternational(flight);
-          const searchLower = searchNormalized;
-          
-          if (isInternational) {
-            return searchLower.includes('internacional') || 
-                   searchLower.includes('international') ||
-                   searchLower.includes('inter');
-          } else {
-            return searchLower.includes('nacional') || 
-                   searchLower.includes('domestic') ||
-                   searchLower.includes('domestico');
-          }
-        })();
-        
-        return flightNumber.includes(searchNormalized) ||
-               airlineName.includes(searchNormalized) ||
-               airlineCode.includes(searchNormalized) ||
-               originName.includes(searchNormalized) ||
-               originCountry.includes(searchNormalized) ||
-               originCity.includes(searchNormalized) ||
-               destinationName.includes(searchNormalized) ||
-               destinationCountry.includes(searchNormalized) ||
-               destinationCity.includes(searchNormalized) ||
-               classMatches ||
-               typeMatches;
-      });
-    }
 
     // Filtro por origem (dos filtros avançados)
     if (filters.origin.trim()) {
@@ -238,7 +182,7 @@ const Flights = () => {
     }
 
     return result;
-  }, [allFlights, searchTerm, filters]);
+  }, [allFlights, filters]);
 
   // Atualizar flights quando filteredFlights mudar
   useEffect(() => {
@@ -285,13 +229,7 @@ const Flights = () => {
       minPrice: '',
       maxPrice: ''
     });
-    setSearchTerm('');
     setCurrentPage(1); // Reset página
-  };
-
-  // Limpa apenas a pesquisa por texto
-  const clearTextSearch = () => {
-    setSearchTerm('');
   };
 
   // Seleciona um voo (pode expandir funcionalidade depois)
@@ -333,6 +271,11 @@ const Flights = () => {
     return Math.ceil(flights.length / FLIGHTS_PER_PAGE);
   };
 
+  // Função auxiliar para detectar telas pequenas
+  const isSmallScreen = () => {
+    return window.innerWidth < 576;
+  };
+
   // Navega para uma página específica
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -360,54 +303,15 @@ const Flights = () => {
               </p>
             </div>
 
-            {/* Barra de Pesquisa Rápida */}
-            <Card className="quick-search mb-4">
-              <Card.Body>
-                <Row>
-                  <Col>
-                    <InputGroup>
-                      <Form.Control
-                        type="text"
-                        placeholder="Pesquisar por voo, empresa, origem, destino, classe (economy, business), tipo (nacional, internacional)..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="search-input"
-                      />
-                      {searchTerm && (
-                        <Button 
-                          variant="outline-secondary" 
-                          onClick={clearTextSearch}
-                          className="clear-button"
-                          title="Limpar pesquisa"
-                        >
-                          ✕
-                        </Button>
-                      )}
-                      <InputGroup.Text className="search-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path 
-                            d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" 
-                            stroke="currentColor" 
-                            strokeWidth="2" 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </InputGroup.Text>
-                    </InputGroup>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-
             {/* Filtros de Busca */}
             <Card className="search-filters mb-4">
               <Card.Header>
-                <h5 className="mb-0">Filtros Avançados</h5>
+                <h5 className="mb-0">Filtros de Busca</h5>
               </Card.Header>
               <Card.Body>
+                {/* Primeira linha de filtros */}
                 <Row>
-                  <Col md={3}>
+                  <Col xs={12} md={6} lg={3}>
                     <Form.Group className="mb-3">
                       <Form.Label>Origem</Form.Label>
                       <Form.Control
@@ -418,7 +322,7 @@ const Flights = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={3}>
+                  <Col xs={12} md={6} lg={3}>
                     <Form.Group className="mb-3">
                       <Form.Label>Destino</Form.Label>
                       <Form.Control
@@ -429,7 +333,7 @@ const Flights = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={2}>
+                  <Col xs={6} md={6} lg={2}>
                     <Form.Group className="mb-3">
                       <Form.Label>Partida</Form.Label>
                       <Form.Control
@@ -439,7 +343,7 @@ const Flights = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={2}>
+                  <Col xs={6} md={6} lg={2}>
                     <Form.Group className="mb-3">
                       <Form.Label>Volta</Form.Label>
                       <Form.Control
@@ -449,18 +353,21 @@ const Flights = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={2} className="d-flex align-items-end">
-                    <div className="d-flex gap-2 mb-3">
+                  {/* Botões somente visíveis em desktop (lg) */}
+                  <Col xs={0} md={0} lg={2} className="d-none d-lg-flex align-items-end justify-content-end">
+                    <div className="d-flex gap-2 mb-3 w-lg-auto">
                       <Button 
                         variant="primary" 
                         onClick={handleSearch}
                         disabled={searchLoading}
+                        className="flex-lg-grow-0"
                       >
                         {searchLoading ? <Spinner size="sm" /> : 'Buscar'}
                       </Button>
                       <Button 
                         variant="outline-secondary" 
                         onClick={handleClearFilters}
+                        className="flex-lg-grow-0"
                       >
                         Limpar
                       </Button>
@@ -470,7 +377,7 @@ const Flights = () => {
                 
                 {/* Segunda linha de filtros */}
                 <Row>
-                  <Col md={2}>
+                  <Col xs={6} sm={6} md={4} lg={2}>
                     <Form.Group className="mb-3">
                       <Form.Label>Classe da Cabine</Form.Label>
                       <Form.Select
@@ -485,7 +392,7 @@ const Flights = () => {
                       </Form.Select>
                     </Form.Group>
                   </Col>
-                  <Col md={2}>
+                  <Col xs={6} sm={6} md={4} lg={2}>
                     <Form.Group className="mb-3">
                       <Form.Label>Classe do Assento</Form.Label>
                       <Form.Select
@@ -499,7 +406,7 @@ const Flights = () => {
                       </Form.Select>
                     </Form.Group>
                   </Col>
-                  <Col md={2}>
+                  <Col xs={6} sm={6} md={4} lg={2}>
                     <Form.Group className="mb-3">
                       <Form.Label>Tipo de Voo</Form.Label>
                       <Form.Select
@@ -512,7 +419,7 @@ const Flights = () => {
                       </Form.Select>
                     </Form.Group>
                   </Col>
-                  <Col md={2}>
+                  <Col xs={6} sm={6} md={4} lg={2}>
                     <Form.Group className="mb-3">
                       <Form.Label>Preço Min. (R$)</Form.Label>
                       <Form.Control
@@ -525,7 +432,7 @@ const Flights = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={2}>
+                  <Col xs={6} sm={6} md={4} lg={2}>
                     <Form.Group className="mb-3">
                       <Form.Label>Preço Máx. (R$)</Form.Label>
                       <Form.Control
@@ -538,15 +445,38 @@ const Flights = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={2}>
+                  <Col xs={6} sm={6} md={4} lg={2}>
                     <Form.Group className="mb-3">
                       <Form.Label className="text-muted">Ações</Form.Label>
                       <div>
-                        <small className="text-muted">
+                        <small className="text-muted d-block">
                           {Object.values(filters).filter(v => v).length} filtro(s) ativo(s)
                         </small>
                       </div>
                     </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Linha de botões (somente visível em mobile/tablet) */}
+                <Row className="d-flex d-lg-none mt-2">
+                  <Col xs={12}>
+                    <div className="d-flex gap-2 mb-2">
+                      <Button 
+                        variant="primary" 
+                        onClick={handleSearch}
+                        disabled={searchLoading}
+                        className="flex-grow-1"
+                      >
+                        {searchLoading ? <Spinner size="sm" /> : 'Buscar'}
+                      </Button>
+                      <Button 
+                        variant="outline-secondary" 
+                        onClick={handleClearFilters}
+                        className="flex-grow-1"
+                      >
+                        Limpar
+                      </Button>
+                    </div>
                   </Col>
                 </Row>
               </Card.Body>
@@ -572,7 +502,7 @@ const Flights = () => {
               // Estado vazio
               <Alert variant="info" className="mb-4">
                 <Alert.Heading>Nenhum voo encontrado</Alert.Heading>
-                {searchTerm || filters.origin || filters.destination || filters.departureDate ||
+                {filters.origin || filters.destination || filters.departureDate ||
                  filters.cabinClass || filters.seatClass || filters.flightType || 
                  filters.minPrice || filters.maxPrice ? (
                   <div>
@@ -602,24 +532,18 @@ const Flights = () => {
                 <div className="flights-count mb-3">
                   <p className="text-muted">
                     {flights.length} {flights.length === 1 ? 'voo encontrado' : 'voos encontrados'}
-                    {searchTerm && (
-                      <span className="ms-2">
-                        para "{searchTerm}"
-                      </span>
-                    )}
                     {flights.length > FLIGHTS_PER_PAGE && (
                       <span className="ms-2">
                         | Página {currentPage} de {getTotalPages()}
                       </span>
                     )}
                   </p>
-                  {(searchTerm || filters.origin || filters.destination || filters.departureDate || 
+                  {(filters.origin || filters.destination || filters.departureDate || 
                     filters.cabinClass || filters.seatClass || filters.flightType || 
                     filters.minPrice || filters.maxPrice) && (
                     <div className="active-filters mt-2">
                       <small className="text-info">
                         Filtros ativos: 
-                        {searchTerm && <span className="badge bg-primary ms-2">Busca: {searchTerm}</span>}
                         {filters.origin && <span className="badge bg-secondary ms-2">Origem: {filters.origin}</span>}
                         {filters.destination && <span className="badge bg-secondary ms-2">Destino: {filters.destination}</span>}
                         {filters.departureDate && <span className="badge bg-secondary ms-2">Data: {new Date(filters.departureDate).toLocaleDateString('pt-BR')}</span>}
@@ -643,7 +567,7 @@ const Flights = () => {
                 
                 <Row>
                   {getCurrentPageFlights().map((flight) => (
-                    <Col key={flight.id} lg={6} className="mb-4">
+                    <Col key={flight.id} xs={12} md={6} className="mb-4">
                       <FlightCard
                         flight={flight}
                         onSelect={handleSelectFlight}
@@ -655,8 +579,8 @@ const Flights = () => {
 
                 {/* Controles de Paginação */}
                 {flights.length > FLIGHTS_PER_PAGE && (
-                  <div className="d-flex justify-content-center mt-4">
-                    <Pagination>
+                  <div className="d-flex justify-content-center mt-4 pagination-container">
+                    <Pagination className="flex-wrap responsive-pagination">
                       <Pagination.First 
                         onClick={() => handlePageChange(1)}
                         disabled={currentPage === 1}
@@ -666,20 +590,21 @@ const Flights = () => {
                         disabled={currentPage === 1}
                       />
                       
-                      {/* Páginas numeradas */}
+                      {/* Páginas numeradas - versão responsiva */}
                       {Array.from({ length: getTotalPages() }, (_, index) => {
                         const page = index + 1;
                         const isCurrentPage = page === currentPage;
                         
-                        // Mostra páginas próximas à atual (máximo 5 páginas visíveis)
+                        // Em telas pequenas, mostrar menos páginas
                         const showPage = 
                           page === 1 || 
                           page === getTotalPages() || 
-                          Math.abs(page - currentPage) <= 2;
+                          Math.abs(page - currentPage) <= (isSmallScreen() ? 1 : 2);
                         
                         if (!showPage) {
                           // Mostra "..." se necessário
-                          if (page === currentPage - 3 || page === currentPage + 3) {
+                          if ((isSmallScreen() && (page === currentPage - 2 || page === currentPage + 2)) ||
+                              (!isSmallScreen() && (page === currentPage - 3 || page === currentPage + 3))) {
                             return <Pagination.Ellipsis key={page} disabled />;
                           }
                           return null;

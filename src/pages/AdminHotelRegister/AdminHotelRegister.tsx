@@ -13,7 +13,7 @@ const AdminHotelRegister = () => {
   // Define o título da página
   usePageTitle(PAGE_TITLES.ADMIN_HOTEL_REGISTER);
   const navigate = useNavigate();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079/api';
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102';
 
   // Estados para controlar o processo de envio
   const [loading, setLoading] = useState(false);

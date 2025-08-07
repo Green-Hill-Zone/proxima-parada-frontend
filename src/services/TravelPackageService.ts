@@ -178,7 +178,7 @@ interface TravelPackageBackendRequest {
 export const createTravelPackage = async (data: TravelPackageCreateRequest): Promise<TravelPackageDetailResponse | null> => {
   try {
     console.log('➕ Criando novo pacote de viagem...');
-    const response = await api.post('/TravelPackage', data);
+    const response = await api.post('/api/TravelPackage', data);
     
     console.log('✅ Pacote criado com sucesso');
     return response.data;
@@ -228,7 +228,7 @@ export const addFlightsToPackage = async (packageId: number, flightIds: number[]
     
     console.log(`📤 Enviando voos para o pacote ID ${numericPackageId}:`, flightIds);
     
-    const response = await api.post(`/TravelPackage/${numericPackageId}/flights`, flightIds);
+    const response = await api.post(`/api/TravelPackage/${numericPackageId}/flights`, flightIds);
     
     console.log('✅ Voos adicionados com sucesso:', response.data);
     return response.data;

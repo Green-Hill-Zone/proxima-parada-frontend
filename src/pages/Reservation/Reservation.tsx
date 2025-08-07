@@ -1,18 +1,40 @@
 import { useState } from 'react';
-import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
-import { useReservation } from './context/ReservationContext';
-import { usePageTitle, PAGE_TITLES } from '../../hooks';
-import FlightInfo from './components/FlightSection/FlightInfo';
-import HotelInfo from './components/HotelSection/HotelInfo';
-import ReservationSummary from './components/Reservations/ReservationSummary';
-import FlightSelector from './components/FlightSection/FlightSelector';
-import HotelSelector from './components/HotelSection/HotelSelector';
+import { Alert, Badge, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { PAGE_TITLES, usePageTitle } from '../../hooks';
 import { calculateNewPrice } from '../../services/ReservationService';
+import FlightInfo from './components/FlightSection/FlightInfo';
+import FlightSelector from './components/FlightSection/FlightSelector';
+import HotelInfo from './components/HotelSection/HotelInfo';
+import HotelSelector from './components/HotelSection/HotelSelector';
+import ReservationSummary from './components/Reservations/ReservationSummary';
+import { useReservation } from './context/ReservationContext';
+
+// Helper function to render room capacity details
+const getRoomCapacityDetails = (roomType: any) => {
+  if (!roomType) return 'Informações não disponíveis';
+
+  const adults = roomType.capacityAdults || 0;
+  const children = roomType.capacityChildren || 0;
+  const total = roomType.totalCapacity || (adults + children) || 0;
+
+  const adultsText = adults > 0 ? `${adults} adulto${adults > 1 ? 's' : ''}` : '';
+  const childrenText = children > 0 ? `${children} criança${children > 1 ? 's' : ''}` : '';
+
+  if (adultsText && childrenText) {
+    return `${adultsText} e ${childrenText} (capacidade total: ${total})`;
+  } else if (adultsText) {
+    return `${adultsText} (capacidade total: ${total})`;
+  } else if (childrenText) {
+    return `${childrenText} (capacidade total: ${total})`;
+  } else {
+    return `Capacidade total: ${total || 'não informada'}`;
+  }
+};
 
 const Reservation = () => {
   // Define o título da página
   usePageTitle(PAGE_TITLES.RESERVATION);
-  
+
   const { reservationData, setReservationData, isLoading, error } = useReservation();
   const [showFlightSelector, setShowFlightSelector] = useState(false);
   const [showHotelSelector, setShowHotelSelector] = useState(false);
@@ -45,7 +67,7 @@ const Reservation = () => {
   const handleSelectFlight = async (flight: any) => {
     try {
       console.log('Voo selecionado:', flight);
-      
+
       // Calcular novo preço com o voo alterado
       const originalPrice = reservationData?.totalPrice || reservationData?.travelPackage.price || 0;
       const newPrice = await calculateNewPrice({
@@ -53,12 +75,12 @@ const Reservation = () => {
         customFlightId: flight.id,
         customFlightPrice: flight.totalPrice || flight.price
       });
-      
+
       console.log('✅ Novo preço calculado:', newPrice);
-      
+
       // Calcular diferença baseada no preço real calculado
       const flightPriceDiff = newPrice - originalPrice;
-      
+
       // Mostrar comparação de preços
       setPriceComparison({
         originalPrice,
@@ -66,7 +88,7 @@ const Reservation = () => {
         changeType: 'flight',
         flightPriceDiff
       });
-      
+
       // KISS: Atualizar estado local em vez de chamar backend que não existe
       if (reservationData) {
         setReservationData({
@@ -82,23 +104,23 @@ const Reservation = () => {
           totalPrice: newPrice // Atualizar o preço total da reserva
         });
       }
-      
+
       setShowFlightSelector(false);
     } catch (err) {
       console.error('Erro ao selecionar voo:', err);
-      
+
       // Fallback: mostrar comparação sem cálculo preciso
       if (reservationData) {
         const originalPrice = reservationData.totalPrice || 0;
         const estimatedNewPrice = originalPrice + (flight.totalPrice * 0.1); // Estimativa simples
-        
+
         setPriceComparison({
           originalPrice,
           newPrice: estimatedNewPrice,
           changeType: 'flight',
           flightPriceDiff: estimatedNewPrice - originalPrice
         });
-        
+
         // Atualizar estado mesmo com erro
         setReservationData({
           ...reservationData,
@@ -112,7 +134,7 @@ const Reservation = () => {
           },
           totalPrice: estimatedNewPrice
         });
-        
+
         setShowFlightSelector(false);
       }
     }
@@ -121,7 +143,7 @@ const Reservation = () => {
   const handleSelectHotel = async (hotel: any, roomType: any) => {
     try {
       console.log('Hotel selecionado:', hotel, 'Tipo de quarto:', roomType);
-      
+
       // Calcular novo preço com o hotel alterado
       const originalPrice = reservationData?.totalPrice || 0;
       const newPrice = await calculateNewPrice({
@@ -129,12 +151,12 @@ const Reservation = () => {
         customAccommodationId: hotel.id,
         customAccommodationPrice: roomType.pricePerNight
       });
-      
+
       console.log('✅ Novo preço calculado:', newPrice);
-      
+
       // Calcular diferença baseada no preço real calculado
       const hotelPriceDiff = newPrice - originalPrice;
-      
+
       // Mostrar comparação de preços
       setPriceComparison({
         originalPrice,
@@ -142,7 +164,7 @@ const Reservation = () => {
         changeType: 'hotel',
         hotelPriceDiff
       });
-      
+
       // KISS: Atualizar estado local em vez de chamar backend que não existe
       if (reservationData) {
         setReservationData({
@@ -168,24 +190,24 @@ const Reservation = () => {
           totalPrice: newPrice
         });
       }
-      
+
       setShowHotelSelector(false);
     } catch (err) {
       console.error('Erro ao selecionar hotel:', err);
-      
+
       // Fallback: mostrar comparação sem cálculo preciso
       if (reservationData) {
         const originalPrice = reservationData.totalPrice || 0;
         const hotelCostDiff = (roomType.pricePerNight * 5) - (originalPrice * 0.3); // 5 noites vs 30% do preço base
         const estimatedNewPrice = originalPrice + hotelCostDiff;
-        
+
         setPriceComparison({
           originalPrice,
           newPrice: estimatedNewPrice,
           changeType: 'hotel',
           hotelPriceDiff: hotelCostDiff
         });
-        
+
         // Atualizar estado mesmo com erro
         setReservationData({
           ...reservationData,
@@ -209,7 +231,7 @@ const Reservation = () => {
           },
           totalPrice: estimatedNewPrice
         });
-        
+
         setShowHotelSelector(false);
       }
     }
@@ -269,19 +291,57 @@ const Reservation = () => {
           {reservationData.travelPackage.destination.name}, {reservationData.travelPackage.destination.country}
         </p>
       </div>
-      
+
+      {/* Detalhes adicionais sobre a acomodação, se estiver selecionada */}
+      {reservationData.selectedAccommodation && (
+        <div className="mb-4 text-center">
+          <Alert variant="light" className="border shadow-sm">
+            <h5>Detalhes da Acomodação</h5>
+            <Row className="mt-3">
+              <Col md={6}>
+                <p className="mb-1"><strong>Hotel:</strong> {reservationData.selectedAccommodation.name}</p>
+                <p className="mb-1">
+                  <strong>Quarto:</strong> {reservationData.selectedAccommodation.roomType.name || 'Standard'}
+                </p>
+                <p className="mb-1">
+                  <strong>Capacidade:</strong> {getRoomCapacityDetails(reservationData.selectedAccommodation.roomType)}
+                </p>
+              </Col>
+              <Col md={6}>
+                <p className="mb-1">
+                  <strong>Check-in:</strong> {reservationData.selectedAccommodation.checkInTime || '14:00'}
+                </p>
+                <p className="mb-1">
+                  <strong>Check-out:</strong> {reservationData.selectedAccommodation.checkOutTime || '12:00'}
+                </p>
+                <p className="mb-1">
+                  <Badge bg="info">
+                    {reservationData.selectedAccommodation.starRating} {'★'.repeat(Math.min(5, Math.max(1, reservationData.selectedAccommodation.starRating)))}
+                  </Badge>
+                </p>
+              </Col>
+            </Row>
+            <p className="mt-2 text-muted small">
+              {reservationData.selectedAccommodation.description?.length > 150
+                ? reservationData.selectedAccommodation.description.slice(0, 150) + '...'
+                : reservationData.selectedAccommodation.description}
+            </p>
+          </Alert>
+        </div>
+      )}
+
       {/* Cards principais ou seletores */}
       {!showFlightSelector && !showHotelSelector ? (
         <Row className="align-items-stretch">
           <Col xs={12} sm={12} md={6} lg={4} className="h-100 py-3">
-            <FlightInfo 
-              onChangeFlight={handleChangeFlight} 
+            <FlightInfo
+              onChangeFlight={handleChangeFlight}
               isActive={false}
             />
           </Col>
           <Col xs={12} sm={12} md={6} lg={4} className="h-100 py-3">
-            <HotelInfo 
-              onChangeHotel={handleChangeHotel} 
+            <HotelInfo
+              onChangeHotel={handleChangeHotel}
               isActive={false}
             />
           </Col>
@@ -294,14 +354,14 @@ const Reservation = () => {
           {/* Cards destacados quando seletores estão abertos */}
           <Row className="mb-4">
             <Col md={4}>
-              <FlightInfo 
-                onChangeFlight={handleChangeFlight} 
+              <FlightInfo
+                onChangeFlight={handleChangeFlight}
                 isActive={showFlightSelector}
               />
             </Col>
             <Col md={4}>
-              <HotelInfo 
-                onChangeHotel={handleChangeHotel} 
+              <HotelInfo
+                onChangeHotel={handleChangeHotel}
                 isActive={showHotelSelector}
               />
             </Col>
@@ -309,7 +369,7 @@ const Reservation = () => {
               <ReservationSummary priceComparison={priceComparison} />
             </Col>
           </Row>
-          
+
           {/* Seletores */}
           {showFlightSelector && (
             <FlightSelector
@@ -320,7 +380,7 @@ const Reservation = () => {
               onSelectFlight={handleSelectFlight}
             />
           )}
-          
+
           {showHotelSelector && (
             <HotelSelector
               destination={reservationData.travelPackage.destination.name}

@@ -38,7 +38,7 @@ export const getTravelById = async (id: number): Promise<Travel> => {
     console.log(`🔄 Buscando viagem por ID: ${id}`);
     
     const response = await axios.get(
-      `${API_BASE_URL}/Travel/${id}`
+      `${API_BASE_URL}/api/Travel/${id}`
     );
 
     console.log('✅ Viagem encontrada:', response.data);
@@ -66,7 +66,7 @@ export const getAllTravels = async (): Promise<Travel[]> => {
     console.log('🔄 Buscando todas as viagens...');
     
     const response = await axios.get(
-      `${API_BASE_URL}/Travel`
+      `${API_BASE_URL}/api/Travel`
     );
 
     console.log('✅ Viagens encontradas:', response.data);
@@ -91,7 +91,7 @@ export const getReservationById = async (id: number): Promise<Reservation> => {
     console.log(`🔄 Buscando reserva por ID: ${id}`);
     
     const response = await axios.get(
-      `${API_BASE_URL}/Reservation/${id}`
+      `${API_BASE_URL}/api/Reservation/${id}`
     );
 
     console.log('✅ Reserva encontrada:', response.data);

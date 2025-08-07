@@ -11,9 +11,10 @@
  */
 
 import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079';
 
 const api = axios.create({
-  baseURL: 'https://localhost:7102/api', // Backend .NET API
+  baseURL: API_BASE_URL, // Backend .NET API
 });
 
 /* ===================================================================== */
@@ -62,7 +63,7 @@ export const createTraveler = async (travelerData: TravelerCreateRequest): Promi
   try {
     console.log('🔄 Criando viajante:', travelerData.name);
     
-    const response = await api.post('/Traveler', travelerData);
+    const response = await api.post('/api/Traveler', travelerData);
     
     console.log('✅ Viajante criado com sucesso:', response.data);
     return response.data;
@@ -82,7 +83,7 @@ export const associateTravelerToReservation = async (travelerId: number, reserva
   try {
     console.log(`🔄 Associando viajante ${travelerId} à reserva ${reservationId}`);
     
-    const response = await api.patch(`/Traveler/${travelerId}/reservation/${reservationId}`);
+    const response = await api.patch(`/api/Traveler/${travelerId}/reservation/${reservationId}`);
     
     console.log('✅ Viajante associado com sucesso:', response.data);
     return response.data;
@@ -101,7 +102,7 @@ export const getTravelersByReservation = async (reservationId: number): Promise<
   try {
     console.log(`🔄 Buscando viajantes da reserva ${reservationId}`);
     
-    const response = await api.get(`/Traveler/reservation/${reservationId}`);
+    const response = await api.get(`/api/Traveler/reservation/${reservationId}`);
     
     console.log(`✅ ${response.data.length} viajantes encontrados`);
     return response.data;

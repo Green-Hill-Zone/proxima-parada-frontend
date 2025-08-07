@@ -64,7 +64,7 @@ export interface AccommodationResponse {
 export const getAllFlights = async (): Promise<FlightResponse[]> => {
   try {
     console.log('✈️ Buscando voos disponíveis...');
-    const response = await api.get('/Flight');
+    const response = await api.get('/api/Flight');
     
     let flightsData = response.data;
     
@@ -92,7 +92,7 @@ export const getAllFlights = async (): Promise<FlightResponse[]> => {
 export const getAllAccommodations = async (): Promise<AccommodationResponse[]> => {
   try {
     console.log('🏨 Buscando acomodações disponíveis...');
-    const response = await api.get('/Accommodation');
+    const response = await api.get('/api/Accommodation');
     
     let accommodationsData = response.data;
     
@@ -120,7 +120,7 @@ export const getAllAccommodations = async (): Promise<AccommodationResponse[]> =
 export const getFlightById = async (id: number): Promise<FlightResponse | null> => {
   try {
     console.log(`✈️ Buscando voo ${id}...`);
-    const response = await api.get(`/Flight/${id}`);
+    const response = await api.get(`/api/Flight/${id}`);
     
     console.log(`✅ Voo ${id} encontrado`);
     return response.data;
@@ -136,7 +136,7 @@ export const getFlightById = async (id: number): Promise<FlightResponse | null> 
 export const getAccommodationById = async (id: number): Promise<AccommodationResponse | null> => {
   try {
     console.log(`🏨 Buscando acomodação ${id}...`);
-    const response = await api.get(`/Accommodation/${id}`);
+    const response = await api.get(`/api/Accommodation/${id}`);
     
     console.log(`✅ Acomodação ${id} encontrada`);
     return response.data;

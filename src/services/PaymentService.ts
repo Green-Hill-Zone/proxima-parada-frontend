@@ -38,7 +38,7 @@ export const createPayment = async (paymentData: PaymentRequest): Promise<Paymen
     console.log('🔄 Enviando dados de pagamento para API:', paymentData);
     
     const response = await axios.post(
-      `${API_BASE_URL}/Payment/create`,
+      `${API_BASE_URL}/api/Payment/create`,
       paymentData
     );
 
@@ -70,7 +70,7 @@ export const getUserPayments = async (userId: number): Promise<PaymentResponse[]
     console.log(`🔄 Buscando pagamentos do usuário: ${userId}`);
     
     const response = await axios.get(
-      `${API_BASE_URL}/Payment/user/${userId}`
+      `${API_BASE_URL}/api/Payment/user/${userId}`
     );
 
     console.log('✅ Pagamentos encontrados:', response.data);
@@ -98,7 +98,7 @@ export const updatePaymentStatus = async (
     console.log(`🔄 Atualizando status do pagamento ${paymentId} para: ${status}`);
     
     const response = await axios.put(
-      `${API_BASE_URL}/Payment/${paymentId}/status`,
+      `${API_BASE_URL}/api/Payment/${paymentId}/status`,
       { status }
     );
 
@@ -138,7 +138,7 @@ export const createStripeCheckoutSession = async (
     console.log(`🔄 Criando sessão do Stripe para reserva: ${reservationId} | Valor: ${amount}`);
     
     const response = await axios.post(
-      `${API_BASE_URL}/Payment/stripe/create-session`,
+      `${API_BASE_URL}/api/Payment/stripe/create-session`,
       {
         reservationId,
         amount

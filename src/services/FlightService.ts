@@ -222,7 +222,7 @@ export const getAllFlights = async (): Promise<Flight[]> => {
   try {
     console.log('🔄 Buscando todos os voos...');
     
-    const response = await axios.get(`${API_BASE_URL}/Flight`);
+    const response = await axios.get(`${API_BASE_URL}/api/Flight`);
     
     console.log('📋 Resposta do backend:', response.data);
     
@@ -270,7 +270,7 @@ export const getFlightById = async (id: number): Promise<Flight> => {
   try {
     console.log(`🔄 Buscando voo ID: ${id}`);
     
-    const response = await axios.get(`${API_BASE_URL}/Flight/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/api/Flight/${id}`);
     
     console.log('📋 Voo encontrado:', response.data);
     
@@ -303,7 +303,7 @@ export const getFlightsByRoute = async (originId: number, destinationId: number)
   try {
     console.log(`🔄 Buscando voos de ${originId} para ${destinationId}`);
     
-    const response = await axios.get(`${API_BASE_URL}/Flight/route/${originId}/${destinationId}`);
+    const response = await axios.get(`${API_BASE_URL}/api/Flight/route/${originId}/${destinationId}`);
     
     console.log('📋 Voos da rota:', response.data);
     
@@ -341,7 +341,7 @@ export const getFlightsByAirline = async (airlineId: number): Promise<Flight[]> 
   try {
     console.log(`🔄 Buscando voos da companhia ${airlineId}`);
     
-    const response = await axios.get(`${API_BASE_URL}/Flight/airline/${airlineId}`);
+    const response = await axios.get(`${API_BASE_URL}/api/Flight/airline/${airlineId}`);
     
     console.log('📋 Voos da companhia:', response.data);
     
@@ -389,7 +389,7 @@ export const createFlight = async (flightData: FlightCreateRequest): Promise<Fli
     
     console.log('📤 Enviando dados para API:', backendRequestData);
     
-    const response = await axios.post(`${API_BASE_URL}/Flight`, backendRequestData);
+    const response = await axios.post(`${API_BASE_URL}/api/Flight`, backendRequestData);
     
     console.log('📥 Resposta do servidor:', response.data);
     
@@ -653,7 +653,7 @@ export const updateFlight = async (id: number, flightData: FlightCreateRequest):
     
     console.log('📤 Enviando dados para API:', backendRequestData);
     
-    const response = await axios.put(`${API_BASE_URL}/Flight/${id}`, backendRequestData);
+    const response = await axios.put(`${API_BASE_URL}/api/Flight/${id}`, backendRequestData);
     
     console.log('📥 Resposta do servidor:', response.data);
     
@@ -694,7 +694,7 @@ export const deleteFlight = async (id: number): Promise<boolean> => {
   try {
     console.log(`🗑️ Removendo voo ID ${id}`);
     
-    await axios.delete(`${API_BASE_URL}/Flight/${id}`);
+    await axios.delete(`${API_BASE_URL}/api/Flight/${id}`);
     
     console.log(`✅ Voo ${id} removido com sucesso`);
     

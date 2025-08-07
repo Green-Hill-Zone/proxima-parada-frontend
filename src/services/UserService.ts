@@ -7,7 +7,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:710
 
 // Legacy API (para compatibilidade com SCRUM52)
 const legacyApi = axios.create({
-  baseURL: 'http://localhost:3001', // ou o endereço onde está rodando o json-server
+  baseURL: API_BASE_URL, // ou o endereço onde está rodando o json-server
 });
 
 /* ===================================================================== */
@@ -625,3 +625,4 @@ export const deleteLegacyUser = async (id: number): Promise<void> => {
 
 // Exportações para compatibilidade
 export { createUser as default };
+

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { useReservation } from './context/ReservationContext';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import FlightInfo from './components/FlightSection/FlightInfo';
 import HotelInfo from './components/HotelSection/HotelInfo';
 import ReservationSummary from './components/Reservations/ReservationSummary';
@@ -9,6 +10,9 @@ import HotelSelector from './components/HotelSection/HotelSelector';
 import { calculateNewPrice } from '../../services/ReservationService';
 
 const Reservation = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.RESERVATION);
+  
   const { reservationData, setReservationData, isLoading, error } = useReservation();
   const [showFlightSelector, setShowFlightSelector] = useState(false);
   const [showHotelSelector, setShowHotelSelector] = useState(false);
@@ -269,19 +273,19 @@ const Reservation = () => {
       {/* Cards principais ou seletores */}
       {!showFlightSelector && !showHotelSelector ? (
         <Row className="align-items-stretch">
-          <Col md={4} className="h-md-100 py-3">
+          <Col xs={12} sm={12} md={6} lg={4} className="h-100 py-3">
             <FlightInfo 
               onChangeFlight={handleChangeFlight} 
               isActive={false}
             />
           </Col>
-          <Col md={4} className="h-md-100 py-3">
+          <Col xs={12} sm={12} md={6} lg={4} className="h-100 py-3">
             <HotelInfo 
               onChangeHotel={handleChangeHotel} 
               isActive={false}
             />
           </Col>
-          <Col md={4} className="h-md-100 py-3">
+          <Col xs={12} sm={12} md={12} lg={4} className="h-100 py-3">
             <ReservationSummary priceComparison={priceComparison} />
           </Col>
         </Row>

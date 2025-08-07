@@ -139,6 +139,15 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                     required                                        // Campo obrigatório
                     disabled={isLoading}                           // Desabilita durante carregamento
                   />
+                  <div className="text-end mt-1">
+                    <Button
+                      variant="link"
+                      className="p-0 text-decoration-none text-muted small"
+                      onClick={() => navigate('/recuperar-senha')}
+                    >
+                      Esqueceu a senha?
+                    </Button>
+                  </div>
                 </Form.Group>
 
                 {/* Botão principal de login */}

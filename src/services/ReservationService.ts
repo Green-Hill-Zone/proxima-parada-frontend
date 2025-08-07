@@ -14,11 +14,11 @@ import axios from 'axios';
 import { getAllAccommodations, type Accommodation } from './AccommodationService';
 
 const api = axios.create({
-  baseURL: 'https://localhost:7102/api', // Backend .NET API
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api', // Backend .NET API
 });
 
 // URL base da API correta para reservas (baseada no UserService)
-const API_BASE_URL = 'https://localhost:7102/api';
+const API_BASE_URL = 'https://localhost:7102';
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -160,64 +160,26 @@ export const initializeReservation = async (travelPackageId: number): Promise<Re
   try {
     console.log(`🎫 Iniciando reserva para pacote ${travelPackageId}...`);
     
-    try {
-      // Buscar dados completos do pacote diretamente do backend
-      const response = await api.get(`/TravelPackage/${travelPackageId}`);
-      
-      if (!response.data) {
-        throw new Error(`Pacote ${travelPackageId} não encontrado`);
-      }
-      
-      // Mapear dados do backend para formato de reserva
-      const travelPackageData = mapBackendPackageToReservation(response.data);
-      
-      const reservationData: ReservationData = {
-        travelPackage: travelPackageData,
-        travelers: [],
-        totalPrice: travelPackageData.price
-      };
-      
-      console.log('✅ Reserva inicializada:', reservationData.travelPackage.title);
-      return reservationData;
-    } catch (apiError) {
-      console.error('⚠️ Erro ao buscar dados do backend, usando dados de fallback:', apiError);
-      
-      // Dados de fallback para quando não conseguimos conectar com o backend
-      const fallbackData: ReservationData = {
-        travelPackage: {
-          id: travelPackageId,
-          title: "Pacote de Viagem",
-          description: "Descrição do pacote de viagem.",
-          price: 2500.00,
-          destination: {
-            id: 1,
-            name: "Paris",
-            country: "França",
-            state: "",
-            city: "Paris"
-          },
-          company: {
-            id: 1,
-            name: "Próxima Parada Turismo",
-            cnpj: "12.345.678/0001-90"
-          },
-          availableDates: [
-            {
-              id: 1,
-              departureDate: "2025-12-15T00:00:00",
-              returnDate: "2025-12-22T00:00:00",
-              maxCapacity: 20,
-              availableSpots: 10
-            }
-          ]
-        },
-        travelers: [],
-        totalPrice: 2500.00
-      };
-      
-      console.log('✅ Reserva inicializada com dados de fallback');
-      return fallbackData;
+    // Buscar dados completos do pacote diretamente do backend
+    const response = await api.get(`/TravelPackage/${travelPackageId}`);
+    
+    if (!response.data) {
+      console.error(`❌ Pacote ${travelPackageId} não encontrado`);
+      return null;
     }
+    
+    // Mapear dados do backend para formato de reserva
+    const travelPackageData = mapBackendPackageToReservation(response.data);
+    
+    const reservationData: ReservationData = {
+      travelPackage: travelPackageData,
+      travelers: [],
+      totalPrice: travelPackageData.price
+    };
+    
+    console.log('✅ Reserva inicializada:', reservationData.travelPackage.title);
+    return reservationData;
+    
   } catch (error) {
     console.error('❌ Erro ao inicializar reserva:', error);
     return null;

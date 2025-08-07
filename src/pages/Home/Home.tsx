@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { type TravelPackageListItem } from '../../Entities/TravelPackage';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import imgBg from '../../imgs/img-home/img-bg.png';
 import { getFeaturedPackages } from '../../services/TravelPackageService';
 import '../../styles/home/heroSection.css';
@@ -13,6 +14,9 @@ import './styles.css'; // Importa os estilos específicos da página Home
 
 // Componente Home - Página principal da aplicação
 const Home = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.HOME);
+  
   const navigate = useNavigate();
   const [featuredPackages, setFeaturedPackages] = useState<TravelPackageListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);

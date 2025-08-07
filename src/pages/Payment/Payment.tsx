@@ -2,6 +2,9 @@
 import { useState, useEffect } from 'react';
 import { Button, Card, Col, Container, Form, Row, Alert, Badge, Spinner } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { createPayment } from '../../services/PaymentService';
+import { useAuth } from '../../hooks/useAuth';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import { FaArrowLeft, FaUsers, FaUser, FaEdit } from 'react-icons/fa';
 import './Payment.css';
 import { useReservation } from '../Reservation/context/ReservationContext';
@@ -29,19 +32,27 @@ interface PaymentData {
   cpf: string;
 }
 
-// Interface para dados da viagem (recebidos via props/state)
+// Interface para dados da viagem recebidos via state
 interface TravelData {
   name: string;
   date: string;
   price: number;
   people: number;
+  travelId?: number;
+  reservationId?: number;
   totalAmount?: number;
 }
 
 // Componente Payment - Tela de Pagamento
 const Payment = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.PAYMENT);
+  
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
+
+  // Dados da viagem recebidos via state
   const { reservationData } = useReservation();
   
   // Dados da viagem e viajantes recebidos via state
@@ -141,11 +152,22 @@ const Payment = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Função para processar o pagamento via Stripe
+  // Função para processar o pagamento real
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
+      return;
+    }
+
+    if (!user) {
+      alert('Usuário não autenticado. Faça login para prosseguir.');
+      navigate('/login');
+      return;
+    }
+
+    if (!travelData.travelId) {
+      alert('ID do pacote de viagem não encontrado.');
       return;
     }
 
@@ -241,19 +263,18 @@ const Payment = () => {
 
       // Para demonstração, vamos simular o retorno do Stripe
       setShowSuccess(true);
-      
+
       setTimeout(() => {
-        navigate('/my-payments', { 
-          state: { 
-            message: 'Redirecionando para processamento do pagamento...',
-            paymentId: `pay_${Date.now()}`
+        navigate('/my-payments', {
+          state: {
+            message: 'Pagamento realizado com sucesso!',
+            paymentId: response.id
           }
         });
       }, 2000);
-      
-    } catch (error) {
-      console.error('Erro ao criar sessão de pagamento:', error);
-      alert('Erro ao processar pagamento. Tente novamente.');
+    } catch (error: any) {
+      setShowSuccess(false);
+      alert(error?.message || 'Erro ao processar pagamento. Tente novamente.');
     } finally {
       setIsLoading(false);
     }

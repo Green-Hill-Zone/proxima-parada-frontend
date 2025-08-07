@@ -1,0 +1,76 @@
+/* Estilos para o formulário de recuperação de senha */
+.recuperar-senha-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 140px); /* Ajuste conforme o tamanho do seu header/footer */
+  padding: 2rem 1rem;
+}
+
+.recuperar-senha-form-row {
+  width: 100%;
+  justify-content: center;
+}
+
+.recuperar-senha-form-col {
+  display: flex;
+  justify-content: center;
+}
+
+.recuperar-senha-form-card {
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  border: none;
+}
+
+.recuperar-senha-form-card-body {
+  padding: 2rem;
+}
+
+.recuperar-senha-form-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.recuperar-senha-form-title {
+  color: var(--bs-primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.recuperar-senha-form-subtitle {
+  color: var(--bs-gray-600);
+  font-size: 0.9rem;
+}
+
+.recuperar-senha-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.recuperar-senha-form-btn-primary {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+.recuperar-senha-form-back {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.recuperar-senha-form-back-text {
+  margin-bottom: 0;
+  color: var(--bs-gray-600);
+}
+
+.recuperar-senha-form-back-link {
+  padding: 0;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.recuperar-senha-form-back-link:hover {
+  text-decoration: underline;
+}

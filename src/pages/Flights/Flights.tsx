@@ -9,17 +9,22 @@
  * - YAGNI: Funcionalidades essenciais
  */
 
-import { useEffect, useState } from 'react';
-import { Container, Row, Col, Spinner, Alert, Form, Button, Card, Pagination } from 'react-bootstrap';
+import { useEffect, useState, useMemo } from 'react';
+import { Container, Row, Col, Spinner, Alert, Form, Button, Card, Pagination, Stack } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
-import { getAllFlights, getFlightsByRoute, type Flight } from '../../services/FlightService';
+import { getAllFlights, getFlightsByRoute, isFlightInternational, matchesFlightClass, type Flight } from '../../services/FlightService';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
+import { normalizeText } from '../../utils/textUtils';
 import FlightCard from './components/FlightCard';
 import './Flights.css';
 
 // Componente principal da página de voos
 const Flights = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.FLIGHTS);
   // Estados do componente
   const [flights, setFlights] = useState<Flight[]>([]);
+  const [allFlights, setAllFlights] = useState<Flight[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -36,7 +41,12 @@ const Flights = () => {
     origin: '',
     destination: '',
     departureDate: '',
-    returnDate: ''
+    returnDate: '',
+    cabinClass: '',
+    seatClass: '',
+    flightType: '', // 'national', 'international', ou ''
+    minPrice: '',
+    maxPrice: ''
   });
 
   /* ================================================================= */
@@ -71,6 +81,7 @@ const Flights = () => {
         flightsData = await getAllFlights();
       }
       
+      setAllFlights(flightsData);
       setFlights(flightsData);
       setCurrentPage(1); // Reset página quando carrega novos voos
       console.log(`✅ ${flightsData.length} voos carregados`);
@@ -87,6 +98,98 @@ const Flights = () => {
   /* MANIPULADORES DE EVENTOS                                        */
   /* ================================================================= */
 
+  // Filtrar voos com base nos filtros
+  const filteredFlights = useMemo(() => {
+    let result = allFlights;
+
+    // Filtro por origem (dos filtros avançados)
+    if (filters.origin.trim()) {
+      const originNormalized = normalizeText(filters.origin);
+      result = result.filter(flight => {
+        const originName = normalizeText(flight.originDestination.name);
+        const originCountry = normalizeText(flight.originDestination.country);
+        const originCity = normalizeText(flight.originDestination.city || '');
+        
+        return originName.includes(originNormalized) ||
+               originCountry.includes(originNormalized) ||
+               originCity.includes(originNormalized);
+      });
+    }
+
+    // Filtro por destino (dos filtros avançados)
+    if (filters.destination.trim()) {
+      const destinationNormalized = normalizeText(filters.destination);
+      result = result.filter(flight => {
+        const destinationName = normalizeText(flight.finalDestination.name);
+        const destinationCountry = normalizeText(flight.finalDestination.country);
+        const destinationCity = normalizeText(flight.finalDestination.city || '');
+        
+        return destinationName.includes(destinationNormalized) ||
+               destinationCountry.includes(destinationNormalized) ||
+               destinationCity.includes(destinationNormalized);
+      });
+    }
+
+    // Filtro por data de partida
+    if (filters.departureDate) {
+      const searchDate = new Date(filters.departureDate);
+      result = result.filter(flight => {
+        const flightDate = new Date(flight.departureDateTime);
+        return flightDate.toDateString() === searchDate.toDateString();
+      });
+    }
+
+    // Filtro por classe da cabine
+    if (filters.cabinClass.trim()) {
+      result = result.filter(flight => 
+        matchesFlightClass(flight.cabinClass, filters.cabinClass)
+      );
+    }
+
+    // Filtro por classe do assento
+    if (filters.seatClass.trim()) {
+      result = result.filter(flight => 
+        matchesFlightClass(flight.seatClass || '', filters.seatClass)
+      );
+    }
+
+    // Filtro por tipo de voo (nacional/internacional)
+    if (filters.flightType) {
+      const isInternational = filters.flightType === 'international';
+      result = result.filter(flight => 
+        isFlightInternational(flight) === isInternational
+      );
+    }
+
+    // Filtro por preço mínimo
+    if (filters.minPrice.trim()) {
+      const minPrice = parseFloat(filters.minPrice);
+      if (!isNaN(minPrice)) {
+        result = result.filter(flight => 
+          (flight.price || 0) >= minPrice
+        );
+      }
+    }
+
+    // Filtro por preço máximo
+    if (filters.maxPrice.trim()) {
+      const maxPrice = parseFloat(filters.maxPrice);
+      if (!isNaN(maxPrice)) {
+        result = result.filter(flight => 
+          (flight.price || 0) <= maxPrice
+        );
+      }
+    }
+
+    return result;
+  }, [allFlights, filters]);
+
+  // Atualizar flights quando filteredFlights mudar
+  useEffect(() => {
+    setFlights(filteredFlights);
+    setCurrentPage(1); // Reset página quando filtros mudam
+  }, [filteredFlights]);
+
   // Atualiza filtros de busca
   const handleFilterChange = (field: string, value: string) => {
     setFilters(prev => ({
@@ -95,16 +198,15 @@ const Flights = () => {
     }));
   };
 
-  // Executa busca com filtros
+  // Executa busca com filtros (agora usa o filtro reativo)
   const handleSearch = async () => {
     try {
       setSearchLoading(true);
       setError(null);
       
-      // Por enquanto, busca todos os voos (pode ser expandido depois)
-      const flightsData = await getAllFlights();
-      setFlights(flightsData);
-      setCurrentPage(1); // Reset página após busca
+      // Os filtros já são aplicados automaticamente através do useMemo
+      // Esta função pode ser usada para busca no backend futuramente
+      console.log('Busca aplicada automaticamente');
       
     } catch (err) {
       console.error('❌ Erro na busca:', err);
@@ -120,10 +222,14 @@ const Flights = () => {
       origin: '',
       destination: '',
       departureDate: '',
-      returnDate: ''
+      returnDate: '',
+      cabinClass: '',
+      seatClass: '',
+      flightType: '',
+      minPrice: '',
+      maxPrice: ''
     });
     setCurrentPage(1); // Reset página
-    loadFlights();
   };
 
   // Seleciona um voo (pode expandir funcionalidade depois)
@@ -165,6 +271,11 @@ const Flights = () => {
     return Math.ceil(flights.length / FLIGHTS_PER_PAGE);
   };
 
+  // Função auxiliar para detectar telas pequenas
+  const isSmallScreen = () => {
+    return window.innerWidth < 576;
+  };
+
   // Navega para uma página específica
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -195,11 +306,12 @@ const Flights = () => {
             {/* Filtros de Busca */}
             <Card className="search-filters mb-4">
               <Card.Header>
-                <h5 className="mb-0">🔍 Buscar Voos</h5>
+                <h5 className="mb-0">Filtros de Busca</h5>
               </Card.Header>
               <Card.Body>
+                {/* Primeira linha de filtros */}
                 <Row>
-                  <Col md={3}>
+                  <Col xs={12} md={6} lg={3}>
                     <Form.Group className="mb-3">
                       <Form.Label>Origem</Form.Label>
                       <Form.Control
@@ -210,7 +322,7 @@ const Flights = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={3}>
+                  <Col xs={12} md={6} lg={3}>
                     <Form.Group className="mb-3">
                       <Form.Label>Destino</Form.Label>
                       <Form.Control
@@ -221,7 +333,7 @@ const Flights = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={2}>
+                  <Col xs={6} md={6} lg={2}>
                     <Form.Group className="mb-3">
                       <Form.Label>Partida</Form.Label>
                       <Form.Control
@@ -231,7 +343,7 @@ const Flights = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={2}>
+                  <Col xs={6} md={6} lg={2}>
                     <Form.Group className="mb-3">
                       <Form.Label>Volta</Form.Label>
                       <Form.Control
@@ -241,18 +353,126 @@ const Flights = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={2} className="d-flex align-items-end">
-                    <div className="d-flex gap-2 mb-3">
+                  {/* Botões somente visíveis em desktop (lg) */}
+                  <Col xs={0} md={0} lg={2} className="d-none d-lg-flex align-items-end justify-content-end">
+                    <div className="d-flex gap-2 mb-3 w-lg-auto">
                       <Button 
                         variant="primary" 
                         onClick={handleSearch}
                         disabled={searchLoading}
+                        className="flex-lg-grow-0"
                       >
                         {searchLoading ? <Spinner size="sm" /> : 'Buscar'}
                       </Button>
                       <Button 
                         variant="outline-secondary" 
                         onClick={handleClearFilters}
+                        className="flex-lg-grow-0"
+                      >
+                        Limpar
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+                
+                {/* Segunda linha de filtros */}
+                <Row>
+                  <Col xs={6} sm={6} md={4} lg={2}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Classe da Cabine</Form.Label>
+                      <Form.Select
+                        value={filters.cabinClass}
+                        onChange={(e) => handleFilterChange('cabinClass', e.target.value)}
+                      >
+                        <option value="">Todas</option>
+                        <option value="economy">Econômica</option>
+                        <option value="business">Executiva</option>
+                        <option value="first">Primeira Classe</option>
+                        <option value="premium">Premium</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                  <Col xs={6} sm={6} md={4} lg={2}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Classe do Assento</Form.Label>
+                      <Form.Select
+                        value={filters.seatClass}
+                        onChange={(e) => handleFilterChange('seatClass', e.target.value)}
+                      >
+                        <option value="">Todas</option>
+                        <option value="standard">Standard</option>
+                        <option value="premium">Premium</option>
+                        <option value="business">Business</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                  <Col xs={6} sm={6} md={4} lg={2}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Tipo de Voo</Form.Label>
+                      <Form.Select
+                        value={filters.flightType}
+                        onChange={(e) => handleFilterChange('flightType', e.target.value)}
+                      >
+                        <option value="">Todos</option>
+                        <option value="national">Nacional</option>
+                        <option value="international">Internacional</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                  <Col xs={6} sm={6} md={4} lg={2}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Preço Min. (R$)</Form.Label>
+                      <Form.Control
+                        type="number"
+                        placeholder="0"
+                        value={filters.minPrice}
+                        onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                        min="0"
+                        step="50"
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col xs={6} sm={6} md={4} lg={2}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Preço Máx. (R$)</Form.Label>
+                      <Form.Control
+                        type="number"
+                        placeholder="9999"
+                        value={filters.maxPrice}
+                        onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                        min="0"
+                        step="50"
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col xs={6} sm={6} md={4} lg={2}>
+                    <Form.Group className="mb-3">
+                      <Form.Label className="text-muted">Ações</Form.Label>
+                      <div>
+                        <small className="text-muted d-block">
+                          {Object.values(filters).filter(v => v).length} filtro(s) ativo(s)
+                        </small>
+                      </div>
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Linha de botões (somente visível em mobile/tablet) */}
+                <Row className="d-flex d-lg-none mt-2">
+                  <Col xs={12}>
+                    <div className="d-flex gap-2 mb-2">
+                      <Button 
+                        variant="primary" 
+                        onClick={handleSearch}
+                        disabled={searchLoading}
+                        className="flex-grow-1"
+                      >
+                        {searchLoading ? <Spinner size="sm" /> : 'Buscar'}
+                      </Button>
+                      <Button 
+                        variant="outline-secondary" 
+                        onClick={handleClearFilters}
+                        className="flex-grow-1"
                       >
                         Limpar
                       </Button>
@@ -282,10 +502,29 @@ const Flights = () => {
               // Estado vazio
               <Alert variant="info" className="mb-4">
                 <Alert.Heading>Nenhum voo encontrado</Alert.Heading>
-                <p>Não encontramos voos para os critérios selecionados.</p>
-                <Button variant="outline-info" onClick={handleClearFilters}>
-                  Ver Todos os Voos
-                </Button>
+                {filters.origin || filters.destination || filters.departureDate ||
+                 filters.cabinClass || filters.seatClass || filters.flightType || 
+                 filters.minPrice || filters.maxPrice ? (
+                  <div>
+                    <p>Não encontramos voos que correspondam aos seus critérios de busca.</p>
+                    <p>Tente:</p>
+                    <ul>
+                      <li>Verificar a ortografia dos termos de busca</li>
+                      <li>Usar termos mais gerais</li>
+                      <li>Remover alguns filtros</li>
+                    </ul>
+                    <Button variant="outline-info" onClick={handleClearFilters}>
+                      Limpar Filtros e Ver Todos os Voos
+                    </Button>
+                  </div>
+                ) : (
+                  <div>
+                    <p>Não há voos disponíveis no momento.</p>
+                    <Button variant="outline-info" onClick={loadFlights}>
+                      Recarregar Voos
+                    </Button>
+                  </div>
+                )}
               </Alert>
             ) : (
               // Lista de voos com paginação
@@ -299,11 +538,36 @@ const Flights = () => {
                       </span>
                     )}
                   </p>
+                  {(filters.origin || filters.destination || filters.departureDate || 
+                    filters.cabinClass || filters.seatClass || filters.flightType || 
+                    filters.minPrice || filters.maxPrice) && (
+                    <div className="active-filters mt-2">
+                      <small className="text-info">
+                        Filtros ativos: 
+                        {filters.origin && <span className="badge bg-secondary ms-2">Origem: {filters.origin}</span>}
+                        {filters.destination && <span className="badge bg-secondary ms-2">Destino: {filters.destination}</span>}
+                        {filters.departureDate && <span className="badge bg-secondary ms-2">Data: {new Date(filters.departureDate).toLocaleDateString('pt-BR')}</span>}
+                        {filters.cabinClass && <span className="badge bg-info ms-2">Cabine: {filters.cabinClass}</span>}
+                        {filters.seatClass && <span className="badge bg-info ms-2">Assento: {filters.seatClass}</span>}
+                        {filters.flightType && <span className="badge bg-success ms-2">Tipo: {filters.flightType === 'national' ? 'Nacional' : 'Internacional'}</span>}
+                        {filters.minPrice && <span className="badge bg-warning ms-2">Min: R$ {filters.minPrice}</span>}
+                        {filters.maxPrice && <span className="badge bg-warning ms-2">Max: R$ {filters.maxPrice}</span>}
+                        <Button 
+                          variant="link" 
+                          size="sm" 
+                          onClick={handleClearFilters}
+                          className="text-decoration-none ms-2 p-0"
+                        >
+                          Limpar todos
+                        </Button>
+                      </small>
+                    </div>
+                  )}
                 </div>
                 
                 <Row>
                   {getCurrentPageFlights().map((flight) => (
-                    <Col key={flight.id} lg={6} className="mb-4">
+                    <Col key={flight.id} xs={12} md={6} className="mb-4">
                       <FlightCard
                         flight={flight}
                         onSelect={handleSelectFlight}
@@ -315,8 +579,8 @@ const Flights = () => {
 
                 {/* Controles de Paginação */}
                 {flights.length > FLIGHTS_PER_PAGE && (
-                  <div className="d-flex justify-content-center mt-4">
-                    <Pagination>
+                  <div className="d-flex justify-content-center mt-4 pagination-container">
+                    <Pagination className="flex-wrap responsive-pagination">
                       <Pagination.First 
                         onClick={() => handlePageChange(1)}
                         disabled={currentPage === 1}
@@ -326,20 +590,21 @@ const Flights = () => {
                         disabled={currentPage === 1}
                       />
                       
-                      {/* Páginas numeradas */}
+                      {/* Páginas numeradas - versão responsiva */}
                       {Array.from({ length: getTotalPages() }, (_, index) => {
                         const page = index + 1;
                         const isCurrentPage = page === currentPage;
                         
-                        // Mostra páginas próximas à atual (máximo 5 páginas visíveis)
+                        // Em telas pequenas, mostrar menos páginas
                         const showPage = 
                           page === 1 || 
                           page === getTotalPages() || 
-                          Math.abs(page - currentPage) <= 2;
+                          Math.abs(page - currentPage) <= (isSmallScreen() ? 1 : 2);
                         
                         if (!showPage) {
                           // Mostra "..." se necessário
-                          if (page === currentPage - 3 || page === currentPage + 3) {
+                          if ((isSmallScreen() && (page === currentPage - 2 || page === currentPage + 2)) ||
+                              (!isSmallScreen() && (page === currentPage - 3 || page === currentPage + 3))) {
                             return <Pagination.Ellipsis key={page} disabled />;
                           }
                           return null;

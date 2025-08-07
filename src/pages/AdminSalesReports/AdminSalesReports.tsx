@@ -1,8 +1,12 @@
 import { Button, Card, Col, Container, Row, Table } from 'react-bootstrap';
 import { FaArrowDown, FaArrowUp, FaChartLine, FaDollarSign, FaShoppingCart, FaUsers } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { usePageTitle, PAGE_TITLES } from '../../hooks';
 
 const AdminSalesReports = () => {
+  // Define o título da página
+  usePageTitle(PAGE_TITLES.ADMIN_SALES);
+  
   const navigate = useNavigate();
   const salesData = [
     { id: '1', customerName: 'João Silva', package: 'Paris Romântico', amount: 4500.00, date: '28/07/2025', status: 'Pago' },

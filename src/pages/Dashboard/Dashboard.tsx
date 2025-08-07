@@ -1,9 +1,11 @@
 // Importações necessárias
-import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+import { Alert, Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import './Dashboard.css';
+import { useState } from 'react';
+import { resendEmailConfirmation } from '../../services/UserService';
 
 // Componente Dashboard - Página para usuários autenticados
 const Dashboard = () => {
@@ -12,6 +14,23 @@ const Dashboard = () => {
   
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isResendingEmail, setIsResendingEmail] = useState(false);
+
+  // Função para reenviar email de confirmação
+  const handleResendEmailConfirmation = async () => {
+    if (!user?.id) return;
+
+    setIsResendingEmail(true);
+    try {
+      await resendEmailConfirmation(Number(user.id));
+      alert('Email de confirmação reenviado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao reenviar email de confirmação:', error);
+      alert('Erro ao reenviar o email. Por favor, tente novamente.');
+    } finally {
+      setIsResendingEmail(false);
+    }
+  };
 
   // Função para navegar para a página de pacotes
   const handleExplorarDestinos = () => {
@@ -47,6 +66,32 @@ const Dashboard = () => {
                 <h1>Olá, {user?.name}!</h1>
                 <p className="lead">Gerencie suas viagens e explore novos destinos.</p>
               </div>
+
+              {/* Aviso de confirmação de email */}
+              {user && user.isEmailConfirmed === false && (
+                <Alert variant="warning" className="mb-4">
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div>
+                      <Alert.Heading>⚠️ Email não confirmado</Alert.Heading>
+                      <p>
+                        Seu email ainda não foi confirmado. Para ter acesso completo a todas as 
+                        funcionalidades, confirme seu email clicando no link enviado para {user.email}.
+                      </p>
+                      <p className="mb-0">
+                        Não recebeu o email? Verifique sua caixa de spam ou clique no botão ao lado para reenviar.
+                      </p>
+                    </div>
+                    <Button 
+                      variant="outline-warning"
+                      className="ms-3"
+                      onClick={handleResendEmailConfirmation}
+                      disabled={isResendingEmail}
+                    >
+                      {isResendingEmail ? 'Enviando...' : 'Reenviar Email'}
+                    </Button>
+                  </div>
+                </Alert>
+              )}
 
               {/* Cards com funcionalidades */}
               <Row className="dashboard-cards">

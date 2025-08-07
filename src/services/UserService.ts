@@ -3,7 +3,7 @@ import type { User as AuthUser } from '../contexts/types';
 import type { User as LegacyUser, UserCreateRequest, UserResponse } from '../Entities/User';
 
 // URL base da API - deve corresponder ao backend .NET
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079';
 
 // Legacy API (para compatibilidade com SCRUM52)
 const legacyApi = axios.create({
@@ -119,13 +119,49 @@ export const adaptUserToAuthUser = (user: User, existingData?: AuthUser): AuthUs
 /* ===================================================================== */
 
 /**
+ * Envia email de confirmação para um usuário recém-registrado
+ * @param userId - ID do usuário para enviar o email de confirmação
+ * @returns Promise que resolve quando o email for enviado com sucesso
+ */
+export const sendEmailConfirmation = async (userId: number): Promise<void> => {
+  try {
+    console.log(`🔄 Enviando email de confirmação para o usuário ID: ${userId}`);
+    
+    await axios.post(
+      `${API_BASE_URL}/api/AppUser/send-confirmation-email/${userId}`
+    );
+    
+    console.log('✅ Email de confirmação enviado com sucesso');
+  } catch (error) {
+    console.error('❌ Erro ao enviar email de confirmação:', error);
+    
+    // Apenas logamos o erro, mas não interrompemos o fluxo
+    // para não impedir o usuário de continuar usando a aplicação
+    // se houver algum problema com o envio do email
+  }
+};
+
+/**
  * Registra um novo usuário no sistema
  * @param formData - Dados do usuário para criar
  * @returns Promise com o usuário criado ou erro
  */
 export const createUser = async (formData: any) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/AppUser/create`, formData);
+    // Adapta o formato dos dados para o esperado pelo backend
+    const appUserDto = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      role: "customer", // Papel padrão para novos usuários
+      phone: formData.phone,
+      document: formData.document,
+      // Não enviamos confirmPassword para o backend
+    };
+    
+    console.log('🔄 Enviando dados para criação de usuário:', appUserDto);
+    
+    const response = await axios.post(`${API_BASE_URL}/api/AppUser/create`, appUserDto);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -148,7 +184,7 @@ export const getUserById = async (id: number): Promise<User> => {
     console.log(`🔄 Buscando usuário por ID: ${id}`);
     
     const response = await axios.get(
-      `${API_BASE_URL}/AppUser/${id}`
+      `${API_BASE_URL}/api/AppUser/${id}`
     );
 
     console.log('📋 Resposta do getUserById:', response.data);
@@ -183,7 +219,7 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
     // Busca todos os usuários e filtra por email
     // Nota: Idealmente o backend deveria ter um endpoint específico para busca por email
     const response = await axios.get(
-      `${API_BASE_URL}/AppUser`
+      `${API_BASE_URL}/api/AppUser`
     );
 
     console.log('📋 Resposta bruta do backend:', response.data);
@@ -266,7 +302,7 @@ export const getAllUsers = async (): Promise<User[]> => {
     console.log('🔄 Buscando todos os usuários...');
     
     const response = await axios.get(
-      `${API_BASE_URL}/AppUser`
+      `${API_BASE_URL}/api/AppUser`
     );
 
     console.log('📋 Resposta bruta do backend:', response.data);
@@ -330,7 +366,7 @@ export const updateUser = async (id: number, updateData: UpdateUserRequest): Pro
     
     // Faz a requisição PUT para atualizar usuário
     const response = await axios.put(
-      `${API_BASE_URL}/AppUser/${id}`,
+      `${API_BASE_URL}/api/AppUser/${id}`,
       updatedData,
       {
         headers: {
@@ -375,7 +411,7 @@ export const deleteUser = async (id: number): Promise<boolean> => {
   try {
     console.log(`🔄 Deletando usuário ID: ${id}`);
     
-    const response = await axios.delete(`${API_BASE_URL}/AppUser/${id}`);
+    const response = await axios.delete(`${API_BASE_URL}/api/AppUser/${id}`);
     console.log('✅ Usuário deletado com sucesso');
     return response.status === 200 || response.status === 204;
   } catch (error) {
@@ -391,7 +427,7 @@ export const deleteUser = async (id: number): Promise<boolean> => {
  */
 export const checkEmailConfirmationStatus = async (userId: number): Promise<boolean> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/AppUser/${userId}/email-status`);
+    const response = await axios.get(`${API_BASE_URL}/api/AppUser/${userId}/email-status`);
     return response.data?.isEmailConfirmed || false;
   } catch (error) {
     console.error('Erro ao verificar status de confirmação de email:', error);
@@ -406,7 +442,7 @@ export const checkEmailConfirmationStatus = async (userId: number): Promise<bool
  */
 export const resendEmailConfirmation = async (userId: number): Promise<boolean> => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/AppUser/send-confirmation-email/${userId}`);
+    const response = await axios.post(`${API_BASE_URL}/api/AppUser/send-confirmation-email/${userId}`);
     return response.status === 200;
   } catch (error) {
     console.error('Erro ao reenviar email de confirmação:', error);
@@ -421,10 +457,10 @@ export const resendEmailConfirmation = async (userId: number): Promise<boolean> 
  */
 export const confirmEmail = async (token: string): Promise<boolean> => {
   try {
-    console.log('🔄 Enviando requisição GET para:', `${API_BASE_URL}/AppUser/confirm-email?token=${token}`);
+    console.log('🔄 Enviando requisição GET para:', `${API_BASE_URL}/api/AppUser/confirm-email?token=${token}`);
     console.log('📝 Token enviado:', token);
     
-    const response = await axios.get(`${API_BASE_URL}/AppUser/confirm-email?token=${encodeURIComponent(token)}`);
+    const response = await axios.get(`${API_BASE_URL}/api/AppUser/confirm-email?token=${encodeURIComponent(token)}`);
     
     console.log('✅ Resposta recebida:', response.status, response.data);
     return response.status === 200;
@@ -453,7 +489,7 @@ export const confirmEmail = async (token: string): Promise<boolean> => {
  */
 export const requestPasswordReset = async (email: string): Promise<boolean> => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/AppUser/request-password-reset`, { email });
+    const response = await axios.post(`${API_BASE_URL}/api/AppUser/request-password-reset`, { email });
     return response.status === 200;
   } catch (error) {
     console.error('Erro ao solicitar recuperação de senha:', error);
@@ -479,7 +515,7 @@ export const resetPassword = async (newPassword: string, token: string): Promise
       token ? `${token.substring(0, 10)}...` : 'vazio');
 
     // Chamada à API para redefinir a senha com o formato correto
-    const response = await axios.post(`${API_BASE_URL}/AppUser/reset-password`, {
+    const response = await axios.post(`${API_BASE_URL}/api/AppUser/reset-password`, {
       token,
       newPassword
     });

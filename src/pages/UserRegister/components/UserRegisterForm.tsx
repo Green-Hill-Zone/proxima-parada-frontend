@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import FormField from "../../../components/FormField";
 import type { UserRegisterFormData } from "../../../hooks/useUserRegistration";
 import { useUserRegistration } from "../../../hooks/useUserRegistration";
-import { createUser } from "../../../services/UserService";
+import { createUser, sendEmailConfirmation } from "../../../services/UserService";
 import { FIELD_LIMITS } from "../../../utils/validationConstants";
 interface UserRegisterFormProps {
   onSubmit?: (data: UserRegisterFormData) => void;
@@ -26,12 +26,30 @@ const UserRegisterForm = ({ onSubmit }: UserRegisterFormProps) => {
 
     try {
       setErrorMessage("");
-      const user = await createUser(formData);
+      console.log("Tentando criar usuário com dados:", formData);
+      console.log("URL da API:", `${import.meta.env.VITE_API_BASE_URL}/api/AppUser/create`);
+      
+      // Cria o usuário no backend
+      const response = await createUser(formData);
+      console.log("Resposta do backend após criação do usuário:", response);
+      
+      const userId = response.userId; // Pegando o ID do usuário retornado
+      
+      // Se onSubmit foi fornecido, chama-o com os dados do formulário
       if (onSubmit) {
         onSubmit(formData);
       }
-      setSuccessMessage("Cadastro concluído com sucesso!");
-      console.log("User registered successfully:", user);
+      
+      // Envia o email de confirmação automaticamente
+      if (userId) {
+        console.log(`Enviando email de confirmação para o usuário ID: ${userId}`);
+        await sendEmailConfirmation(userId);
+      }
+      
+      setSuccessMessage("Cadastro concluído com sucesso! Verifique seu email para confirmar sua conta.");
+      console.log("User registered successfully:", response);
+      
+      // Redireciona para o login após 1.2 segundos
       setTimeout(() => {
         navigate("/login");
       }, 1200);

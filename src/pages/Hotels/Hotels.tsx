@@ -10,15 +10,15 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Container, Row, Col, Spinner, Alert, Form, Button, Card, Pagination } from 'react-bootstrap';
+import { Alert, Button, Card, Col, Container, Form, Pagination, Row, Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
-import { 
-  getAllAccommodations, 
-  searchAccommodations, 
+import { PAGE_TITLES, usePageTitle } from '../../hooks';
+import {
+  getAllAccommodations,
+  searchAccommodations,
   type Accommodation,
-  type AccommodationFilters 
+  type AccommodationFilters
 } from '../../services/AccommodationService';
-import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import HotelCard from './components/HotelCard';
 import './Hotels.css';
 
@@ -26,7 +26,7 @@ import './Hotels.css';
 const Hotels = () => {
   // Define o título da página
   usePageTitle(PAGE_TITLES.HOTELS);
-  
+
   // Estados do componente
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,13 +66,13 @@ const Hotels = () => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Verifica se há parâmetros de busca na URL
       const searchParams = new URLSearchParams(location.search);
       const destinationParam = searchParams.get('destination');
-      
+
       let accommodationsData: Accommodation[];
-      
+
       if (destinationParam) {
         // Busca por destino específico
         console.log(`Buscando hotéis para destino: ${destinationParam}`);
@@ -82,11 +82,11 @@ const Hotels = () => {
         console.log('Carregando todos os hotéis');
         accommodationsData = await getAllAccommodations();
       }
-      
+
       setAccommodations(accommodationsData);
       setCurrentPage(1); // Reset página quando carrega novos hotéis
       console.log(`✅ ${accommodationsData.length} hotéis carregados`);
-      
+
     } catch (err) {
       console.error('❌ Erro ao carregar hotéis:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar hotéis');
@@ -112,12 +112,12 @@ const Hotels = () => {
     try {
       setSearchLoading(true);
       setError(null);
-      
+
       console.log('🔍 Buscando com filtros:', filters);
       const accommodationsData = await searchAccommodations(filters);
       setAccommodations(accommodationsData);
       setCurrentPage(1); // Reset página após busca
-      
+
     } catch (err) {
       console.error('❌ Erro na busca:', err);
       setError(err instanceof Error ? err.message : 'Erro na busca');
@@ -185,9 +185,9 @@ const Hotels = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     // Scroll suave para o topo da lista de hotéis
-    document.querySelector('.hotels-count')?.scrollIntoView({ 
+    document.querySelector('.hotels-count')?.scrollIntoView({
       behavior: 'smooth',
-      block: 'start' 
+      block: 'start'
     });
   };
 
@@ -263,8 +263,8 @@ const Hotels = () => {
                   </Col>
                   <Col md={3} className="d-flex align-items-end">
                     <div className="d-flex gap-2 mb-3 w-100">
-                      <Button 
-                        variant="primary" 
+                      <Button
+                        variant="primary"
                         onClick={handleSearch}
                         disabled={searchLoading}
                         className="flex-fill"
@@ -278,8 +278,8 @@ const Hotels = () => {
                           'Buscar'
                         )}
                       </Button>
-                      <Button 
-                        variant="outline-secondary" 
+                      <Button
+                        variant="outline-secondary"
                         onClick={handleClearFilters}
                         className="flex-fill"
                       >
@@ -356,7 +356,7 @@ const Hotels = () => {
                     {isLoading ? (
                       'Carregando hotéis...'
                     ) : (
-                      `${accommodations.length} hotel${accommodations.length !== 1 ? 'éis' : ''} encontrado${accommodations.length !== 1 ? 's' : ''}`
+                      `${accommodations.length} hot${accommodations.length !== 1 ? 'éis' : ''} encontrado${accommodations.length !== 1 ? 's' : ''}`
                     )}
                   </h5>
                   {accommodations.length > 0 && (
@@ -431,28 +431,28 @@ const Hotels = () => {
                       <div className="d-flex justify-content-center mt-4">
                         <Pagination className="hotels-pagination">
                           {/* Primeira página */}
-                          <Pagination.First 
+                          <Pagination.First
                             onClick={() => handlePageChange(1)}
                             disabled={currentPage === 1}
                           />
-                          
+
                           {/* Página anterior */}
-                          <Pagination.Prev 
+                          <Pagination.Prev
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
                           />
-                          
+
                           {/* Páginas numeradas */}
                           {Array.from({ length: getTotalPages() }, (_, index) => {
                             const page = index + 1;
                             const isCurrentPage = page === currentPage;
-                            
+
                             // Mostra páginas próximas à atual (máximo 5 páginas visíveis)
-                            const showPage = 
-                              page === 1 || 
-                              page === getTotalPages() || 
+                            const showPage =
+                              page === 1 ||
+                              page === getTotalPages() ||
                               Math.abs(page - currentPage) <= 2;
-                            
+
                             if (!showPage) {
                               // Mostra "..." se necessário
                               if (page === currentPage - 3 || page === currentPage + 3) {
@@ -460,7 +460,7 @@ const Hotels = () => {
                               }
                               return null;
                             }
-                            
+
                             return (
                               <Pagination.Item
                                 key={page}
@@ -473,13 +473,13 @@ const Hotels = () => {
                           })}
 
                           {/* Próxima página */}
-                          <Pagination.Next 
+                          <Pagination.Next
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === getTotalPages()}
                           />
-                          
+
                           {/* Última página */}
-                          <Pagination.Last 
+                          <Pagination.Last
                             onClick={() => handlePageChange(getTotalPages())}
                             disabled={currentPage === getTotalPages()}
                           />

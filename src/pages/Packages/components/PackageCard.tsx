@@ -8,6 +8,14 @@ interface PackageCardProps {
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({ travelPackage }) => {
+  // Verificação de segurança - se não tem travelPackage, retorna null
+  if (!travelPackage) {
+    console.error('PackageCard: travelPackage é undefined');
+    return null;
+  }
+
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102';
+
   // Ajustando para a nova estrutura do backend
   const packageData = travelPackage as any; // Cast para acessar as propriedades do backend
   const id = packageData.id || packageData.Id;
@@ -15,14 +23,63 @@ const PackageCard: React.FC<PackageCardProps> = ({ travelPackage }) => {
   const description = packageData.description || packageData.Description;
   const price = packageData.price || packageData.BasePrice;
   const destination = packageData.destination || packageData.MainDestination;
-  
-  // Extrair imagens da nova estrutura do backend
-  const imagesData = packageData.images;
-  const imageArray = imagesData?.$values || imagesData || [];
-  const mainImage = Array.isArray(imageArray) ? imageArray[0] : null;
-  const imageUrl = mainImage?.url || mainImage?.ImageUrl || 'https://picsum.photos/300/200?text=Sem+Imagem';
-  const imageAlt = mainImage?.altText || mainImage?.AltText || title;
-  
+
+  // Melhor tratamento para as imagens - similar ao HotelSelector
+  const extractImageUrl = () => {
+    // Verificar as possíveis estruturas de dados para imagens
+    const imagesData = packageData.images || packageData.Images;
+
+    // Se não existem imagens, retornar imagem padrão
+    if (!imagesData) {
+      return 'https://picsum.photos/300/200?text=Sem+Imagem';
+    }
+
+    // Lidar com estrutura $values do .NET de maneira segura
+    let imageArray: any[] = [];
+
+    // Verificar se imagesData é um objeto com propriedade $values
+    if (imagesData && typeof imagesData === 'object' && !Array.isArray(imagesData) && '$values' in imagesData) {
+      imageArray = imagesData.$values || [];
+    }
+    // Se é um array diretamente
+    else if (Array.isArray(imagesData)) {
+      imageArray = imagesData;
+    }
+
+    // Se array vazio
+    if (imageArray.length === 0) {
+      return 'https://picsum.photos/300/200?text=Sem+Imagem';
+    }
+
+    // Obter a primeira imagem
+    const mainImage = imageArray[0];
+
+    // Se a imagem tem uma URL completa, usá-la diretamente
+    if (mainImage.url && mainImage.url.startsWith('http')) {
+      return mainImage.url;
+    }
+
+    // Se a imagem tem uma URL relativa, adicionar o prefixo da API
+    if (mainImage.url) {
+      return `${API_BASE_URL}${mainImage.url}`;
+    }
+
+    // Se a imagem usa o campo ImageUrl em vez de url
+    if (mainImage.ImageUrl && mainImage.ImageUrl.startsWith('http')) {
+      return mainImage.ImageUrl;
+    }
+
+    if (mainImage.ImageUrl) {
+      return `${API_BASE_URL}${mainImage.ImageUrl}`;
+    }
+
+    // Fallback para imagem padrão
+    return 'https://picsum.photos/300/200?text=Sem+Imagem';
+  };
+
+  const imageUrl = extractImageUrl();
+  const imageAlt = title || 'Imagem do pacote de viagem';
+
   const truncatedDescription = description?.length > 120
     ? `${description.substring(0, 120)}...`
     : description;
@@ -34,10 +91,10 @@ const PackageCard: React.FC<PackageCardProps> = ({ travelPackage }) => {
       // Ir direto para reserva ao clicar no card
       e.preventDefault();
       if (id) {
-        navigate('/reservation', { 
-          state: { 
-            packageId: id 
-          } 
+        navigate('/reservation', {
+          state: {
+            packageId: id
+          }
         });
       } else {
         console.error('ID do pacote não encontrado');
@@ -46,17 +103,6 @@ const PackageCard: React.FC<PackageCardProps> = ({ travelPackage }) => {
       console.error('Erro ao navegar:', error);
     }
   };
-
-  // Validações de segurança
-  if (!travelPackage) {
-    console.error('PackageCard: travelPackage é undefined');
-    return <div>Erro: Dados do pacote não encontrados</div>;
-  }
-
-  if (!title) {
-    console.error('PackageCard: title é undefined');
-    return <div>Erro: Título do pacote não encontrado</div>;
-  }
 
   return (
     <Card className="h-100 shadow-sm" style={{ cursor: 'pointer' }} onClick={handleCardClick}>

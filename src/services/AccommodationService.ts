@@ -356,7 +356,7 @@ export const getAccommodationsByDestination = async (destinationId: number): Pro
     const response = await axios.get(`${API_BASE_URL}/api/accommodation/destination/${destinationId}`);
     
     console.log('📋 Acomodações do destino:', response.data);
-    console.log('📋 Acomodações do destino IMAGEMMMMMM', response.data.images);
+    console.log('📋 Acomodações do destino IMAGEMMMMMM');
     
     // DRY: Reutilizar mesma lógica de getAllAccommodations
     const backendData = response.data;
@@ -398,8 +398,8 @@ export const addImagesToAccommodation = async (accommodationId: number, imageIds
     console.log(`🖼️ Associando imagens à acomodação ${accommodationId}:`, imageIds);
 
     console.log("imageIds JSON:", JSON.stringify(imageIds));
-    
-    await axios.post(`${API_BASE_URL}/Accommodation/${accommodationId}/images`, imageIds,
+
+    await axios.post(`${API_BASE_URL}/api/Accommodation/${accommodationId}/images`, imageIds,
       {
         headers: {
           'Content-Type': 'application/json'

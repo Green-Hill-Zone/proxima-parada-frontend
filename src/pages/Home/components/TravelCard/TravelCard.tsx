@@ -8,8 +8,9 @@ interface TravelCardProps {
   onViewDetails?: (id: number) => void;
 }
 
-
 const TravelCard: React.FC<TravelCardProps> = ({ travelPackage }) => {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102';
+
   // Ajustando para a nova estrutura do backend
   const packageData = travelPackage as any; // Cast para acessar as propriedades do backend
   const id = packageData.id || packageData.Id;
@@ -18,35 +19,64 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage }) => {
   const price = packageData.price || packageData.BasePrice;
   const destination = packageData.destination || packageData.MainDestination;
 
-  // Função auxiliar para garantir que a imagem use o caminho local
-  const getLocalImagePath = (relativePath: string | null | undefined): string => {
-    if (!relativePath) {
+  // Melhor tratamento para as imagens - reutilizando a lógica do PackageCard
+  const extractImageUrl = () => {
+    // Verificar as possíveis estruturas de dados para imagens
+    const imagesData = packageData.images || packageData.Images;
+
+    // Se não existem imagens, retornar imagem padrão
+    if (!imagesData) {
       return 'https://picsum.photos/300/200?text=Sem+Imagem';
     }
 
-    const localBasePath = 'file:///C:/Users/v.gomes.germano/OneDrive%20-%20Avanade/Documents/Projeto/proxima-parada-backend/Presentation.API/wwwroot';
-    const formattedPath = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
-    return `${localBasePath}${formattedPath}`;
+    // Lidar com estrutura $values do .NET
+    const imageArray = imagesData.$values || imagesData;
+
+    // Se não é array ou array vazio
+    if (!Array.isArray(imageArray) || imageArray.length === 0) {
+      return 'https://picsum.photos/300/200?text=Sem+Imagem';
+    }
+
+    // Obter a primeira imagem
+    const mainImage = imageArray[0];
+
+    // Se a imagem tem uma URL completa, usá-la diretamente
+    if (mainImage.url && mainImage.url.startsWith('http')) {
+      return mainImage.url;
+    }
+
+    // Se a imagem tem uma URL relativa, adicionar o prefixo da API
+    if (mainImage.url) {
+      return `${API_BASE_URL}${mainImage.url}`;
+    }
+
+    // Se a imagem usa o campo ImageUrl em vez de url
+    if (mainImage.ImageUrl && mainImage.ImageUrl.startsWith('http')) {
+      return mainImage.ImageUrl;
+    }
+
+    if (mainImage.ImageUrl) {
+      return `${API_BASE_URL}${mainImage.ImageUrl}`;
+    }
+
+    // Fallback para imagem padrão
+    return 'https://picsum.photos/300/200?text=Sem+Imagem';
   };
 
-  // Extrair informações da imagem
-  const imagesData = packageData.images;
-  const imageArray = imagesData?.$values || imagesData || [];
-  const mainImage = Array.isArray(imageArray) ? imageArray[0] : null;
-  const imageRelativePath = mainImage?.url || mainImage?.ImageUrl;
+  // Extrair URL da imagem usando a função acima
+  const imageUrl = extractImageUrl();
 
-  // Usar função auxiliar local para garantir o caminho correto
-  const imageUrl = getLocalImagePath(imageRelativePath);
+  // Manter a extração do alt text
+  const mainImage = (packageData.images?.$values || packageData.images || packageData.Images?.$values || packageData.Images || [])[0];
   const imageAlt = mainImage?.altText || mainImage?.AltText || title || "Imagem do pacote";
 
   // Debug: Log da URL da imagem sendo gerada
   console.log(`🖼️ [TravelCard] URL da imagem gerada:`, imageUrl);
-  console.log(`🖼️ [TravelCard] Caminho relativo original:`, imageRelativePath);
+  console.log(`🖼️ [TravelCard] Alt text:`, imageAlt);
 
   const truncatedDescription = description?.length > 120
     ? `${description.substring(0, 120)}...`
     : description;
-
 
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();

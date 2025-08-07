@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { Card, Badge, Button } from "react-bootstrap";
-import { useReservation } from "../../context/ReservationContext";
-import { FaHotel, FaExchangeAlt, FaEdit, FaCalendarAlt } from "react-icons/fa";
+import { Badge, Button, Card } from "react-bootstrap";
+import { FaCalendarAlt, FaEdit, FaExchangeAlt, FaHotel } from "react-icons/fa";
 import { calculateNights, formatDisplayDate, formatWeekday } from "../../../../utils/dateHelpers";
+import { useReservation } from "../../context/ReservationContext";
 
 interface HotelInfoProps {
   onChangeHotel?: () => void;
@@ -11,8 +10,6 @@ interface HotelInfoProps {
 
 const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
   const { reservationData } = useReservation();
-  const [selectedSuite, setSelectedSuite] = useState("master");
-
   // Se não há dados de reserva, não renderiza nada
   if (!reservationData) {
     return null;
@@ -22,7 +19,7 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
   const availableDates = reservationData.travelPackage.availableDates[0];
   const checkInDate = availableDates?.departureDate || '2025-07-28';
   const checkOutDate = availableDates?.returnDate || '2025-07-31';
-  
+
   // Calcular número de diárias
   const numberOfNights = calculateNights(checkInDate, checkOutDate);
 
@@ -36,7 +33,7 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
   };
 
   return (
-    <Card 
+    <Card
       className={`rounded-4 mb-0 ${isActive ? 'shadow-lg' : ''} stat-card`}
       style={{
         borderWidth: isActive ? '2px' : '1px',
@@ -48,7 +45,7 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
       }}
     >
       {isActive && (
-        <div 
+        <div
           className="position-absolute top-0 end-0 m-2"
           style={{ zIndex: 10 }}
         >
@@ -58,7 +55,7 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
           </Badge>
         </div>
       )}
-      
+
       <Card.Header
         className="rounded-top-4 d-flex justify-content-between align-items-center "
         style={{ background: isActive ? "#1d4ed8" : "#3246aa" }}
@@ -74,67 +71,67 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
         </nav>
       </Card.Header>
       <Card.Body className="rounded-4">
-          <div className="col-auto">
-            <img
-              src="https://placehold.co/600x400"
-              alt="Foto do hotel"
-              className="rounded-3"
-              style={{ width: "100px", height: "100px", objectFit: "cover" }}
-            />
+        <div className="col-auto">
+          <img
+            src="https://placehold.co/600x400"
+            alt="Foto do hotel"
+            className="rounded-3"
+            style={{ width: "100px", height: "100px", objectFit: "cover" }}
+          />
+        </div>
+        <div className="col">
+          <h5 className="fw-bold mb-1">{hotel.name}</h5>
+          <div className="text-muted small mb-2">
+            {hotel.location} ·{" "}
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                hotel.location
+              )}`}
+              className="fw-semibold text-decoration-none"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Veja no mapa
+            </a>
           </div>
-          <div className="col">
-            <h5 className="fw-bold mb-1">{hotel.name}</h5>
-            <div className="text-muted small mb-2">
-              {hotel.location} ·{" "}
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  hotel.location
-                )}`}
-                className="fw-semibold text-decoration-none"
-                target="_blank"
-                rel="noopener noreferrer"
+          <div className="d-flex align-items-center gap-2 mb-2">
+            <span className="text-warning">★ ★ ★ ☆ ☆</span>
+            <span className="text-secondary small">+15</span>
+          </div>
+          <div className="d-flex justify-content-between text-center mb-3">
+            <div>
+              <div className="fw-bold text-uppercase text-primary">
+                {formatDisplayDate(checkInDate)}
+              </div>
+              <div className="text-muted small">Entrada na {formatWeekday(checkInDate)}</div>
+            </div>
+
+            {/* Badge de diárias no centro */}
+            <div className="d-flex align-items-center">
+              <Badge
+                bg="info"
+                className="rounded-pill px-3 py-2 d-flex align-items-center gap-1"
+                style={{ fontSize: '0.85rem' }}
               >
-                Veja no mapa
-              </a>
+                <FaCalendarAlt size={12} />
+                {numberOfNights} {numberOfNights === 1 ? 'diária' : 'diárias'}
+              </Badge>
             </div>
-            <div className="d-flex align-items-center gap-2 mb-2">
-              <span className="text-warning">★ ★ ★ ☆ ☆</span>
-              <span className="text-secondary small">+15</span>
-            </div>
-            <div className="d-flex justify-content-between text-center mb-3">
-              <div>
-                <div className="fw-bold text-uppercase text-primary">
-                  {formatDisplayDate(checkInDate)}
-                </div>
-                <div className="text-muted small">Entrada na {formatWeekday(checkInDate)}</div>
+
+            <div>
+              <div className="fw-bold text-uppercase text-primary">
+                {formatDisplayDate(checkOutDate)}
               </div>
-              
-              {/* Badge de diárias no centro */}
-              <div className="d-flex align-items-center">
-                <Badge 
-                  bg="info" 
-                  className="rounded-pill px-3 py-2 d-flex align-items-center gap-1"
-                  style={{ fontSize: '0.85rem' }}
-                >
-                  <FaCalendarAlt size={12} />
-                  {numberOfNights} {numberOfNights === 1 ? 'diária' : 'diárias'}
-                </Badge>
-              </div>
-              
-              <div>
-                <div className="fw-bold text-uppercase text-primary">
-                  {formatDisplayDate(checkOutDate)}
-                </div>
-                <div className="text-muted small">Saída na {formatWeekday(checkOutDate)}</div>
-              </div>
+              <div className="text-muted small">Saída na {formatWeekday(checkOutDate)}</div>
             </div>
           </div>
+        </div>
         <div className="mt-2 d-flex justify-content-between align-items-center">
           <Badge bg="success" text="white">
             Reembolsável
           </Badge>
-          <Button 
-            variant="outline-primary" 
+          <Button
+            variant="outline-primary"
             size="sm"
             onClick={onChangeHotel}
             className="d-flex align-items-center gap-1"

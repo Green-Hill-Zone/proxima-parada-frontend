@@ -161,7 +161,7 @@ export const initializeReservation = async (travelPackageId: number): Promise<Re
     console.log(`🎫 Iniciando reserva para pacote ${travelPackageId}...`);
     
     // Buscar dados completos do pacote diretamente do backend
-    const response = await api.get(`/TravelPackage/${travelPackageId}`);
+    const response = await api.get(`/api/TravelPackage/${travelPackageId}`);
     
     if (!response.data) {
       console.error(`❌ Pacote ${travelPackageId} não encontrado`);
@@ -320,7 +320,7 @@ export const updateReservationFlight = async (reservationId: number, newFlightId
   try {
     console.log(`🔄 Atualizando reserva ${reservationId} com voo ${newFlightId}`);
     
-    const response = await api.put(`/reservation/${reservationId}/update-flight`, {
+    const response = await api.put(`/api/reservation/${reservationId}/update-flight`, {
       flightId: newFlightId
     });
     
@@ -351,7 +351,7 @@ export const updateReservationHotel = async (reservationId: number, newHotelId: 
   try {
     console.log(`🔄 Atualizando reserva ${reservationId} com hotel ${newHotelId}`);
     
-    const response = await api.put(`/reservation/${reservationId}/update-accommodation`, {
+    const response = await api.put(`/api/reservation/${reservationId}/update-accommodation`, {
       accommodationId: newHotelId
     });
     
@@ -389,7 +389,7 @@ export const calculateNewPrice = async (customization: {
     console.log('💰 Calculando novo preço:', customization);
     
     // Buscar preço base do pacote
-    const travelPackageResponse = await api.get(`/TravelPackage/${customization.travelPackageId}`);
+    const travelPackageResponse = await api.get(`/api/TravelPackage/${customization.travelPackageId}`);
     const basePrice = travelPackageResponse.data?.price || 0;
     console.log('💰 Preço base do pacote:', basePrice);
     
@@ -402,7 +402,7 @@ export const calculateNewPrice = async (customization: {
       
       // Tentar buscar do backend primeiro
       try {
-        const accommodationResponse = await api.get(`/Accommodation/${customization.customAccommodationId}`);
+        const accommodationResponse = await api.get(`/api/Accommodation/${customization.customAccommodationId}`);
         accommodationPrice = accommodationResponse.data?.pricePerNight || 0;
         console.log('🏨 Preço da acomodação obtido do backend:', accommodationPrice);
       } catch (error) {
@@ -430,7 +430,7 @@ export const calculateNewPrice = async (customization: {
       
       // Tentar buscar do backend primeiro
       try {
-        const flightResponse = await api.get(`/Flight/${customization.customFlightId}`);
+        const flightResponse = await api.get(`/api/Flight/${customization.customFlightId}`);
         flightPrice = flightResponse.data?.price || 0;
         console.log('✈️ Preço do voo obtido do backend:', flightPrice);
       } catch (error) {
@@ -471,7 +471,7 @@ export const calculateNewPrice = async (customization: {
     
     // Fallback: tentar buscar apenas o preço base
     try {
-      const travelPackageResponse = await api.get(`/TravelPackage/${customization.travelPackageId}`);
+      const travelPackageResponse = await api.get(`/api/TravelPackage/${customization.travelPackageId}`);
       return travelPackageResponse.data?.price || 0;
     } catch (fallbackError) {
       console.error('❌ Erro no fallback:', fallbackError);
@@ -774,7 +774,7 @@ export const getAllReservations = async (): Promise<BackendReservation[]> => {
   try {
     console.log('🔄 Buscando todas as reservas...');
     
-    const response = await axios.get(`${API_BASE_URL}/Reservation`);
+    const response = await axios.get(`${API_BASE_URL}/api/Reservation`);
 
     console.log('📋 Resposta bruta do backend (reservas):', response.data);
 

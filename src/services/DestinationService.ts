@@ -133,7 +133,7 @@ export const getDestinationById = async (id: number): Promise<Destination> => {
   try {
     console.log(`🔄 Buscando destino ID: ${id}`);
     
-    const response = await axios.get(`${API_BASE_URL}/Destination/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/api/Destination/${id}`);
     
     console.log('📋 Destino encontrado:', response.data);
     
@@ -162,7 +162,7 @@ export const createDestination = async (destinationData: DestinationCreateReques
   try {
     console.log('🔄 Criando novo destino:', destinationData);
     
-    const response = await axios.post(`${API_BASE_URL}/Destination`, destinationData);
+    const response = await axios.post(`${API_BASE_URL}/api/Destination`, destinationData);
     
     console.log('📥 Resposta do servidor:', response.data);
     
@@ -190,7 +190,7 @@ export const updateDestination = async (id: number, destinationData: Destination
   try {
     console.log(`🔄 Atualizando destino ID ${id}:`, destinationData);
     
-    const response = await axios.put(`${API_BASE_URL}/Destination/${id}`, destinationData);
+    const response = await axios.put(`${API_BASE_URL}/api/Destination/${id}`, destinationData);
     
     console.log('📥 Resposta do servidor:', response.data);
     
@@ -220,7 +220,7 @@ export const deleteDestination = async (id: number): Promise<boolean> => {
   try {
     console.log(`🗑️ Removendo destino ID ${id}`);
     
-    await axios.delete(`${API_BASE_URL}/Destination/${id}`);
+    await axios.delete(`${API_BASE_URL}/api/Destination/${id}`);
     
     console.log(`✅ Destino ${id} removido com sucesso`);
     

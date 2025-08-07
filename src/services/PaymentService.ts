@@ -115,3 +115,52 @@ export const updatePaymentStatus = async (
     throw new Error('Erro de conexão com o servidor');
   }
 };
+
+/**
+ * Interface para resposta da sessão do Stripe
+ */
+export interface StripeSessionResponse {
+  sessionId: string;
+  checkoutUrl: string;
+}
+
+/**
+ * Cria uma sessão de checkout no Stripe
+ * @param reservationId ID da reserva
+ * @param amount Valor total do pagamento
+ * @returns Objeto com ID da sessão e URL de checkout
+ */
+export const createStripeCheckoutSession = async (
+  reservationId: number,
+  amount: number
+): Promise<StripeSessionResponse> => {
+  try {
+    console.log(`🔄 Criando sessão do Stripe para reserva: ${reservationId} | Valor: ${amount}`);
+    
+    const response = await axios.post(
+      `${API_BASE_URL}/Payment/stripe/create-session`,
+      {
+        reservationId,
+        amount
+      }
+    );
+
+    console.log('✅ Sessão do Stripe criada:', response.data);
+    return response.data;
+    
+  } catch (error) {
+    console.error('❌ Erro ao criar sessão do Stripe:', error);
+    
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        throw new Error('Dados inválidos para criação da sessão');
+      }
+      if (error.response?.status === 404) {
+        throw new Error('Reserva não encontrada');
+      }
+      throw new Error(`Erro do servidor: ${error.response?.status}`);
+    }
+    
+    throw new Error('Erro de conexão com o servidor');
+  }
+};

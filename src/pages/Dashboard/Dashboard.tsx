@@ -4,17 +4,58 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import './Dashboard.css';
-import { useState } from 'react';
-import { resendEmailConfirmation } from '../../services/UserService';
+import { useState, useEffect } from 'react';
+import { resendEmailConfirmation, checkEmailConfirmationStatus, getUserById, adaptUserToAuthUser } from '../../services/UserService';
 
 // Componente Dashboard - Página para usuários autenticados
 const Dashboard = () => {
   // Define o título da página
   usePageTitle(PAGE_TITLES.DASHBOARD);
   
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
   const [isResendingEmail, setIsResendingEmail] = useState(false);
+
+  // Verifica periodicamente se o email foi confirmado (caso o usuário confirme em outra aba)
+  useEffect(() => {
+    // Só verifica se o usuário estiver logado e o email ainda não estiver confirmado
+    if (!user || !user.id || user.isEmailConfirmed) {
+      return;
+    }
+
+    const checkEmailStatus = async () => {
+      try {
+        console.log('🔄 Verificando status de confirmação de email no Dashboard');
+        
+        // Busca os dados atualizados do usuário
+        const updatedUserData = await getUserById(parseInt(user.id));
+        
+        // Se o status mudou (foi confirmado), atualiza o contexto
+        if (updatedUserData.isEmailConfirmed && !user.isEmailConfirmed) {
+          console.log('✅ Email foi confirmado! Atualizando contexto...');
+          
+          // Adapta para o formato do contexto preservando dados existentes
+          const updatedAuthUser = adaptUserToAuthUser(updatedUserData, user);
+          
+          // Atualiza o contexto
+          updateUser(updatedAuthUser);
+        }
+      } catch (error) {
+        console.error('❌ Erro ao verificar status de confirmação no Dashboard:', error);
+      }
+    };
+
+    // Verifica imediatamente
+    checkEmailStatus();
+
+    // Configura verificação periódica a cada 30 segundos
+    const interval = setInterval(checkEmailStatus, 30000);
+
+    // Cleanup: remove o interval quando o componente for desmontado
+    return () => {
+      clearInterval(interval);
+    };
+  }, [user?.id, user?.isEmailConfirmed, updateUser]); // Dependências para re-executar o efeito
 
   // Função para reenviar email de confirmação
   const handleResendEmailConfirmation = async () => {

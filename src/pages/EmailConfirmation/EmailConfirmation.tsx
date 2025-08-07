@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Alert, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { confirmEmail } from '../../services/UserService';
+import { confirmEmail, getUserById, adaptUserToAuthUser } from '../../services/UserService';
+import { useAuth } from '../../hooks/useAuth';
 
 // Componente EmailConfirmation - Página de confirmação de email
 const EmailConfirmation = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user, updateUser } = useAuth(); // Adiciona acesso ao contexto de autenticação
   const [isLoading, setIsLoading] = useState(true);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [error, setError] = useState('');
@@ -32,6 +34,35 @@ const EmailConfirmation = () => {
         if (success) {
           console.log('✅ Email confirmado com sucesso');
           setIsConfirmed(true);
+          
+          // Atualiza o status de confirmação no contexto se o usuário estiver logado
+          if (user && user.id) {
+            try {
+              console.log('🔄 Buscando dados atualizados do usuário após confirmação');
+              
+              // Busca os dados atualizados do usuário no backend
+              const updatedUserData = await getUserById(parseInt(user.id));
+              
+              // Adapta para o formato do contexto de autenticação preservando dados existentes
+              const updatedAuthUser = adaptUserToAuthUser(updatedUserData, user);
+              
+              console.log('✅ Atualizando contexto com dados frescos do backend:', {
+                antes: user.isEmailConfirmed,
+                depois: updatedAuthUser.isEmailConfirmed
+              });
+              
+              // Atualiza o contexto com os dados frescos
+              updateUser(updatedAuthUser);
+              
+            } catch (updateError) {
+              console.error('⚠️ Erro ao atualizar dados do usuário no contexto:', updateError);
+              // Fallback: apenas atualiza o status de confirmação localmente
+              updateUser({
+                ...user,
+                isEmailConfirmed: true
+              });
+            }
+          }
         } else {
           console.log('❌ Erro ao confirmar email');
           setError('Não foi possível confirmar o email. O token pode estar expirado ou inválido.');

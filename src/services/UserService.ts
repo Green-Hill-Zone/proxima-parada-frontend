@@ -421,21 +421,6 @@ export const deleteUser = async (id: number): Promise<boolean> => {
 };
 
 /**
- * Verifica se o email do usuário está confirmado
- * @param userId O ID do usuário
- * @returns true se o email estiver confirmado, false caso contrário
- */
-export const checkEmailConfirmationStatus = async (userId: number): Promise<boolean> => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/api/AppUser/${userId}/email-status`);
-    return response.data?.isEmailConfirmed || false;
-  } catch (error) {
-    console.error('Erro ao verificar status de confirmação de email:', error);
-    return false;
-  }
-};
-
-/**
  * Reenvia o email de confirmação para o usuário
  * @param userId O ID do usuário
  * @returns true se o reenvio foi bem-sucedido, false caso contrário
@@ -446,6 +431,25 @@ export const resendEmailConfirmation = async (userId: number): Promise<boolean> 
     return response.status === 200;
   } catch (error) {
     console.error('Erro ao reenviar email de confirmação:', error);
+    return false;
+  }
+};
+
+/**
+ * Verifica o status atual de confirmação de email de um usuário
+ * @param userId O ID do usuário
+ * @returns true se o email estiver confirmado, false caso contrário
+ */
+export const checkEmailConfirmationStatus = async (userId: number): Promise<boolean> => {
+  try {
+    console.log(`🔄 Verificando status de confirmação de email para usuário ${userId}`);
+    
+    const user = await getUserById(userId);
+    
+    console.log(`✅ Status de confirmação obtido: ${user.isEmailConfirmed ?? false}`);
+    return user.isEmailConfirmed ?? false;
+  } catch (error) {
+    console.error('❌ Erro ao verificar status de confirmação:', error);
     return false;
   }
 };

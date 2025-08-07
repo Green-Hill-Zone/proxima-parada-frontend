@@ -88,6 +88,53 @@ const Profile = () => {
     }
   }, [user]);
 
+  // Verifica periodicamente se o email foi confirmado (caso o usuário confirme em outra aba)
+  useEffect(() => {
+    // Só verifica se o usuário estiver logado e o email ainda não estiver confirmado
+    if (!user || !user.id || user.isEmailConfirmed) {
+      return;
+    }
+
+    const checkEmailStatus = async () => {
+      try {
+        console.log('🔄 Verificando status de confirmação de email no Profile');
+        
+        // Importa dinamicamente para evitar dependência circular
+        const { getUserById, adaptUserToAuthUser } = await import('../../services/UserService');
+        
+        // Busca os dados atualizados do usuário
+        const updatedUserData = await getUserById(parseInt(user.id));
+        
+        // Se o status mudou (foi confirmado), atualiza o contexto e estado local
+        if (updatedUserData.isEmailConfirmed && !user.isEmailConfirmed) {
+          console.log('✅ Email foi confirmado! Atualizando contexto e estado local...');
+          
+          // Adapta para o formato do contexto preservando dados existentes
+          const updatedAuthUser = adaptUserToAuthUser(updatedUserData, user);
+          
+          // Atualiza o contexto
+          updateUserInContext(updatedAuthUser);
+          
+          // Atualiza o estado local
+          setIsEmailConfirmed(true);
+        }
+      } catch (error) {
+        console.error('❌ Erro ao verificar status de confirmação no Profile:', error);
+      }
+    };
+
+    // Verifica imediatamente
+    checkEmailStatus();
+
+    // Configura verificação periódica a cada 30 segundos
+    const interval = setInterval(checkEmailStatus, 30000);
+
+    // Cleanup: remove o interval quando o componente for desmontado
+    return () => {
+      clearInterval(interval);
+    };
+  }, [user?.id, user?.isEmailConfirmed, updateUserInContext]); // Dependências para re-executar o efeito
+
   // Função para reenviar email de confirmação
   const handleResendEmailConfirmation = async () => {
     if (!user?.id) return;

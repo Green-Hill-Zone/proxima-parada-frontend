@@ -35,11 +35,33 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
 
   const handleShowDetails = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
+  
   const handleReserve = () => {
-    // Navegar para reserva passando o ID do pacote
-    navigate('/reservation', { 
+    // 🚀 Navegar diretamente para checkout minimalista
+    navigate('/checkout', { 
       state: { 
-        packageId: id 
+        travelData: {
+          packageId: id,
+          name: `${title} - ${destination?.name || destination?.Name}`,
+          date: "A escolher",
+          price: price,
+          people: 1
+        }
+      } 
+    });
+  };
+
+  const handleQuickCheckout = () => {
+    // 🚀 Checkout rápido direto do card
+    navigate('/checkout', { 
+      state: { 
+        travelData: {
+          packageId: id,
+          name: `${title} - ${destination?.name || destination?.Name}`,
+          date: "A escolher", 
+          price: price,
+          people: 1
+        }
       } 
     });
   };
@@ -76,6 +98,17 @@ const TravelCard: React.FC<TravelCardProps> = ({ travelPackage, onViewDetails })
               </h5>
               <small className="text-muted">Pacote de viagem</small>
             </div>
+            <Button 
+              variant="success" 
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleQuickCheckout();
+              }}
+              style={{ fontWeight: 600 }}
+            >
+              🚀 Reservar
+            </Button>
           </div>
         </Card.Body>
       </Card>

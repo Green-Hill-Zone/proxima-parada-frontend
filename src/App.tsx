@@ -20,7 +20,10 @@ import Login from './pages/Login';
 import MyPayments from './pages/MyPayments';
 import MyTravels from './pages/MyTravels';
 import Packages from './pages/Packages';
-import Payment from './pages/Payment';
+import CheckoutClean from './pages/CheckoutClean';
+import PaymentPage from './pages/PaymentPage/PaymentPage.tsx';
+import PaymentPageSuccessClean from './pages/PaymentPage/PaymentPageSuccessClean';
+import PaymentPageCancelClean from './pages/PaymentPage/PaymentPageCancelClean';
 import Profile from './pages/Profile';
 import { ReservationProvider } from './pages/Reservation/context/ReservationContext.tsx';
 import Reservation from './pages/Reservation/Reservation.tsx';
@@ -36,7 +39,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<UserRegister />} />
-            <Route path="/payment" element={<Payment />} />
+            <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/checkout" element={<CheckoutClean />} />
+            <Route path="/payment/success" element={<PaymentPageSuccessClean />} />
+            <Route path="/payment/cancel" element={<PaymentPageCancelClean />} />
             <Route path="/admin/packages" element={<AdminRoute><AdminPackages /></AdminRoute>} />
             <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/admin/hotels" element={<AdminRoute><AdminHotels /></AdminRoute>} />

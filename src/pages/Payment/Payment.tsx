@@ -268,7 +268,7 @@ const Payment = () => {
         navigate('/my-payments', {
           state: {
             message: 'Pagamento realizado com sucesso!',
-            paymentId: response.id
+            paymentId: `pay_${Date.now()}`
           }
         });
       }, 2000);

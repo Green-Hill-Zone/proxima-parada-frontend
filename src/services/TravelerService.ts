@@ -123,7 +123,19 @@ export const createAndAssociateTravelers = async (
   reservationId: number
 ): Promise<TravelerResponse[]> => {
   try {
+    // ✅ Validar se travelers não é undefined ou null
+    if (!travelers || !Array.isArray(travelers)) {
+      console.warn('⚠️ Lista de viajantes inválida ou vazia:', travelers);
+      return [];
+    }
+
     console.log(`🔄 Criando e associando ${travelers.length} viajantes à reserva ${reservationId}`);
+    
+    // Se não há viajantes, retornar lista vazia
+    if (travelers.length === 0) {
+      console.log('ℹ️ Nenhum viajante para processar');
+      return [];
+    }
     
     // Criar os viajantes em sequência
     const createdTravelers: TravelerResponse[] = [];

@@ -3,13 +3,19 @@ import { useState, useEffect } from 'react';
 import { Button, Card, Col, Container, Form, Row, Alert, Badge, Spinner } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPayment } from '../../services/PaymentService';
+import { 
+  CheckoutService, 
+  type ReservationCheckoutData, 
+  validateCheckoutData,
+  validateUserForCheckout,
+  createCheckoutRequest,
+  type ReservationWithStripeSessionResponse
+} from '../../services/CheckoutService';
 import { useAuth } from '../../hooks/useAuth';
 import { usePageTitle, PAGE_TITLES } from '../../hooks';
-import { FaArrowLeft, FaUsers, FaUser, FaEdit } from 'react-icons/fa';
+import { FaArrowLeft, FaUsers, FaUser } from 'react-icons/fa';
 import './Payment.css';
 import { useReservation } from '../Reservation/context/ReservationContext';
-import { createStripeCheckoutSession } from '../../services/PaymentService';
-import { createAndAssociateTravelers, type TravelerCreateRequest } from '../../services/TravelerService';
 
 // Interface para dados do viajante
 interface TravelerData {
@@ -89,6 +95,233 @@ const Payment = () => {
     }
   }, []);
 
+  /* ===================================================================== */
+  /* STRIPE PAYMENT HANDLING - MAIN FUNCTIONALITY                        */
+  /* ===================================================================== */
+
+  /**
+   * ✅ NOVO: Função principal para lidar com pagamento Stripe
+   * Baseada na implementação da pasta FRONT
+   */
+  const handleStripePayment = async () => {
+    // ✅ CLEAN ARCH: 1. Validar usuário logado PRIMEIRO
+    const userValidation = validateUserForCheckout(user);
+    if (!userValidation.isValid) {
+      setError(userValidation.error || 'Erro de validação');
+      
+      // ✅ KISS: Redirecionar para login se não estiver logado
+      if (!user) {
+        setTimeout(() => navigate('/login', { 
+          state: { returnTo: location.pathname } 
+        }), 2000);
+      }
+      return;
+    }
+
+    // 2. Validar dados do pagamento
+    if (!paymentData.fullName.trim() || !paymentData.email.trim() || !paymentData.cpf.trim()) {
+      setError('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
+    // 3. Obter ID do pacote de viagem
+    const travelPackageId = getTravelPackageId();
+    if (!travelPackageId) {
+      setError('ID do pacote de viagem não encontrado');
+      return;
+    }
+
+    setIsProcessing(true);
+    setError('');
+    setSuccess('Criando sessão de pagamento...');
+
+    try {
+      // ✅ DRY: 4. Usar helper para criar request padronizado
+      const request = createCheckoutRequest(
+        travelPackageId,
+        user,
+        travelData.totalAmount ? travelData.totalAmount * 100 : undefined // converter para centavos
+      );
+
+      console.log('📋 Dados da requisição Stripe:', request);
+
+      // 5. Criar sessão Stripe (endpoint testado)
+      const response = await CheckoutService.createReservationWithStripeSession(request);
+      
+      setSuccess(`Sessão criada! Reserva: ${response.reservationNumber}`);
+
+      // 6. Salvar dados localmente antes de redirecionar
+      savePaymentDataForLater(response);
+
+      // 7. Redirecionar para Stripe Checkout
+      setTimeout(() => {
+        CheckoutService.redirectToStripeCheckout(response.checkoutUrl);
+      }, 1500);
+
+    } catch (error: any) {
+      console.error('❌ Erro ao processar pagamento Stripe:', error);
+      setError(error.message || 'Erro ao processar pagamento. Tente novamente.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  /**
+   * ✅ HELPER: Obter ID do pacote de viagem de diferentes fontes
+   * DRY: Centraliza lógica de obtenção do ID
+   */
+  const getTravelPackageId = (): number => {
+    // Primeiro, tentar do contexto de reserva
+    if (reservationData?.travelPackage?.id) {
+      return reservationData.travelPackage.id;
+    }
+    
+    // Segundo, tentar dos dados da viagem
+    if (travelData.travelId) {
+      return travelData.travelId;
+    }
+    
+    // Fallback para teste (deve ser removido em produção)
+    console.warn('⚠️ ID do pacote não encontrado, usando fallback');
+    return 1;
+  };
+
+  /**
+   * ✅ HELPER: Salvar dados do pagamento para recuperação posterior
+   * CLEAN CODE: Função específica para persistência
+   */
+  /**
+   * ✅ HELPER: Salvar dados do pagamento para recuperação posterior
+   * CLEAN CODE: Função específica para persistência
+   */
+  const savePaymentDataForLater = (response: ReservationWithStripeSessionResponse) => {
+    const paymentSession = {
+      reservationId: response.reservationId,
+      reservationNumber: response.reservationNumber,
+      sessionId: response.stripeSessionId,
+      amount: response.amount,
+      customerData: paymentData,
+      travelData,
+      timestamp: Date.now()
+    };
+    
+    localStorage.setItem('stripePaymentSession', JSON.stringify(paymentSession));
+    console.log('💾 Dados do pagamento salvos localmente');
+  };
+
+  /**
+   * ✅ LEGACY: Função de pagamento original (manter para compatibilidade)
+   */
+  const handlePayment = async () => {
+    // Validação de dados
+    if (!paymentData.fullName.trim() || !paymentData.email.trim() || !paymentData.cpf.trim()) {
+      setError('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
+    const reservationId = getReservationId();
+    if (!reservationId) {
+      setError('ID da reserva não encontrado');
+      return;
+    }
+
+    setIsProcessing(true);
+    setError('');
+
+    try {
+      // Criar dados de checkout para o método legacy
+      const checkoutData: ReservationCheckoutData = {
+        reservationId,
+        customerName: paymentData.fullName,
+        customerEmail: paymentData.email,
+        totalAmount: travelData.totalAmount || travelData.price * travelData.people,
+        successUrl: `${window.location.origin}/payment/success`,
+        cancelUrl: `${window.location.origin}/payment/cancel`,
+      };
+
+      // Validar dados de checkout
+      const validation = validateCheckoutData(checkoutData);
+      if (!validation.isValid) {
+        setError(`Dados inválidos: ${validation.errors.join(', ')}`);
+        return;
+      }
+
+      // Criar sessão de checkout no Stripe
+      const response = await CheckoutService.createCheckoutSession(checkoutData);
+      
+      console.log('✅ Sessão criada:', response);
+      
+      // Salvar dados da sessão
+      localStorage.setItem('paymentSession', JSON.stringify({
+        sessionId: response.sessionId,
+        customerData: paymentData,
+        travelData,
+        timestamp: Date.now()
+      }));
+
+      // Redirecionar para o checkout do Stripe
+      window.location.href = response.checkoutUrl;
+
+    } catch (error: any) {
+      console.error('❌ Erro no pagamento:', error);
+      setError(error.message || 'Erro ao processar pagamento');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+    if (reservationData && reservationData.travelPackage.id) {
+      return reservationData.travelPackage.id;
+    }
+
+    // Segundo, tentar do localStorage de viajantes pendentes
+    const pendingTravelersString = localStorage.getItem('pendingTravelers');
+    if (pendingTravelersString) {
+      const pendingTravelersData = JSON.parse(pendingTravelersString);
+      if (pendingTravelersData.reservationId) {
+        return pendingTravelersData.reservationId;
+      }
+    }
+
+    // Terceiro, tentar do travelData
+    if (travelData.travelId) {
+      return travelData.travelId;
+    }
+
+    // Fallback: gerar ID temporário para desenvolvimento
+    console.warn('⚠️ ID de reserva não encontrado, usando fallback');
+    return Date.now(); // Temporary fallback
+  };
+
+  /**
+   * Salva dados do pagamento para recuperação posterior
+   * Clean Code: Função com responsabilidade específica
+   */
+  const savePaymentDataForLater = (checkoutData: ReservationCheckoutData, sessionId: string) => {
+    // Recuperar dados de viajantes pendentes
+    const pendingTravelersString = localStorage.getItem('pendingTravelers');
+    const pendingTravelers = pendingTravelersString ? JSON.parse(pendingTravelersString) : null;
+
+    const paymentDataToSave = {
+      travelData,
+      paymentData,
+      checkoutData,
+      amount: totalAmount,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      paymentId: `pay_${Date.now()}`,
+      stripeSessionId: sessionId,
+      reservationId: checkoutData.reservationId,
+      pendingTravelers: pendingTravelers ? pendingTravelers.travelers || pendingTravelers : []
+    };
+
+    localStorage.setItem('pendingPayment', JSON.stringify(paymentDataToSave));
+    console.log('💾 Dados do pagamento salvos para recuperação posterior');
+  };
+
+  /* ===================================================================== */
+  /* PAYMENT PROCESSING & STATES                                          */
+  /* ===================================================================== */
+
   // Estados do formulário (simplificado para Stripe)
   const [paymentData, setPaymentData] = useState<PaymentData>({
     fullName: '',
@@ -100,6 +333,44 @@ const Payment = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [errors, setErrors] = useState<Partial<PaymentData>>({});
   const [editingPaymentInfo, setEditingPaymentInfo] = useState(false);
+
+  // ✅ NOVOS Estados para integração Stripe
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  /* ===================================================================== */
+  /* HELPER FUNCTIONS - CLEAN CODE & DRY                                  */
+  /* ===================================================================== */
+
+  /**
+   * Obtém o ID da reserva de diferentes fontes
+   * DRY: Centraliza lógica de obtenção do ID
+   */
+  const getReservationId = (): number => {
+    // Primeiro, tentar do contexto de reserva
+    if (reservationData && reservationData.travelPackage.id) {
+      return reservationData.travelPackage.id;
+    }
+
+    // Segundo, tentar do localStorage de viajantes pendentes
+    const pendingTravelersString = localStorage.getItem('pendingTravelers');
+    if (pendingTravelersString) {
+      const pendingTravelersData = JSON.parse(pendingTravelersString);
+      if (pendingTravelersData.reservationId) {
+        return pendingTravelersData.reservationId;
+      }
+    }
+
+    // Terceiro, tentar do travelData
+    if (travelData.travelId) {
+      return travelData.travelId;
+    }
+
+    // Fallback: gerar ID temporário para desenvolvimento
+    console.warn('⚠️ ID de reserva não encontrado, usando fallback');
+    return Date.now(); // Temporary fallback
+  };
 
   // Função para formatar CPF
   const formatCPF = (value: string) => {
@@ -152,7 +423,7 @@ const Payment = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Função para processar o pagamento real
+  // Função para processar o pagamento usando o novo CheckoutService
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -174,105 +445,34 @@ const Payment = () => {
     setIsLoading(true);
 
     try {
-      // Recuperar dados de viajantes e reserva do localStorage
-      const pendingTravelersString = localStorage.getItem('pendingTravelers');
-      const pendingTravelersData = pendingTravelersString ? JSON.parse(pendingTravelersString) : null;
-      
-      // Se temos dados de reserva do contexto, usar para criar sessão de pagamento
-      if (reservationData && reservationData.travelPackage.id) {
-        console.log('🔄 Criando sessão de pagamento no Stripe com dados do contexto...');
-        
-        // Criar sessão de pagamento com Stripe
-        const stripeSession = await createStripeCheckoutSession(
-          reservationData.travelPackage.id,
-          totalAmount
-        );
-        
-        // Salvar dados da compra no localStorage para recuperar depois
-        localStorage.setItem('pendingPayment', JSON.stringify({
-          travelData,
-          paymentData,
-          amount: totalAmount,
-          status: 'pending',
-          createdAt: new Date().toISOString(),
-          paymentId: `pay_${Date.now()}`,
-          stripeSessionId: stripeSession.sessionId,
-          reservationId: reservationData.travelPackage.id,
-          pendingTravelers: pendingTravelersData ? pendingTravelersData.travelers : []
-        }));
-        
-        // Redirecionar para o Stripe
-        console.log('✅ Redirecionando para Stripe:', stripeSession.checkoutUrl);
-        window.location.href = stripeSession.checkoutUrl;
-        return;
-      } 
-      // Se não temos contexto, mas temos dados no localStorage
-      else if (pendingTravelersData && pendingTravelersData.reservationId) {
-        console.log('🔄 Criando sessão de pagamento no Stripe com dados do localStorage...');
-        
-        // Criar sessão de pagamento com Stripe usando o ID armazenado no localStorage
-        const mockReservationId = pendingTravelersData.reservationId;
-        
-        try {
-          const stripeSession = await createStripeCheckoutSession(
-            mockReservationId,
-            totalAmount
-          );
-          
-          // Salvar dados da compra no localStorage para recuperar depois
-          localStorage.setItem('pendingPayment', JSON.stringify({
-            travelData,
-            paymentData,
-            amount: totalAmount,
-            status: 'pending',
-            createdAt: new Date().toISOString(),
-            paymentId: `pay_${Date.now()}`,
-            stripeSessionId: stripeSession.sessionId,
-            reservationId: mockReservationId,
-            pendingTravelers: pendingTravelersData.travelers
-          }));
-          
-          // Redirecionar para o Stripe
-          console.log('✅ Redirecionando para Stripe:', stripeSession.checkoutUrl);
-          window.location.href = stripeSession.checkoutUrl;
-          return;
-        } catch (error) {
-          console.error('Erro ao criar sessão no Stripe:', error);
-          // Se falhar, cair no fallback abaixo
-        }
-      }
-      
-      // Fallback para comportamento anterior (sem contexto de reserva)
-      // Simular criação de sessão no Stripe
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Dados para enviar ao backend/Stripe
-      const paymentSession = {
-        travelData,
-        paymentData,
-        amount: totalAmount
+      // Preparar dados para checkout usando o padrão Clean Architecture
+      const checkoutData: ReservationCheckoutData = {
+        reservationId: getReservationId(), // Helper para obter ID da reserva
+        amount: totalAmount,
+        customerEmail: paymentData.email,
+        customerName: paymentData.fullName,
+        description: `Pagamento para ${travelData.name} - ${travelData.people} pessoa(s)`
       };
 
-      // Salvar dados da compra no localStorage para recuperar depois
-      localStorage.setItem('pendingPayment', JSON.stringify({
-        ...paymentSession,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        paymentId: `pay_${Date.now()}`
-      }));
+      // Validar dados antes do processamento (KISS)
+      if (!validateCheckoutData(checkoutData)) {
+        throw new Error('Dados de checkout inválidos');
+      }
 
-      // Para demonstração, vamos simular o retorno do Stripe
-      setShowSuccess(true);
+      console.log('🔄 Iniciando processo de checkout...', checkoutData);
 
-      setTimeout(() => {
-        navigate('/my-payments', {
-          state: {
-            message: 'Pagamento realizado com sucesso!',
-            paymentId: `pay_${Date.now()}`
-          }
-        });
-      }, 2000);
+      // Criar sessão de checkout usando o CheckoutService
+      const stripeSession = await CheckoutService.createCheckoutSession(checkoutData);
+
+      // Salvar dados temporários para recuperação pós-pagamento (Shadow Properties)
+      savePaymentDataForLater(checkoutData, stripeSession.sessionId);
+
+      // Redirecionar para o Stripe (Delegation Pattern)
+      console.log('✅ Redirecionando para Stripe Checkout...');
+      CheckoutService.redirectToCheckout(stripeSession.checkoutUrl);
+
     } catch (error: any) {
+      console.error('❌ Erro no processo de checkout:', error);
       setShowSuccess(false);
       alert(error?.message || 'Erro ao processar pagamento. Tente novamente.');
     } finally {
@@ -386,7 +586,20 @@ const Payment = () => {
                       <h5 className="mb-0">Dados do Pagamento</h5>
                     </Card.Header>
                     <Card.Body>
-                      <Form onSubmit={handlePayment}>
+                      <Form onSubmit={(e) => { e.preventDefault(); handleStripePayment(); }}>
+                        
+                        {/* ✅ Alertas de Sucesso e Erro */}
+                        {error && (
+                          <Alert variant="danger" className="mb-3">
+                            <strong>❌ Erro:</strong> {error}
+                          </Alert>
+                        )}
+                        
+                        {success && (
+                          <Alert variant="success" className="mb-3">
+                            <strong>✅ Sucesso:</strong> {success}
+                          </Alert>
+                        )}
                         {/* Dados Pessoais */}
                         <div className="payment-section">
                           <h6 className="payment-section-title d-flex justify-content-between align-items-center">
@@ -484,7 +697,7 @@ const Payment = () => {
                             variant="outline-secondary"
                             onClick={() => navigate('/reservation')}
                             className="payment-back-button"
-                            disabled={isLoading}
+                            disabled={isProcessing}
                           >
                             Voltar
                           </Button>
@@ -492,9 +705,9 @@ const Payment = () => {
                           <Button
                             type="submit"
                             className="payment-submit-button btn-standard"
-                            disabled={isLoading}
+                            disabled={isProcessing}
                           >
-                            {isLoading ? (
+                            {isProcessing ? (
                               <>
                                 <Spinner
                                   as="span"
@@ -504,7 +717,7 @@ const Payment = () => {
                                   aria-hidden="true"
                                   className="me-2"
                                 />
-                                Redirecionando...
+                                Processando...
                               </>
                             ) : (
                               'Pagar com Stripe'

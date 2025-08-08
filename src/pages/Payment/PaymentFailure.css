@@ -1,0 +1,381 @@
+/* ===================================================================== */
+/* ESTILOS DA PÁGINA DE FRACASSO DO PAGAMENTO                          */
+/* ===================================================================== */
+
+/* Configuração de cores seguindo o padrão do projeto */
+:root {
+  --primary-blue: #3246AA;
+  --secondary-orange: #FFAD33;
+  --danger-red: #dc3545;
+  --warning-yellow: #ffc107;
+  --secondary-gray: #6c757d;
+  --white: #ffffff;
+}
+
+/* ===================================================================== */
+/* LAYOUT PRINCIPAL                                                     */
+/* ===================================================================== */
+
+.payment-failure-page {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+/* ===================================================================== */
+/* CARD PRINCIPAL                                                       */
+/* ===================================================================== */
+
+.payment-failure-card {
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.payment-failure-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--warning-yellow) 0%, var(--danger-red) 100%);
+}
+
+.payment-failure-card .card-body {
+  background: var(--white);
+}
+
+/* ===================================================================== */
+/* ÍCONES E ANIMAÇÕES                                                   */
+/* ===================================================================== */
+
+.canceled-icon, .failed-icon, .invalid-icon, .unknown-icon {
+  animation: bounceIn 0.6s ease-out;
+}
+
+.failed-icon i {
+  animation: pulse 2s infinite;
+}
+
+.canceled-icon i {
+  animation: swing 1s ease-in-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3) translateY(-20px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes swing {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(15deg);
+  }
+  40% {
+    transform: rotate(-10deg);
+  }
+  60% {
+    transform: rotate(5deg);
+  }
+  80% {
+    transform: rotate(-5deg);
+  }
+}
+
+/* ===================================================================== */
+/* TIPOGRAFIA                                                           */
+/* ===================================================================== */
+
+.payment-failure-card h1 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.payment-failure-card .lead {
+  font-size: 1.1rem;
+  color: #6c757d;
+  line-height: 1.6;
+}
+
+/* ===================================================================== */
+/* ALERTS CUSTOMIZADOS                                                  */
+/* ===================================================================== */
+
+.alert {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  color: #0c5460;
+}
+
+.alert-warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  color: #856404;
+}
+
+.alert-secondary {
+  background: linear-gradient(135deg, #e2e3e5 0%, #d6d8db 100%);
+  color: #383d41;
+}
+
+.alert-dark {
+  background: linear-gradient(135deg, #d6d8db 0%, #c6c8ca 100%);
+  color: #1b1e21;
+}
+
+.alert-heading {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.alert ul {
+  margin-bottom: 0;
+  padding-left: 1.5rem;
+}
+
+.alert li {
+  margin-bottom: 0.25rem;
+}
+
+/* ===================================================================== */
+/* BOTÕES DE AÇÃO                                                       */
+/* ===================================================================== */
+
+.action-buttons {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+  border-radius: 25px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 160px;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-buttons .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.action-buttons .btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.action-buttons .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.action-buttons .btn-primary {
+  background-color: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+
+.action-buttons .btn-primary:hover {
+  background-color: #2b3a8a;
+  border-color: #2b3a8a;
+  box-shadow: 0 6px 20px rgba(50, 70, 170, 0.3);
+}
+
+.action-buttons .btn-outline-warning {
+  color: var(--warning-yellow);
+  border-color: var(--warning-yellow);
+  border-width: 2px;
+}
+
+.action-buttons .btn-outline-warning:hover {
+  background-color: var(--warning-yellow);
+  border-color: var(--warning-yellow);
+  color: #212529;
+}
+
+.action-buttons .btn-outline-secondary {
+  color: var(--secondary-gray);
+  border-color: var(--secondary-gray);
+  border-width: 2px;
+}
+
+.action-buttons .btn-outline-secondary:hover {
+  background-color: var(--secondary-gray);
+  border-color: var(--secondary-gray);
+}
+
+/* ===================================================================== */
+/* CARD DE INFORMAÇÕES DE SUPORTE                                       */
+/* ===================================================================== */
+
+.support-info-card {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+}
+
+.support-info-card .card-header {
+  border-radius: 15px 15px 0 0 !important;
+  border: none;
+  background: linear-gradient(90deg, #f8f9fa 0%, #e9ecef 100%);
+  color: var(--primary-blue);
+}
+
+.support-info-card .card-header h6 {
+  font-weight: 600;
+}
+
+.support-item {
+  padding: 1rem 0;
+  transition: transform 0.3s ease;
+}
+
+.support-item:hover {
+  transform: translateY(-2px);
+}
+
+.support-item i {
+  font-size: 1.5rem;
+  display: block;
+}
+
+.support-item strong {
+  color: var(--primary-blue);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.support-item small {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+/* ===================================================================== */
+/* RESPONSIVIDADE                                                       */
+/* ===================================================================== */
+
+@media (max-width: 768px) {
+  .payment-failure-page {
+    padding: 1rem 0;
+  }
+  
+  .payment-failure-card .card-body {
+    padding: 2rem 1.5rem !important;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 0.5rem;
+    min-width: auto;
+  }
+  
+  .canceled-icon i, 
+  .failed-icon i, 
+  .invalid-icon i, 
+  .unknown-icon i {
+    font-size: 3rem !important;
+  }
+  
+  .payment-failure-card h1 {
+    font-size: 1.8rem;
+  }
+  
+  .support-info-card .card-body .row > div {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .payment-failure-card .lead {
+    font-size: 1rem;
+  }
+  
+  .alert {
+    text-align: left;
+  }
+  
+  .alert-heading {
+    font-size: 1rem;
+  }
+  
+  .support-item {
+    padding: 0.5rem 0;
+  }
+  
+  .support-item i {
+    font-size: 1.25rem;
+  }
+}
+
+/* ===================================================================== */
+/* ESTADOS ESPECÍFICOS                                                  */
+/* ===================================================================== */
+
+/* Estado de carregamento */
+.loading-state {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Estado de erro crítico */
+.critical-error {
+  border-left: 4px solid var(--danger-red);
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+}
+
+/* Estado de aviso */
+.warning-state {
+  border-left: 4px solid var(--warning-yellow);
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+}

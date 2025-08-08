@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Row, Badge, Alert } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getUserPayments } from '../../services/PaymentService';
-import type { PaymentResponse } from '../../services/PaymentService';
+import { getUserPaymentsByEmail, type PaymentResponse } from '../../services/PaymentService';
 import { useAuth } from '../../hooks/useAuth';
 import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import './MyPayments.css';
@@ -46,35 +45,43 @@ const MyPayments = () => {
     const loadPayments = async () => {
       setLoading(true);
       try {
-        if (!user) {
+        if (!user?.email) {
+          console.log('⚠️ Usuário não encontrado ou sem email');
           setPayments([]);
           setLoading(false);
           return;
         }
-        // Buscar pagamentos reais da API
-        const apiPayments: PaymentResponse[] = await getUserPayments(Number(user.id));
+        
+        console.log('🔍 Carregando pagamentos para:', user.email);
+        
+        // ✅ Buscar pagamentos usando o email do usuário logado
+        const apiPayments: PaymentResponse[] = await getUserPaymentsByEmail(user.email);
+        console.log('🔍 Pagamentos da API:', apiPayments);
 
-        // Adaptar dados da API para o formato esperado pelo componente
+        // ✅ Adaptar dados da API para o formato esperado pelo componente
         const mappedPayments: Payment[] = apiPayments.map((p) => ({
           paymentId: String(p.id),
           travelData: {
-            name: p.travelId ? `Pacote #${p.travelId}` : 'Viagem',
-            date: p.createdAt ? new Date(p.createdAt).toLocaleDateString('pt-BR') : '',
+            name: p.travelPackageTitle || p.reservationNumber || `Pacote de Viagem #${p.id}`,
+            date: p.createdAt ? new Date(p.createdAt).toLocaleDateString('pt-BR') : 'Data não disponível',
             price: p.amount,
-            people: 1 // Ajuste conforme sua API
+            people: 1 // Ajuste conforme necessário
           },
           paymentData: {
-            fullName: user.name,
-            email: user.email,
+            fullName: p.customerName && p.customerName !== 'Unknown' ? p.customerName : user.name,
+            email: p.customerEmail && p.customerEmail !== 'Unknown' ? p.customerEmail : user.email,
             installments: '1' // Ajuste conforme sua API
           },
           amount: p.amount,
-          status: p.status === 'completed' ? 'approved' : (p.status === 'failed' ? 'rejected' : (p.status as any)),
+          status: p.status === 'completed' ? 'approved' : 
+                  (p.status === 'failed' ? 'rejected' : 
+                   (p.status === 'pending' ? 'pending' : 'processing')),
           createdAt: p.createdAt,
           updatedAt: p.updatedAt,
           stripeSessionId: p.stripeSessionId
         }));
 
+        console.log('✅ Pagamentos mapeados:', mappedPayments);
         setPayments(mappedPayments);
 
         if (location.state?.message) {
@@ -83,10 +90,12 @@ const MyPayments = () => {
         }
       } catch (error) {
         console.error('Erro ao carregar pagamentos:', error);
+        setMessage('Erro ao carregar seus pagamentos. Tente novamente.');
       } finally {
         setLoading(false);
       }
     };
+    
     loadPayments();
   }, [location.state, user]);
 
@@ -243,16 +252,6 @@ const MyPayments = () => {
                                           onClick={() => retryPayment(payment)}
                                         >
                                           Tentar Novamente
-                                        </Button>
-                                      )}
-                                      
-                                      {payment.status === 'approved' && (
-                                        <Button
-                                          variant="success"
-                                          size="sm"
-                                          onClick={() => navigate('/my-travels')}
-                                        >
-                                          Ver Viagem
                                         </Button>
                                       )}
                                     </div>

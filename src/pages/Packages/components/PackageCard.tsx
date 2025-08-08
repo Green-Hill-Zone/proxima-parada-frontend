@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { type TravelPackageListItem } from '../../../Entities/TravelPackage';
 
@@ -104,6 +104,31 @@ const PackageCard: React.FC<PackageCardProps> = ({ travelPackage }) => {
     }
   };
 
+  /**
+   * ✅ NOVO: Função para comprar diretamente (baseada na pasta FRONT)
+   */
+  const handleBuyDirectly = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Impedir que o evento click do card seja ativado
+    try {
+      if (id) {
+        navigate('/payment', {
+          state: {
+            travelData: {
+              id: id,
+              name: title || 'Pacote de Viagem',
+              price: price || 0,
+              quantity: 1 // Padrão 1 pessoa, pode ser alterado na página de pagamento
+            }
+          }
+        });
+      } else {
+        console.error('ID do pacote não encontrado');
+      }
+    } catch (error) {
+      console.error('Erro ao navegar para pagamento:', error);
+    }
+  };
+
   return (
     <Card className="h-100 shadow-sm" style={{ cursor: 'pointer' }} onClick={handleCardClick}>
       <Card.Img
@@ -135,6 +160,16 @@ const PackageCard: React.FC<PackageCardProps> = ({ travelPackage }) => {
             </h5>
             <small className="text-muted">Pacote de viagem</small>
           </div>
+          
+          {/* ✅ NOVO: Botão para comprar diretamente */}
+          <Button
+            variant="success"
+            size="sm"
+            onClick={handleBuyDirectly}
+            className="ms-2"
+          >
+            💳 Comprar
+          </Button>
         </div>
       </Card.Body>
     </Card>

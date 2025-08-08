@@ -1,0 +1,294 @@
+/* ===================================================================== */
+/* ESTILOS DA PÁGINA DE SUCESSO DO PAGAMENTO                           */
+/* ===================================================================== */
+
+/* Configuração de cores seguindo o padrão do projeto */
+:root {
+  --primary-blue: #3246AA;
+  --secondary-orange: #FFAD33;
+  --success-green: #28a745;
+  --warning-yellow: #ffc107;
+  --white: #ffffff;
+}
+
+/* ===================================================================== */
+/* LAYOUT PRINCIPAL                                                     */
+/* ===================================================================== */
+
+.payment-success-page {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+/* ===================================================================== */
+/* CARD PRINCIPAL                                                       */
+/* ===================================================================== */
+
+.payment-success-card {
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.payment-success-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--success-green) 0%, var(--primary-blue) 100%);
+}
+
+.payment-success-card .card-body {
+  background: var(--white);
+}
+
+/* ===================================================================== */
+/* ÍCONES E ANIMAÇÕES                                                   */
+/* ===================================================================== */
+
+.success-icon, .error-icon {
+  animation: scaleIn 0.5s ease-out;
+}
+
+.success-icon i {
+  animation: pulse 2s infinite;
+}
+
+.error-icon i {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* ===================================================================== */
+/* TIPOGRAFIA                                                           */
+/* ===================================================================== */
+
+.payment-success-card h1 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.payment-success-card h2 {
+  font-weight: 600;
+  color: var(--primary-blue);
+}
+
+.payment-success-card .lead {
+  font-size: 1.1rem;
+  color: #6c757d;
+  line-height: 1.6;
+}
+
+/* ===================================================================== */
+/* DETALHES DO PAGAMENTO                                                */
+/* ===================================================================== */
+
+.payment-details {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.payment-details .card {
+  border-width: 2px;
+}
+
+.payment-details .card-header {
+  border: none;
+  font-weight: 600;
+}
+
+.payment-details .card-body {
+  background: #f8f9fa;
+}
+
+.payment-details strong {
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+/* ===================================================================== */
+/* BOTÕES DE AÇÃO                                                       */
+/* ===================================================================== */
+
+.action-buttons {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+  border-radius: 25px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 180px;
+}
+
+.action-buttons .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.action-buttons .btn-success {
+  background-color: var(--success-green);
+  border-color: var(--success-green);
+}
+
+.action-buttons .btn-success:hover {
+  background-color: #218838;
+  border-color: #218838;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.action-buttons .btn-primary {
+  background-color: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+
+.action-buttons .btn-primary:hover {
+  background-color: #2b3a8a;
+  border-color: #2b3a8a;
+  box-shadow: 0 4px 15px rgba(50, 70, 170, 0.3);
+}
+
+.action-buttons .btn-outline-primary {
+  color: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+
+.action-buttons .btn-outline-primary:hover {
+  background-color: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+
+.action-buttons .btn-outline-secondary {
+  color: #6c757d;
+  border-color: #6c757d;
+}
+
+.action-buttons .btn-outline-secondary:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+/* ===================================================================== */
+/* PROGRESS BAR CUSTOMIZADA                                             */
+/* ===================================================================== */
+
+.progress {
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, var(--primary-blue) 0%, var(--secondary-orange) 100%);
+  border-radius: 10px;
+  transition: width 0.6s ease;
+}
+
+/* ===================================================================== */
+/* ALERT CUSTOMIZADO                                                    */
+/* ===================================================================== */
+
+.alert {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.alert-warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  color: #856404;
+}
+
+.alert-warning .alert-heading {
+  color: #856404;
+  font-weight: 700;
+}
+
+/* ===================================================================== */
+/* RESPONSIVIDADE                                                       */
+/* ===================================================================== */
+
+@media (max-width: 768px) {
+  .payment-success-page {
+    padding: 1rem 0;
+  }
+  
+  .payment-success-card .card-body {
+    padding: 2rem 1.5rem !important;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .success-icon i, .error-icon i {
+    font-size: 3rem !important;
+  }
+  
+  .payment-success-card h1 {
+    font-size: 1.8rem;
+  }
+  
+  .payment-success-card h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .payment-details .card-body .row > div {
+    margin-bottom: 0.5rem;
+  }
+  
+  .payment-success-card .lead {
+    font-size: 1rem;
+  }
+}

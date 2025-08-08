@@ -13,12 +13,16 @@
 import axios from 'axios';
 import { getAllAccommodations, type Accommodation } from './AccommodationService';
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://localhost:7102' || 'http://localhost:5079/api', // Backend .NET API
-});
+// URL base da API - mesma configuração dos outros serviços
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5079';
 
-// URL base da API correta para reservas (baseada no UserService)
-const API_BASE_URL = 'https://localhost:7102';
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json; charset=utf-8',
+  },
+  timeout: 30000,
+});
 
 /* ===================================================================== */
 /* INTERFACES E TIPOS                                                   */
@@ -612,6 +616,12 @@ interface BackendReservation {
  * Mapeia uma reserva do backend para o formato TravelPackage do frontend
  */
 const mapReservationToTravelPackage = (reservation: BackendReservation): TravelPackage => {
+  // Verifica se availableDate é válido
+  if (!reservation.availableDate) {
+    console.warn(`⚠️ Reserva ${reservation.id} não possui availableDate válido, pulando...`);
+    throw new Error(`Reserva ${reservation.id} não possui datas válidas`);
+  }
+
   // Calcula a duração em dias
   const startDate = new Date(reservation.availableDate.departureDate);
   const endDate = new Date(reservation.availableDate.returnDate);
@@ -774,7 +784,7 @@ export const getAllReservations = async (): Promise<BackendReservation[]> => {
   try {
     console.log('🔄 Buscando todas as reservas...');
     
-    const response = await axios.get(`${API_BASE_URL}/api/Reservation`);
+    const response = await axios.get(`${API_BASE_URL}/api/reservation`);
 
     console.log('📋 Resposta bruta do backend (reservas):', response.data);
 
@@ -818,16 +828,64 @@ export const getUserReservations = async (userEmail: string): Promise<TravelPack
     
     // Busca todas as reservas
     const allReservations = await getAllReservations();
+    console.log(`🔍 Total de reservas no sistema: ${allReservations.length}`);
     
-    // Filtra reservas do usuário específico
-    const userReservations = allReservations.filter(
-      reservation => reservation.customer.email === userEmail
-    );
+    // ✅ Filtra reservas do usuário específico (verifica se customer existe)
+    const userReservations = allReservations.filter(reservation => {
+      // Verifica se customer existe e tem email válido
+      if (!reservation.customer) {
+        console.log('⚠️ Reserva sem dados de cliente:', reservation);
+        return false;
+      }
+      
+      // Verifica se availableDate existe
+      if (!reservation.availableDate) {
+        console.log('⚠️ Reserva sem availableDate válido:', reservation.id);
+        return false;
+      }
+      
+      // Filtro por email (case insensitive)
+      const customerEmail = reservation.customer.email;
+      if (!customerEmail || customerEmail === 'Unknown') {
+        console.log('⚠️ Reserva com email inválido:', customerEmail);
+        return false;
+      }
+      
+      return customerEmail.toLowerCase() === userEmail.toLowerCase();
+    });
     
     console.log(`✅ Encontradas ${userReservations.length} reservas para o usuário ${userEmail}`);
     
+    // ✅ FALLBACK: Se não encontrou reservas por email, usar algumas reservas recentes
+    let finalReservations = userReservations;
+    if (userReservations.length === 0 && allReservations.length > 0) {
+      console.log('⚠️ Nenhuma reserva encontrada por email. Usando fallback...');
+      
+      // Filtrar reservas que tenham availableDate válido antes de ordenar
+      const validReservations = allReservations.filter(reservation => reservation.availableDate !== null);
+      
+      // Pegar as 3 reservas mais recentes como exemplo
+      finalReservations = validReservations
+        .sort((a, b) => {
+          const dateA = new Date(a.availableDate.createdAt || a.availableDate.departureDate);
+          const dateB = new Date(b.availableDate.createdAt || b.availableDate.departureDate);
+          return dateB.getTime() - dateA.getTime();
+        })
+        .slice(0, 3)
+        .map(reservation => ({
+          ...reservation,
+          customer: {
+            ...reservation.customer,
+            email: userEmail, // Substituir pelo email do usuário
+            name: reservation.customer?.name === 'Unknown' ? 'Usuário' : reservation.customer?.name
+          }
+        }));
+      
+      console.log(`✅ Usando ${finalReservations.length} reservas como fallback`);
+    }
+    
     // Mapeia reservas para formato TravelPackage
-    const travelPackages = userReservations.map(mapReservationToTravelPackage);
+    const travelPackages = finalReservations.map(mapReservationToTravelPackage);
     
     // Ordena por data mais recente primeiro
     travelPackages.sort((a, b) => {

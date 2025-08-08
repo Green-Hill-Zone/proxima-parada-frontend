@@ -22,8 +22,10 @@ import MyPayments from './pages/MyPayments';
 import MyTravels from './pages/MyTravels';
 import NovaSenha from './pages/NovaSenha';
 import Packages from './pages/Packages';
-import Payment from './pages/Payment/Payment';
+import Payment from './pages/Payment/PaymentClean';
 import PaymentConfirmation from './pages/Payment/PaymentConfirmation';
+import PaymentSuccess from './pages/Payment/PaymentSuccess';
+import PaymentFailure from './pages/Payment/PaymentFailure';
 import Profile from './pages/Profile';
 import RecuperarSenha from './pages/RecuperarSenha';
 import { ReservationProvider } from './pages/Reservation/context/ReservationContext.tsx';
@@ -48,6 +50,8 @@ function App() {
             <Route path="/traveler-data" element={<ProtectedRoute><TravelerData /></ProtectedRoute>} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/payment/confirmation" element={<PaymentConfirmation />} />
+            <Route path="/payment/success" element={<PaymentSuccess />} />
+            <Route path="/payment/failure" element={<PaymentFailure />} />
             <Route path="/admin/packages" element={<AdminRoute><AdminPackages /></AdminRoute>} />
             <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/admin/hotels" element={<AdminRoute><AdminHotels /></AdminRoute>} />

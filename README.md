@@ -5,9 +5,8 @@
 
 <!-- ![Próxima Parada](docs/screenshot-login.png) -->
 
-<img width="1449" height="931" alt="image" src="https://github.com/user-attachments/assets/12f73901-e52f-43bc-9f27-82f01c51c936" />
+<img width="1920" height="1536" alt="Screenshot 2025-08-08 at 13-24-19 Sua Agência de Viagens - Próxima Parada2" src="https://github.com/user-attachments/assets/499af3d4-633c-4c9b-a1e1-a0eb32f8759f" />
 
-<img width="1561" height="904" alt="image" src="https://github.com/user-attachments/assets/b20e88b8-f776-48f7-9b3c-f28ac0987e8d" />
 
 
 ## 📋 Sobre o Projeto

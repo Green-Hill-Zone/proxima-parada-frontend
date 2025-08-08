@@ -15,22 +15,23 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
     return null;
   }
 
+  // Prioriza a acomodação selecionada, senão usa os dados do pacote
+  const hotel = reservationData.selectedAccommodation;
+  const travelPackage = reservationData.travelPackage;
+
   // Obter datas do pacote de viagem
-  const availableDates = reservationData.travelPackage.availableDates[0];
-  const checkInDate = availableDates?.departureDate || '2025-07-28';
-  const checkOutDate = availableDates?.returnDate || '2025-07-31';
+  const availableDates = travelPackage.availableDates[0];
+  const checkInDate = availableDates?.departureDate || '';
+  const checkOutDate = availableDates?.returnDate || '';
 
   // Calcular número de diárias
   const numberOfNights = calculateNights(checkInDate, checkOutDate);
 
-  // Dados do hotel (simulados baseados no pacote)
-  const hotel = {
-    name: `Hotel em ${reservationData.travelPackage.destination.name}`,
-    image: '/path/to/default-hotel.jpg',
-    rating: 4.5,
-    location: reservationData.travelPackage.destination.name,
-    suite: 'Quarto Duplo Standard'
-  };
+  // Dados do hotel
+  const hotelName = hotel?.name || `Hotel em ${travelPackage.destination.name}`;
+  const location = hotel?.destination?.name || travelPackage.destination.name;
+  const rating = hotel?.starRating || 4; // Padrão de 4 estrelas
+  const pricePerNight = hotel?.pricePerNight;
 
   return (
     <Card
@@ -63,6 +64,11 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
         <header aria-level={2} className="d-flex gap-2 align-items-center">
           <FaHotel className="text-white" />
           <span className="d-block fw-bold text-white">Hotel</span>
+          {pricePerNight && (
+            <Badge bg="light" text="dark" className="ms-2 rounded-pill">
+              R$ {pricePerNight.toLocaleString('pt-BR')}/noite
+            </Badge>
+          )}
         </header>
         <nav className="d-flex align-items-center gap-2">
           <a href="#" className="text-decoration-none fw-bold inline-block text-white">
@@ -80,12 +86,12 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
           />
         </div>
         <div className="col">
-          <h5 className="fw-bold mb-1">{hotel.name}</h5>
+          <h5 className="fw-bold mb-1">{hotelName}</h5>
           <div className="text-muted small mb-2">
-            {hotel.location} ·{" "}
+            {location} ·{" "}
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                hotel.location
+                location
               )}`}
               className="fw-semibold text-decoration-none"
               target="_blank"
@@ -95,8 +101,7 @@ const HotelInfo = ({ onChangeHotel, isActive = false }: HotelInfoProps) => {
             </a>
           </div>
           <div className="d-flex align-items-center gap-2 mb-2">
-            <span className="text-warning">★ ★ ★ ☆ ☆</span>
-            <span className="text-secondary small">+15</span>
+            <span className="text-warning">{'★'.repeat(rating)}{'☆'.repeat(5 - rating)}</span>
           </div>
           <div className="d-flex justify-content-between text-center mb-3">
             <div>

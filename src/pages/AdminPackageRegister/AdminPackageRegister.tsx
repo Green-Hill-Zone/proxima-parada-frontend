@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { PAGE_TITLES, usePageTitle } from '../../hooks';
 import { getAllAccommodations, type Accommodation } from "../../services/AccommodationService";
+import { getAllDestinations } from "../../services/DestinationService";
 import { getAllFlights, type Flight } from "../../services/FlightService";
 import {
   addFlightsToPackage,
   createTravelPackageBackend,
   uploadTravelPackageImage
 } from "../../services/TravelPackageService";
-import { usePageTitle, PAGE_TITLES } from '../../hooks';
 import PackageForm from "../Admin/components/PackageForm";
 import SingleImageUpload from "../Admin/components/SingleImageUpload";
 
@@ -27,6 +28,8 @@ const AdminPackageRegister = () => {
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [loadingFlights, setLoadingFlights] = useState(false);
   const [loadingAccommodations, setLoadingAccommodations] = useState(false);
+  const [loadingDestinations, setLoadingDestinations] = useState(false);
+  const [destinations, setDestinations] = useState<any[]>([]);
 
   // Estados para seleção específica: 2 voos (ida/volta) + 1 acomodação
   const [selectedOutboundFlightId, setSelectedOutboundFlightId] = useState<number | null>(null);
@@ -39,71 +42,91 @@ const AdminPackageRegister = () => {
   // Pacote - campos mapeados para o backend
   const [form, setForm] = useState({
     nome: "",        // Mapeia para Title
-    destino: "",     // Será usado para criar/buscar Destination
+    destino: "",     // Nome do destino (exibição)
+    destinationId: 0, // ID do destino para envio ao backend
     preco: "",       // Mapeia para Price
     descricao: "",   // Mapeia para Description
     dataInicio: "",  // Mapeia para DepartureDate
     dataFim: ""      // Mapeia para ReturnDate
   });
 
-  // Carregar flights e accommodations ao montar o componente
+  // Carregar dados da API ao montar o componente
   useEffect(() => {
-    const loadFlightsAndAccommodations = async () => {
-      // Carregar flights
+    const loadData = async () => {
+      // Carregar destinos
+      setLoadingDestinations(true);
+      try {
+        const destinationsData = await getAllDestinations();
+        setDestinations(destinationsData);
+      } catch (error) {
+        console.error("Erro ao carregar destinos:", error);
+        setError("Falha ao carregar lista de destinos.");
+      } finally {
+        setLoadingDestinations(false);
+      }
+
+      // Carregar voos
       setLoadingFlights(true);
       try {
         const flightsData = await getAllFlights();
         setFlights(flightsData);
       } catch (error) {
-        console.error('Erro ao carregar voos:', error);
+        console.error("Erro ao carregar voos:", error);
+        setError("Falha ao carregar lista de voos.");
       } finally {
         setLoadingFlights(false);
       }
 
-      // Carregar accommodations
+      // Carregar acomodações
       setLoadingAccommodations(true);
       try {
         const accommodationsData = await getAllAccommodations();
         setAccommodations(accommodationsData);
       } catch (error) {
-        console.error('Erro ao carregar acomodações:', error);
+        console.error("Erro ao carregar acomodações:", error);
+        setError("Falha ao carregar lista de acomodações.");
       } finally {
         setLoadingAccommodations(false);
       }
     };
 
-    loadFlightsAndAccommodations();
+    loadData();
   }, []);
 
-  // Funções auxiliares para renderização
-  const getFlightDisplayName = (flight: Flight): string => {
-    return `${flight.airline?.name || 'N/A'} - ${flight.flightNumber || 'N/A'}`;
-  };
-
-  const getFlightRoute = (flight: Flight): string => {
-    return `${flight.originDestination?.name || 'Origem N/A'} → ${flight.finalDestination?.name || 'Destino N/A'}`;
-  };
-
-  const getAccommodationDisplayName = (accommodation: Accommodation): string => {
-    return accommodation.name || 'N/A';
-  };
-
-  const getAccommodationDescription = (accommodation: Accommodation): string => {
-    return `${accommodation.district || ''} - ${accommodation.destination?.name || 'N/A'} (${accommodation.starRating || 0}⭐)`;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Funções auxiliares para manipular eventos
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({
       ...prev,
       [name]: value
     }));
-
-    // Limpar mensagens de erro/sucesso quando o usuário edita
-    if (error) setError(null);
-    if (success) setSuccess(false);
   };
 
+  // Funções auxiliares para exibir dados de voos e acomodações
+  const getFlightDisplayName = (flight: Flight): string => {
+    if (!flight) return 'Voo não encontrado';
+    return `${flight.airline?.name || 'Companhia N/A'} - ${flight.flightNumber || 'Número N/A'}`;
+  };
+
+  const getFlightRoute = (flight: Flight): string => {
+    if (!flight) return 'Rota não disponível';
+    // Verificar se as propriedades existem antes de acessar seus campos
+    const origin = flight.originDestination?.name || flight.originDestination || 'Origem N/A';
+    const destination = flight.finalDestination?.name || flight.finalDestination || 'Destino N/A';
+    return `${origin} → ${destination}`;
+  };
+
+  const getAccommodationDisplayName = (accommodation: Accommodation): string => {
+    if (!accommodation) return 'Acomodação não encontrada';
+    return accommodation.name || 'Nome N/A';
+  };
+
+  const getAccommodationDescription = (accommodation: Accommodation): string => {
+    if (!accommodation) return 'Descrição não disponível';
+    return `${accommodation.district || ''} - ${accommodation.destination?.name || 'Local N/A'} (${accommodation.starRating || 0}⭐)`;
+  };
+
+  // No método handlePackageSubmit, use diretamente form.destinationId
   const handlePackageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -133,6 +156,11 @@ const AdminPackageRegister = () => {
         throw new Error("Data de início deve ser anterior à data de fim");
       }
 
+      // Validação do destinationId
+      if (!form.destinationId) {
+        throw new Error("Selecione um destino válido para o pacote");
+      }
+
       // Preparar dados para o backend conforme TravelPackageDto
       const packageData = {
         Title: form.nome.trim(),
@@ -140,7 +168,7 @@ const AdminPackageRegister = () => {
         Price: parseFloat(form.preco),
         DepartureDate: form.dataInicio ? new Date(form.dataInicio).toISOString() : null,
         ReturnDate: form.dataFim ? new Date(form.dataFim).toISOString() : null,
-        DestinationId: 1, // Por enquanto usando ID fixo - pode ser expandido depois
+        DestinationId: form.destinationId, // Usar diretamente o ID do destino do form
         CompanyId: 1      // Por enquanto usando ID fixo - pode ser expandido depois
       };
 
@@ -275,47 +303,18 @@ const AdminPackageRegister = () => {
 
         setSuccess(true);
 
-        // Reset do formulário
-        setForm({
-          nome: "",
-          destino: "",
-          preco: "",
-          descricao: "",
-          dataInicio: "",
-          dataFim: ""
-        });
-
-        // Limpar seleções
-        setSelectedOutboundFlightId(null);
-        setSelectedReturnFlightId(null);
-        setSelectedAccommodationId(null);
-        setPackageImage(null);
-
         // Mostrar mensagem de sucesso por alguns segundos antes de navegar
         setTimeout(() => {
           navigate('/admin/dashboard');
         }, 2000);
-      } else {
-        throw new Error("Erro ao criar pacote - resposta inválida do servidor");
       }
-
     } catch (error: unknown) {
-      console.error('❌ Erro ao cadastrar pacote:', error);
-
-      let errorMessage = "Erro desconhecido ao cadastrar pacote";
-
+      console.error("❌ Erro ao cadastrar pacote:", error);
       if (error instanceof Error) {
-        errorMessage = error.message;
-      } else if (typeof error === 'object' && error !== null) {
-        const err = error as { response?: { data?: { message?: string }; status?: number } };
-        if (err.response?.data?.message) {
-          errorMessage = err.response.data.message;
-        } else if (err.response?.status) {
-          errorMessage = `Erro do servidor: ${err.response.status}`;
-        }
+        setError(error.message);
+      } else {
+        setError("Ocorreu um erro inesperado ao cadastrar o pacote.");
       }
-
-      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -359,6 +358,8 @@ const AdminPackageRegister = () => {
             setForm={setForm}
             handleSubmit={handlePackageSubmit}
             handleChange={handleChange}
+            destinations={destinations}
+            loadingDestinations={loadingDestinations}
           />
         </div>
 

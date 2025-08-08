@@ -1,55 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { Form, Spinner } from "react-bootstrap";
-import { getAllDestinations, type Destination } from "../../../services/DestinationService";
+import React from 'react';
+import { Col, Form, Row } from 'react-bootstrap';
 
 type Props = {
-  form: any;
+  form: {
+    nome: string;
+    destino: string;
+    destinationId: number;
+    preco: string;
+    descricao: string;
+    dataInicio: string;
+    dataFim: string;
+  };
   setForm: (cb: any) => void;
   handleSubmit: (e: React.FormEvent) => void;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  destinations?: any[];
+  loadingDestinations?: boolean;
 };
 
-const PackageForm: React.FC<Props> = ({ form, setForm, handleSubmit, handleChange }) => {
-  // Estados para gerenciar destinos
-  const [destinations, setDestinations] = useState<Destination[]>([]);
-  const [loadingDestinations, setLoadingDestinations] = useState(true);
-  const [selectedDestinationId, setSelectedDestinationId] = useState<number | null>(null);
-
-  // Carregar destinos ao montar o componente
-  useEffect(() => {
-    const loadDestinations = async () => {
-      setLoadingDestinations(true);
-      try {
-        const destinationsData = await getAllDestinations();
-        setDestinations(destinationsData);
-
-        // Se já tiver um destino selecionado no form, seleciona-o
-        if (form.destinationId) {
-          setSelectedDestinationId(form.destinationId);
-        } else if (destinationsData.length > 0) {
-          // Se não, seleciona o primeiro destino da lista
-          setSelectedDestinationId(destinationsData[0].id);
-          // Atualiza o form com o destino selecionado
-          setForm((prev: any) => ({
-            ...prev,
-            destinationId: destinationsData[0].id,
-            destino: destinationsData[0].name
-          }));
-        }
-      } catch (err) {
-        console.error("Erro ao carregar destinos:", err);
-      } finally {
-        setLoadingDestinations(false);
-      }
-    };
-
-    loadDestinations();
-  }, []);
+const PackageForm: React.FC<Props> = ({
+  form,
+  setForm,
+  handleSubmit,
+  handleChange,
+  destinations = [],
+  loadingDestinations = false
+}) => {
 
   // Handler para alteração de destino
   const handleDestinationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const destinationId = Number(e.target.value);
-    setSelectedDestinationId(destinationId);
 
     // Encontra o destino selecionado
     const selectedDestination = destinations.find(d => d.id === destinationId);
@@ -57,65 +37,112 @@ const PackageForm: React.FC<Props> = ({ form, setForm, handleSubmit, handleChang
     // Atualiza o form com o destino selecionado
     setForm((prev: any) => ({
       ...prev,
-      destinationId: destinationId,
-      destino: selectedDestination?.name || ""
+      destino: selectedDestination?.name || "",
+      destinationId: destinationId    // Atualiza o ID do destino
     }));
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-light p-4 rounded-3 border">
-      <div className="mb-3">
-        <label className="form-label">Nome do Pacote</label>
-        <input type="text" className="form-control" name="nome" value={form.nome} onChange={handleChange} required />
-      </div>
-
-      <div className="mb-3">
-        <Form.Group controlId="destination">
-          <Form.Label>Destino</Form.Label>
-          {loadingDestinations ? (
-            <div className="d-flex align-items-center">
-              <Spinner animation="border" size="sm" className="me-2" />
-              <span className="text-muted">Carregando destinos...</span>
-            </div>
-          ) : (
-            <Form.Select
-              name="destinationId"
-              value={selectedDestinationId || ''}
-              onChange={handleDestinationChange}
+      <Row className="mb-3">
+        <Col md={8}>
+          <Form.Group controlId="nome">
+            <Form.Label>Nome do Pacote *</Form.Label>
+            <Form.Control
+              type="text"
+              name="nome"
+              value={form.nome}
+              onChange={handleChange}
               required
-            >
-              <option value="">Selecione um destino</option>
-              {destinations.map(destination => (
-                <option key={destination.id} value={destination.id}>
-                  {destination.name} ({destination.city}, {destination.country})
-                </option>
-              ))}
-            </Form.Select>
-          )}
-          <Form.Text className="text-muted">
-            Escolha o destino para este pacote de viagem
-          </Form.Text>
-        </Form.Group>
-      </div>
+              placeholder="Ex: Verão em Cancún"
+            />
+          </Form.Group>
+        </Col>
+        <Col md={4}>
+          <Form.Group controlId="preco">
+            <Form.Label>Preço (R$) *</Form.Label>
+            <Form.Control
+              type="number"
+              name="preco"
+              value={form.preco}
+              onChange={handleChange}
+              required
+              min="0"
+              step="0.01"
+              placeholder="2499.90"
+            />
+          </Form.Group>
+        </Col>
+      </Row>
 
-      <div className="mb-3">
-        <label className="form-label">Preço</label>
-        <input type="number" className="form-control" name="preco" value={form.preco} onChange={handleChange} required />
-      </div>
-      <div className="mb-3">
-        <label className="form-label">Descrição</label>
-        <textarea className="form-control" name="descricao" value={form.descricao} onChange={handleChange} rows={3} required />
-      </div>
-      <div className="row mb-3">
-        <div className="col">
-          <label className="form-label">Data de Início</label>
-          <input type="date" className="form-control" name="dataInicio" value={form.dataInicio} onChange={handleChange} required />
-        </div>
-        <div className="col">
-          <label className="form-label">Data de Fim</label>
-          <input type="date" className="form-control" name="dataFim" value={form.dataFim} onChange={handleChange} required />
-        </div>
-      </div>
+      <Row className="mb-3">
+        <Col md={12}>
+          <Form.Group controlId="destinationId">
+            <Form.Label>Destino *</Form.Label>
+            {loadingDestinations ? (
+              <div className="d-flex align-items-center text-muted">
+                <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                Carregando destinos...
+              </div>
+            ) : (
+              <Form.Select
+                name="destinationId"
+                value={form.destinationId || ''}
+                onChange={handleDestinationChange}
+                required
+              >
+                <option value="">Selecione um destino</option>
+                {destinations.map(destination => (
+                  <option key={destination.id} value={destination.id}>
+                    {destination.name} - {destination.country}
+                    {destination.state && `, ${destination.state}`}
+                    {destination.city && `, ${destination.city}`}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+          </Form.Group>
+        </Col>
+      </Row>
+
+      <Row className="mb-3">
+        <Col md={6}>
+          <Form.Group controlId="dataInicio">
+            <Form.Label>Data de Início *</Form.Label>
+            <Form.Control
+              type="date"
+              name="dataInicio"
+              value={form.dataInicio}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+        </Col>
+        <Col md={6}>
+          <Form.Group controlId="dataFim">
+            <Form.Label>Data de Fim *</Form.Label>
+            <Form.Control
+              type="date"
+              name="dataFim"
+              value={form.dataFim}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+        </Col>
+      </Row>
+
+      <Form.Group controlId="descricao" className="mb-3">
+        <Form.Label>Descrição</Form.Label>
+        <Form.Control
+          as="textarea"
+          rows={3}
+          name="descricao"
+          value={form.descricao}
+          onChange={handleChange}
+          placeholder="Descreva detalhes sobre o pacote de viagem..."
+        />
+      </Form.Group>
     </form>
   );
 };
